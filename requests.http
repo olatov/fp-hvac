@@ -1,3 +1,7 @@
+GET http://localhost:9090/api/v1/enums
+
+###
+
 GET http://localhost:9090/api/v1/state
 
 ###
@@ -22,6 +26,3 @@ Content-Type: application/json
   "eco": false
 }
 
-###
-
-GET http://localhost:9090/api/v1/enums

@@ -1,55 +1,58 @@
+
 program HvacApi;
 
 {$mode objfpc}{$H+}
 {$modeswitch TypeHelpers}
 
-uses
+uses 
   {$ifdef UNIX}
-  cthreads, cmem,
+cthreads, cmem,
   {$endif}
-  Classes,
-  fpHttpApp,
-  httpDefs,
-  httpRoute,
-  fpJson,
-  fpMimeTypes,
-  SysUtils,
-  StrUtils,
+Classes,
+fpHttpApp,
+httpDefs,
+httpRoute,
+fpJson,
+fpMimeTypes,
+SysUtils,
+StrUtils,
 
-  EnumHelpers,
-  HvacModels,
-  HvacConnection;
+EnumHelpers,
+HvacModels,
+HvacConnection;
 
-const
-    ApiVersion = 1;
-    DefaultPort = 9090;
-    ConnectionString: string = 'localhost:12416';
-    
-var
-    Connection: TDeviceConnection;
-    Value: string;
-    JsonMimeType: string;
-    MimeTypeProvider: TFPMimeTypes;
-    AllowOrigin: string;
+const 
+    ApiVersion =   1;
+    DefaultPort =   9090;
+    ConnectionString:   string =   'localhost:12416';
 
-function GetPrettyParam(request: TRequest): boolean;
-var
-    prettyParam: string;
+var 
+    Connection:   THvacConnection;
+    Value:   string;
+    JsonMimeType:   string;
+    MimeTypeProvider:   TFPMimeTypes;
+    AllowOrigin:   string;
+
+function GetPrettyParam(request: TRequest):   boolean;
+
+var 
+    prettyParam:   string;
 begin
     prettyParam := request.QueryFields.Values['pretty'].ToLower();
     result := (not string.IsNullOrWhiteSpace(prettyParam))
-        and (prettyParam <> '0')
-        and (prettyParam <> 'false');
+              and (prettyParam <> '0')
+              and (prettyParam <> 'false');
 end;
 
 procedure GetStateHandler(request: TRequest; response: TResponse);
-var
-    dto: TDeviceStateDto;
-    state: TDeviceState;
-    pretty: boolean;
+
+var 
+    dto:   THvacStateDto;
+    state:   THvacState;
+    pretty:   boolean;
 begin
     state := connection.GetState();
-    dto := TDeviceStateDto.FromDeviceState(state);
+    dto := THvacStateDto.FromHvacState(state);
 
     pretty := GetPrettyParam(request);
 
@@ -67,18 +70,20 @@ begin
 end;
 
 procedure PutStateHandler(request: TRequest; response: TResponse);
-var
-    dto: TDeviceStateDto;
-    state: TDeviceState;
-begin
-    if not request.ContentType.ToLower().StartsWith('application/json') then begin
-        response.Code := 415;
-        response.Content := 'A JSON is required.';
-        Exit();
-    end;
 
-    dto := TDeviceStateDto.FromJson(request.Content);
-    state := dto.ToDeviceState();
+var 
+    dto:   THvacStateDto;
+    state:   THvacState;
+begin
+    if not request.ContentType.ToLower().StartsWith('application/json') then
+        begin
+            response.Code := 415;
+            response.Content := 'A JSON is required.';
+            Exit();
+        end;
+
+    dto := THvacStateDto.FromJson(request.Content);
+    state := dto.ToHvacState();
     connection.SetState(state);
 
     response.Code := 204;
@@ -86,8 +91,9 @@ begin
 end;
 
 procedure GetEnumsHandler(request: TRequest; response: TResponse);
-var
-    json: TJsonObject;
+
+var 
+    json:   TJsonObject;
 begin
     json := TJsonObject.Create();
 
@@ -110,7 +116,7 @@ begin
     finally
         json.Free();
 
-    end;
+end;
 end;
 
 procedure OptionsEnumsHandler(request: TRequest; response: TResponse);
@@ -122,20 +128,21 @@ begin
 end;
 
 procedure RegisterRoutes();
-var
-    prefix, path: string;
-    
+
+var 
+    prefix, path:   string;
+
 begin
-    prefix := Format('/api/v%d', [ApiVersion]);
+    prefix := '/api/v' + IntToStr(ApiVersion);
 
     path := prefix + '/state';
-    HTTPRouter.RegisterRoute(path, rmGet, @GetStateHandler);
-    HTTPRouter.RegisterRoute(path, rmPut, @PutStateHandler);
-    HTTPRouter.RegisterRoute(path, rmOptions, @OptionsStateHandler);
+    HttpRouter.RegisterRoute(path, rmGet, @GetStateHandler);
+    HttpRouter.RegisterRoute(path, rmPut, @PutStateHandler);
+    HttpRouter.RegisterRoute(path, rmOptions, @OptionsStateHandler);
 
     path := prefix + '/enums';
-    HTTPRouter.RegisterRoute(path, rmGet, @GetEnumsHandler);
-    HTTPRouter.RegisterRoute(path, rmOptions, @OptionsEnumsHandler);
+    HttpRouter.RegisterRoute(path, rmGet, @GetEnumsHandler);
+    HttpRouter.RegisterRoute(path, rmOptions, @OptionsEnumsHandler);
 end;
 
 begin
@@ -145,23 +152,23 @@ begin
         JsonMimeType := MimeTypeProvider.GetMimeType('json');
     finally
         FreeAndNil(MimeTypeProvider);
-    end;
-    JsonMimeType := IfThen(string.IsNullOrWhiteSpace(JsonMimeType), 'application/json', JsonMimeType);
+end;
+JsonMimeType := IfThen(string.IsNullOrWhiteSpace(JsonMimeType), 'application/json', JsonMimeType);
 
-    AllowOrigin := GetEnvironmentVariable('ALLOW_ORIGIN');
+AllowOrigin := GetEnvironmentVariable('ALLOW_ORIGIN');
 
-    value := GetEnvironmentVariable('HVAC_CONNECTION_STRING');
-    ConnectionString := IfThen(string.IsNullOrWhiteSpace(value), ConnectionString, value);
-    Writeln(Format('Using connection string: %s', [connectionString]));
+value := GetEnvironmentVariable('HVAC_CONNECTION_STRING');
+ConnectionString := IfThen(string.IsNullOrWhiteSpace(value), ConnectionString, value);
+Writeln(Format('Using connection string: %s', [connectionString]));
 
-    connection := TDeviceConnection.Create(ConnectionString);
+connection := THvacConnection.Create(ConnectionString);
 
-    Application.Port := StrToIntDef(GetEnvironmentVariable('LISTEN_PORT'), DefaultPort);
-    Application.Threaded := false;
-    Writeln(Format('Listening port %d', [Application.Port]));
+Application.Port := StrToIntDef(GetEnvironmentVariable('LISTEN_PORT'), DefaultPort);
+Application.Threaded := false;
+Writeln(Format('Listening port %d', [Application.Port]));
 
-    RegisterRoutes();
+RegisterRoutes();
 
-    Application.Initialize();
-    Application.Run();
+Application.Initialize();
+Application.Run();
 end.

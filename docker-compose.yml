@@ -1,11 +1,22 @@
 services:
+
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.HvacApi
     ports:
       - "9090:9090"
     environment:
-      - HVAC_CONNECTION_STRING=192.168.1.108:12416
+      - HVAC_CONNECTION_STRING=simulator:12416
       - LISTEN_PORT=9090
       - ALLOW_ORIGIN=*
+
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.HvacSimulator
+    ports:
+      - "12416:12416"
+    environment:
+      - LISTEN_IFACE=0.0.0.0
+      - LISTEN_PORT=12416
