@@ -1,0 +1,27 @@
+GET http://localhost:9090/api/v1/state
+
+###
+
+PUT http://localhost:9090/api/v1/state
+Content-Type: application/json
+
+{
+  "power": true,
+  "mode": "mdFan",
+  "desiredTemperature": 22,
+  "turbo": false,
+  "fanSpeed": "fsLevel1",
+  "horizontalFlowMode": "hfmRight",
+  "verticalFlowMode": "vfmSwing",
+  "temperatureScale": "tsCelsius",
+  "quiet": false,
+  "display": true,
+  "health": true,
+  "drying": false,
+  "sleep": false,
+  "eco": false
+}
+
+###
+
+GET http://localhost:9090/api/v1/enums
