@@ -7,7 +7,7 @@ unit HvacModels;
 interface
 
 uses 
-fpJson;
+    fpJson;
 
 const 
     HvacGetStateCommand =   $A0;
@@ -59,7 +59,7 @@ type
                            tsFahrenheit
                           );
 
-    THvacConfig =   bitpacked record
+    THvacConfig = bitpacked record
         // Byte 1
         Mode:   0..%111;
         Power:   boolean;
@@ -169,11 +169,12 @@ type
 implementation
 
 uses 
-SysUtils,
-JsonParser,
-EnumHelpers;
+    SysUtils,
+    JsonParser,
+    EnumHelpers;
 
-// THvacPacket
+{ THvacPacket }
+
 constructor THvacPacket.Create(ACommand: byte);
 begin
     Header[1] := $AA;
@@ -218,9 +219,9 @@ function THvacPacket.VerifyChecksum():   boolean;
 begin
     result := (Checksum = GetChecksum());
 end;
-// THvacPacket end
 
-// THvacState
+{ THvacState }
+
 constructor THvacState.FromHvacConfig(const AConfig: THvacConfig);
 begin
     Power := AConfig.Power;
@@ -230,9 +231,9 @@ begin
 
     HorizontalFlowMode := THorizontalFlowMode(
                           specialize IFThen<byte>(
-                          AConfig.HorizontalFlowMode < 12,
-                          AConfig.HorizontalFlowMode,
-                          AConfig.HorizontalFlowMode - 5));
+                            AConfig.HorizontalFlowMode < 12,
+                            AConfig.HorizontalFlowMode,
+                            AConfig.HorizontalFlowMode - 5));
 
     VerticalFlowMode := TVerticalFlowMode(AConfig.VerticalFlowMode);
     TemperatureScale := TTemperatureScale(AConfig.TemperatureScale);
@@ -274,9 +275,9 @@ begin
             Eco := self.Eco;
         end;
 end;
-// THvacState end
 
-// THvacStateDto
+{ THvacStateDto }
+
 constructor THvacStateDto.FromJson(content: string);
 
 var 
@@ -310,7 +311,7 @@ begin
     finally
         json.Free();
 
-end;
+    end;
 end;
 
 constructor THvacStateDto.FromHvacState(state: THvacState);
@@ -370,16 +371,9 @@ begin
                 Integers['desiredTemperature'] := DesiredTemperature;
                 Booleans['turbo'] := Turbo;
                 Strings['fanSpeed'] := specialize EnumToStr<TFanSpeed>(FanSpeed);
-
-                Strings['horizontalFlowMode'] := 
-                                                 specialize EnumToStr<THorizontalFlowMode>(HorizontalFlowMode);
-
-                Strings['verticalFlowMode'] := 
-                                               specialize EnumToStr<TVerticalFlowMode>(VerticalFlowMode);
-
-                Strings['temperatureScale'] := 
-                                               specialize EnumToStr<TTemperatureScale>(TemperatureScale);
-
+                Strings['horizontalFlowMode'] := specialize EnumToStr<THorizontalFlowMode>(HorizontalFlowMode);
+                Strings['verticalFlowMode'] := specialize EnumToStr<TVerticalFlowMode>(VerticalFlowMode);
+                Strings['temperatureScale'] := specialize EnumToStr<TTemperatureScale>(TemperatureScale);
                 Booleans['quiet'] := Quiet;
                 Booleans['display'] := Display;
                 Booleans['health'] := Health;
@@ -398,8 +392,7 @@ begin
     finally
         json.Free();
 
+    end;
 end;
-end;
-// THvacStateDto end
 
 end.

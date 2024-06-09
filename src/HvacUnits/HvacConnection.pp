@@ -1,4 +1,3 @@
-
 unit HvacConnection;
 
 {$mode objfpc}{$H+}
@@ -7,8 +6,8 @@ unit HvacConnection;
 interface
 
 uses 
-ssockets,
-HvacModels;
+    ssockets,
+    HvacModels;
 
 type 
     THvacConnection =   class
@@ -21,7 +20,7 @@ type
             procedure Disconnect();
 
         public 
-            constructor Create(connectionString: string = 'localhost:12416');
+            constructor Create(AConnectionString: string = 'localhost:12416');
             procedure SetState(state: THvacState);
             function GetState():   THvacState;
     end;
@@ -29,15 +28,17 @@ type
 implementation
 
 uses 
-Classes, sysutils;
+    Classes,
+    SysUtils;
 
-constructor THvacConnection.Create(connectionString: string = 'localhost:12416');
+{ THvacConnection }
 
+constructor THvacConnection.Create(AConnectionString: string = 'localhost:12416');
 var 
     elems:   TStringArray;
 begin
     try
-        elems := connectionString.Split(':');
+        elems := AConnectionString.Split(':');
         if Length(elems) <> 2 then
             raise Exception.Create('Invalid');
 
@@ -47,7 +48,7 @@ begin
     except
         raise Exception.Create('Invalid connection string');
 
-end;
+    end;
 end;
 
 procedure THvacConnection.Connect();
@@ -65,12 +66,11 @@ begin
     Socket.Free();
 end;
 
-function THvacConnection.GetState():   THvacState;
-
+function THvacConnection.GetState(): THvacState;
 var 
-    request, response:   THvacPacket;
-    count:   integer;
-    tries:   integer =   0;
+    request, response: THvacPacket;
+    count: integer;
+    tries: integer = 0;
 begin
     try
         Connect();
@@ -105,11 +105,10 @@ begin
         Disconnect();
         Sleep(250);
 
-end;
+    end;
 end;
 
 procedure THvacConnection.SetState(state: THvacState);
-
 var 
     request:   THvacPacket;
     count:   integer;
@@ -129,7 +128,7 @@ begin
         Disconnect();
         Sleep(500);
 
-end;
+    end;
 end;
 
 end.

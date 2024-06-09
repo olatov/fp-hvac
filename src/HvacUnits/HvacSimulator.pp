@@ -1,4 +1,3 @@
-
 unit HvacSimulator;
 
 {$mode objfpc}{$H+}
@@ -6,10 +5,10 @@ unit HvacSimulator;
 interface
 
 uses 
-sockets,
-ssockets,
-EnumHelpers,
-HvacModels;
+    sockets,
+    ssockets,
+    EnumHelpers,
+    HvacModels;
 
 type 
     THvacSimulator =   class(TInetServer)
@@ -27,8 +26,8 @@ type
 implementation
 
 uses 
-SysUtils,
-StrUtils;
+    SysUtils,
+    StrUtils;
 
 procedure THvacSimulator.PrintState();
 begin
@@ -51,7 +50,6 @@ begin
 end;
 
 procedure THvacSimulator.ClientHandler(Sender: TObject; Data: TSocketStream);
-
 var 
     request, response:   THvacPacket;
     hvacState:   THvacConfig;
@@ -103,7 +101,7 @@ begin
         Data.Free();
 
         Sleep(500);
-end;
+    end;
 end;
 
 constructor THvacSimulator.Create(const AHost: string; const APort: Word; AHAndler : TSocketHandler = Nil);
