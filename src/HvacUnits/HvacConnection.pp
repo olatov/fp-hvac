@@ -6,41 +6,41 @@ unit HvacConnection;
 interface
 
 uses 
-    ssockets,
+    Classes,
+    Ssockets,
     HvacModels;
 
 type 
-    THvacConnection =   class
+    THvacConnection = record
         private 
-            FPort:   integer;
-            FHost:   string;
-            FSocket:   TInetSocket;
-            property Socket:   TInetSocket read FSocket write FSocket;
+            FPort: integer;
+            FHost: string;
+            FSocket: TInetSocket;
+            property Socket: TInetSocket read FSocket write FSocket;
             procedure Connect();
             procedure Disconnect();
 
-        public 
-            constructor Create(AConnectionString: string = 'localhost:12416');
+        public
+            constructor Create(AConnectionString: string);
             procedure SetState(state: THvacState);
-            function GetState():   THvacState;
+            function GetState(): THvacState;
     end;
 
 implementation
 
 uses 
-    Classes,
     SysUtils;
 
 { THvacConnection }
 
-constructor THvacConnection.Create(AConnectionString: string = 'localhost:12416');
+constructor THvacConnection.Create(AConnectionString: string);
 var 
     elems:   TStringArray;
 begin
     try
         elems := AConnectionString.Split(':');
         if Length(elems) <> 2 then
-            raise Exception.Create('Invalid');
+            raise Exception.Create('Invalid connection string');
 
         FHost := elems[0];
         FPort := StrToInt(elems[1]);
@@ -78,10 +78,7 @@ begin
         request := THvacPacket.Create(HvacGetStateCommand);
         count := Socket.Write(request, SizeOf(request));
         if count <> SizeOf(request) then
-            begin
-                Writeln('Error sending');
-                Exit();
-            end;
+            raise Exception.Create('Error sending');
 
         repeat
             Inc(tries);
@@ -89,15 +86,11 @@ begin
             if count = SizeOf(response) then
                 break;
 
-            Writeln('Retrying');
             Sleep(50);
         until tries >= 20;
 
         if (count <> SizeOf(response)) or (not response.VerifyChecksum()) then
-            begin
-                Writeln('Error');
-                Exit();
-            end;
+            raise Exception.Create('Invalid response');
 
         result := THvacState.FromHvacConfig(response.Config);
 
@@ -122,7 +115,7 @@ begin
 
         count := Socket.Write(request, SizeOf(request));
         if count <> SizeOf(request) then
-            Writeln('Error sending');
+            raise Exception.Create('Error sending');
 
     finally
         Disconnect();

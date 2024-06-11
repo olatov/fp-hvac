@@ -1,4 +1,3 @@
-
 unit EnumHelpers;
 
 {$mode objfpc}{$H+}
