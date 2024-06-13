@@ -1,4 +1,4 @@
-unit HvacModels;
+unit Hvac.Models;
 
 {$mode objfpc}{$H+}
 {$modeswitch AdvancedRecords}
@@ -6,7 +6,7 @@ unit HvacModels;
 interface
 
 uses 
-    fpJson;
+    FPJson;
 
 const 
     HvacGetStateCommand =   $A0;
@@ -170,7 +170,7 @@ implementation
 uses 
     SysUtils,
     JsonParser,
-    EnumHelpers;
+    Hvac.Helpers.Enum;
 
 { THvacPacket }
 

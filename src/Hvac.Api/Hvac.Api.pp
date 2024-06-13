@@ -1,4 +1,4 @@
-program HvacApiApp;
+program Hvac.Api;
 
 {
     /**
@@ -26,7 +26,7 @@ uses
     EventLog,
     SysUtils,
     StrUtils,
-    HvacApiApplication;
+    Hvac.Api.Application;
 
 const 
     DefaultPort = 9090;

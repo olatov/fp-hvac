@@ -1,11 +1,11 @@
-program HvacSimulatorApp;
+program Hvac.Simulator;
 
 {$mode objfpc}{$H+}
 
 uses 
     SysUtils,
     StrUtils,
-    HvacSimulator;
+    Hvac.Simulator.Server;
 
 const 
     Port: word = 12416;

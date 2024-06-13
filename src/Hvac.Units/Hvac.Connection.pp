@@ -1,4 +1,4 @@
-unit HvacConnection;
+unit Hvac.Connection;
 
 {$mode objfpc}{$H+}
 {$modeswitch AdvancedRecords}
@@ -8,7 +8,7 @@ interface
 uses 
     Classes,
     Ssockets,
-    HvacModels;
+    Hvac.Models;
 
 type 
     THvacConnection = record

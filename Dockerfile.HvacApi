@@ -1,8 +1,8 @@
 FROM freepascal/fpc:3.2.2-buster-full AS build
 WORKDIR /build
 RUN mkdir src
-COPY src/HvacUnits ./src/HvacUnits
-COPY src/HvacApi ./src/HvacApi
+COPY src/Hvac.Units ./src/Hvac.Units
+COPY src/Hvac.Api ./src/Hvac.Api
 WORKDIR /build/src/HvacApi
 RUN ./build.sh release
 
@@ -11,6 +11,6 @@ RUN apk add --no-cache libc6-compat
 RUN adduser -D web
 USER web
 WORKDIR /app
-COPY --from=build /build/src/HvacApi/out/HvacApiApp .
+COPY --from=build /build/src/Hvac.Api/out/Hvac.Api .
 EXPOSE 9090
-ENTRYPOINT ["/app/HvacApiApp"]
+ENTRYPOINT ["/app/Hvac.Api"]

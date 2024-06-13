@@ -1,4 +1,4 @@
-unit HvacApiApplication;
+unit Hvac.Api.Application;
 
 {$mode objfpc}
 {$H+}
@@ -9,10 +9,10 @@ uses
     Classes,
     HttpDefs,
     HttpRoute,
-    fpHttpApp,
+    FPHttpApp,
     CustHttpApp,
     EventLog,
-    HvacConnection;
+    Hvac.Connection;
 
 type
     THvacApiApplication = class(THttpApplication)
@@ -62,7 +62,7 @@ uses
     SysUtils,
     StrUtils,
     EnumHelpers,
-    HvacModels;
+    Hvac.Models;
 
 { THvacApiApplication }
 

@@ -1,22 +1,22 @@
-unit HvacSimulator;
+unit Hvac.Simulator.Server;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses 
-    sockets,
-    ssockets,
-    EnumHelpers,
-    HvacModels;
+    Sockets,
+    Ssockets,
+    Hvac.Helpers.Enum,
+    Hvac.Models;
 
 type 
-    THvacSimulator =   class(TInetServer)
+    THvacSimulator = class(TInetServer)
         private 
-            FIndoorTemperature:   single;
-            FState:   THvacState;
+            FIndoorTemperature: single;
+            FState: THvacState;
             procedure PrintState();
-            property State:   THvacState read FState write FState;
+            property State: THvacState read FState write FState;
             procedure ClientHandler(Sender: TObject; Data: TSocketStream);
 
         public 

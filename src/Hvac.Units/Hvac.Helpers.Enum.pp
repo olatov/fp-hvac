@@ -1,17 +1,21 @@
-unit EnumHelpers;
+unit Hvac.Helpers.Enum;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses 
-Classes, SysUtils, fpJson;
+    FPJson;
 
 generic function EnumToStr<T>(value: T): string;
 generic function StrToEnum<T>(value: string): T;
 generic function EnumToJsonArray<T>(): TJsonArray;
 
 implementation
+
+uses
+    Classes,
+    SysUtils;
 
 generic function EnumToStr<T>(value: T): string;
 begin
@@ -23,7 +27,7 @@ begin
     ReadStr(value, result);
 end;
 
-generic function EnumToJsonArray<T>():   TJsonArray;
+generic function EnumToJsonArray<T>(): TJsonArray;
 var 
     item:   T;
 begin
