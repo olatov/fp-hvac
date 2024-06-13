@@ -1,4 +1,3 @@
-
 unit HvacModels;
 
 {$mode objfpc}{$H+}
@@ -14,154 +13,154 @@ const
     HvacSetStateCommand =   $01;
 
 type 
-    THvacMode =   (
-                   mdAuto,
-                   mdCool,
-                   mdDry,
-                   mdFan,
-                   mdHeat
-                  );
+    THvacMode =  (
+        mdAuto,
+        mdCool,
+        mdDry,
+        mdFan,
+        mdHeat
+    );
 
-    TFanSpeed =   (
-                   fsAuto,
-                   fsLevel1,
-                   fsLevel2,
-                   fsLevel3,
-                   fsLevel4,
-                   fsLevel5,
-                   fsLevel6
-                  );
+    TFanSpeed = (
+        fsAuto,
+        fsLevel1,
+        fsLevel2,
+        fsLevel3,
+        fsLevel4,
+        fsLevel5,
+        fsLevel6
+    );
 
-    THorizontalFlowMode =   (
-                             hfmStop,
-                             hfmSwing,
-                             hfmLeft,
-                             hfmLeftCenter,
-                             hfmCenter,
-                             hfmRightCenter,
-                             hfmRight,
-                             hfmLeftRight,
-                             hfmSwingWide
-                            );
+    THorizontalFlowMode = (
+        hfmStop,
+        hfmSwing,
+        hfmLeft,
+        hfmLeftCenter,
+        hfmCenter,
+        hfmRightCenter,
+        hfmRight,
+        hfmLeftRight,
+        hfmSwingWide
+    );
 
-    TVerticalFlowMode =   (
-                           vfmStop,
-                           vfmSwing,
-                           vfmTop,
-                           vfmTopCenter,
-                           vfmCenter,
-                           vfmBottomCenter,
-                           vfmBottom
-                          );
+    TVerticalFlowMode = (
+        vfmStop,
+        vfmSwing,
+        vfmTop,
+        vfmTopCenter,
+        vfmCenter,
+        vfmBottomCenter,
+        vfmBottom
+    );
 
-    TTemperatureScale =   (
-                           tsCelsius,
-                           tsFahrenheit
-                          );
+    TTemperatureScale = (
+        tsCelsius,
+        tsFahrenheit
+    );
 
     THvacConfig = bitpacked record
         // Byte 1
-        Mode:   0..%111;
-        Power:   boolean;
-        FanSpeed:   0..%111;
-        Turbo:   boolean;
+        Mode: 0..%111;
+        Power: boolean;
+        FanSpeed: 0..%111;
+        Turbo: boolean;
 
         // Byte 2
-        DesiredTemperature:   0..%11111;
-        TemperatureScale:   boolean;
-        Quiet:   boolean;
-        Unknown1:   boolean;
+        DesiredTemperature: 0..%11111;
+        TemperatureScale: boolean;
+        Quiet: boolean;
+        Unknown1: boolean;
 
         // Byte 3
-        VerticalFlowMode:   0..%1111;
-        HorizontalFlowMode:   0..%1111;
+        VerticalFlowMode: 0..%1111;
+        HorizontalFlowMode: 0..%1111;
 
         // Byte 4
-        Eco:   boolean;
-        Sleep:   boolean;
-        Unknown2:   0..%11;
-        Drying:   boolean;
-        Timing:   boolean;
-        Health:   boolean;
-        Display:   boolean;
+        Eco: boolean;
+        Sleep: boolean;
+        Unknown2: 0..%11;
+        Drying: boolean;
+        Timing: boolean;
+        Health: boolean;
+        Display: boolean;
 
         // Byte 5
-        TimerOnHour:   0..%111;
-        TimerOn:   boolean;
-        TimerOffHour:   0..%111;
-        TimerOff:   boolean;
+        TimerOnHour: 0..%111;
+        TimerOn: boolean;
+        TimerOffHour: 0..%111;
+        TimerOff: boolean;
 
         // Byte 6
-        TimerOnOffMinute:   byte;
+        TimerOnOffMinute: byte;
 
         // Byte 7
-        TimerUnknown1:   byte;
+        TimerUnknown1: byte;
 
         // Byte 8
-        TimerUnknown2:   byte;
+        TimerUnknown2: byte;
 
         // Byte 9
-        IndoorTemperatureIntegral:   shortint;
+        IndoorTemperatureIntegral: shortint;
 
         // Byte 10
-        IndoorTemperatureFractional:   byte;
+        IndoorTemperatureFractional: byte;
     end;
 
-    THvacPacket =   record
-        Header:   array[1..3] of byte;
-        Command:   byte;
-        Unknown1:   array[1..3] of byte;
-        AConfig:   THvacConfig;
-        Unknown2:   array[1..3] of byte;
-        Checksum:   byte;
+    THvacPacket = record
+        Header: array[1..3] of byte;
+        Command: byte;
+        Unknown1: array[1..3] of byte;
+        AConfig: THvacConfig;
+        Unknown2: array[1..3] of byte;
+        Checksum: byte;
 
-        property Config:   THvacConfig read AConfig write AConfig;
-        function GetChecksum():   byte;
-        function VerifyChecksum():   boolean;
+        property Config: THvacConfig read AConfig write AConfig;
+        function GetChecksum(): byte;
+        function VerifyChecksum(): boolean;
         procedure RefreshChecksum();
         constructor Create(ACommand: byte);
     end;
 
-    THvacState =   record
-        Power:   boolean;
-        Mode:   THvacMode;
-        IndoorTemperature:   single;
-        DesiredTemperature:   integer;
-        Turbo:   boolean;
-        FanSpeed:   TFanSpeed;
-        HorizontalFlowMode:   THorizontalFlowMode;
-        VerticalFlowMode:   TVerticalFlowMode;
-        TemperatureScale:   TTemperatureScale;
-        Quiet:   boolean;
-        Display:   boolean;
-        Health:   boolean;
-        Drying:   boolean;
-        Sleep:   boolean;
-        Eco:   boolean;
+    THvacState = record
+        Power: boolean;
+        Mode: THvacMode;
+        IndoorTemperature: single;
+        DesiredTemperature: integer;
+        Turbo: boolean;
+        FanSpeed: TFanSpeed;
+        HorizontalFlowMode: THorizontalFlowMode;
+        VerticalFlowMode: TVerticalFlowMode;
+        TemperatureScale: TTemperatureScale;
+        Quiet: boolean;
+        Display: boolean;
+        Health: boolean;
+        Drying: boolean;
+        Sleep: boolean;
+        Eco: boolean;
 
-        function ToHvacConfig():   THvacConfig;
+        function ToHvacConfig(): THvacConfig;
         constructor FromHvacConfig(const AConfig: THvacConfig);
     end;
 
-    THvacStateDto =   record
-        Power:   boolean;
-        Mode:   THvacMode;
-        IndoorTemperature:   single;
-        DesiredTemperature:   integer;
-        Turbo:   boolean;
-        FanSpeed:   TFanSpeed;
-        HorizontalFlowMode:   THorizontalFlowMode;
-        VerticalFlowMode:   TVerticalFlowMode;
-        TemperatureScale:   TTemperatureScale;
-        Quiet:   boolean;
-        Display:   boolean;
-        Health:   boolean;
-        Drying:   boolean;
-        Sleep:   boolean;
-        Eco:   boolean;
+    THvacStateDto = record
+        Power: boolean;
+        Mode: THvacMode;
+        IndoorTemperature: single;
+        DesiredTemperature: integer;
+        Turbo: boolean;
+        FanSpeed: TFanSpeed;
+        HorizontalFlowMode: THorizontalFlowMode;
+        VerticalFlowMode: TVerticalFlowMode;
+        TemperatureScale: TTemperatureScale;
+        Quiet: boolean;
+        Display: boolean;
+        Health: boolean;
+        Drying: boolean;
+        Sleep: boolean;
+        Eco: boolean;
 
-        function ToJson(pretty: boolean = false):   string;
-        function ToHvacState():   THvacState;
+        function ToJson(pretty: boolean = false): string;
+        function ToHvacState(): THvacState;
         constructor FromJson(content: string);
         constructor FromHvacState(state: THvacState);
     end;
@@ -194,11 +193,10 @@ begin
 end;
 
 function THvacPacket.GetChecksum():   byte;
-
 var 
-    item:   ^byte;
-    sum:   word =   0;
-    i:   integer;
+    item: ^byte;
+    sum: word =   0;
+    i: integer;
 begin
     item := @self;
     for i := 1 to (SizeOf(self) - 1) do
@@ -230,10 +228,10 @@ begin
     FanSpeed := TFanSpeed(AConfig.FanSpeed);
 
     HorizontalFlowMode := THorizontalFlowMode(
-                          specialize IFThen<byte>(
-                            AConfig.HorizontalFlowMode < 12,
-                            AConfig.HorizontalFlowMode,
-                            AConfig.HorizontalFlowMode - 5));
+        specialize IFThen<byte>(
+            AConfig.HorizontalFlowMode < 12,
+                AConfig.HorizontalFlowMode,
+                AConfig.HorizontalFlowMode - 5));
 
     VerticalFlowMode := TVerticalFlowMode(AConfig.VerticalFlowMode);
     TemperatureScale := TTemperatureScale(AConfig.TemperatureScale);
@@ -259,11 +257,10 @@ begin
             IndoorTemperatureFractional := round((self.IndoorTemperature - result.IndoorTemperatureIntegral) * 10);
             DesiredTemperature := self.DesiredTemperature - 16;
 
-            HorizontalFlowMode := 
-                                  specialize IFThen<byte>(
-                                  byte(self.HorizontalFlowMode) < 7,
-                                  byte(self.HorizontalFlowMode),
-                                  byte(self.HorizontalFlowMode) + 5);
+            HorizontalFlowMode := specialize IFThen<byte>(
+                byte(self.HorizontalFlowMode) < 7,
+                    byte(self.HorizontalFlowMode),
+                    byte(self.HorizontalFlowMode) + 5);
 
             VerticalFlowMode := byte(self.VerticalFlowMode);
             TemperatureScale := boolean(self.TemperatureScale);
@@ -279,7 +276,6 @@ end;
 { THvacStateDto }
 
 constructor THvacStateDto.FromJson(content: string);
-
 var 
     json:   TJsonData;
 begin
@@ -354,8 +350,7 @@ begin
         end;
 end;
 
-function THvacStateDto.ToJson(pretty: boolean = false):   string;
-
+function THvacStateDto.ToJson(pretty: boolean = false): string;
 var 
     json:   TJsonObject;
 
