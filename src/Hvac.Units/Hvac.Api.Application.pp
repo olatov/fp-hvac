@@ -61,8 +61,9 @@ uses
     fpMimeTypes,
     SysUtils,
     StrUtils,
-    EnumHelpers,
-    Hvac.Models;
+    Hvac.Models.Core,
+    Hvac.Models.Domain,
+    Hvac.Models.Dto;
 
 { THvacApiApplication }
 
@@ -202,11 +203,12 @@ begin
     json := TJsonObject.Create();
 
     try
-        json.Arrays['mode'] := specialize EnumToJsonArray<THvacMode>();
-        json.Arrays['fanSpeed'] := specialize EnumToJsonArray<TFanSpeed>();
-        json.Arrays['horizontalFlowMode'] := specialize EnumToJsonArray<THorizontalFlowMode>();
-        json.Arrays['verticalFlowMode'] := specialize EnumToJsonArray<TVerticalFlowMode>();
-        json.Arrays['temperatureScale'] := specialize EnumToJsonArray<TTemperatureScale>();
+        // TODO!
+        // json.Arrays['mode'] := specialize EnumToJsonArray<THvacMode>();
+        // json.Arrays['fanSpeed'] := specialize EnumToJsonArray<TFanSpeed>();
+        // json.Arrays['horizontalFlowMode'] := specialize EnumToJsonArray<THorizontalFlowMode>();
+        // json.Arrays['verticalFlowMode'] := specialize EnumToJsonArray<TVerticalFlowMode>();
+        // json.Arrays['temperatureScale'] := specialize EnumToJsonArray<TTemperatureScale>();
         json.CompressedJson := true;
 
         if GetPrettyParam(request) then

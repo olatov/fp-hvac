@@ -7,8 +7,9 @@ interface
 uses 
     Sockets,
     Ssockets,
-    Hvac.Helpers.Enum,
-    Hvac.Models;
+    Hvac.Models.Core,
+    Hvac.Models.Domain,
+    Hvac.Models.Protocol;
 
 type 
     THvacSimulator = class(TInetServer)
@@ -27,7 +28,8 @@ implementation
 
 uses 
     SysUtils,
-    StrUtils;
+    StrUtils,
+    TypInfo;
 
 procedure THvacSimulator.PrintState();
 begin
@@ -35,10 +37,10 @@ begin
     WriteLn(Format('%12s | %s', ['Power',IfThen(State.Power, 'On', 'Off')]));
     WriteLn(Format('%12s | %.1f', ['Indoor temp', FIndoorTemperature]));
     WriteLn(Format('%12s | %d', ['Desired temp', State.DesiredTemperature]));
-    WriteLn(Format('%12s | %s', ['Temp scale', specialize EnumToStr<TTemperatureScale>(State.TemperatureScale)]));
-    WriteLn(Format('%12s | %s', ['Mode', specialize EnumToStr<THvacMode>(State.Mode)]));
-    WriteLn(Format('%12s | %s', ['Fan',specialize EnumToStr<TFanSpeed>(State.FanSpeed)]));
-    WriteLn(Format('%12s | %s', ['Flow', specialize EnumToStr<TVerticalFlowMode>(State.VerticalFlowMode)]));
+    WriteLn(Format('%12s | %s', ['Temp scale', GetEnumName(Typeinfo(TTemperatureScale), Ord(State.TemperatureScale))]));
+    WriteLn(Format('%12s | %s', ['Mode', GetEnumName(Typeinfo(THvacMode), Ord(State.Mode))]));
+    WriteLn(Format('%12s | %s', ['Fan',GetEnumName(Typeinfo(TFanSpeed), Ord(State.FanSpeed))]));
+    WriteLn(Format('%12s | %s', ['Flow', GetEnumName(Typeinfo(THorizontalFlowMode), Ord(State.HorizontalFlowMode))]));
     WriteLn(Format('%12s | %s', ['Turbo', IfThen(State.Turbo, 'On', 'Off')]));
     WriteLn(Format('%12s | %s', ['Quiet', IfThen(State.Quiet, 'On', 'Off')]));
     WriteLn(Format('%12s | %s', ['Display', IfThen(State.Display, 'On', 'Off')]));
@@ -51,9 +53,9 @@ end;
 
 procedure THvacSimulator.ClientHandler(Sender: TObject; Data: TSocketStream);
 var 
-    request, response:   THvacPacket;
-    hvacState:   THvacConfig;
-    count:   integer;
+    request, response: THvacPacket;
+    hvacConfig: THvacConfig;
+    count: integer;
 begin
     Writeln('Incoming connection');
 
@@ -77,12 +79,12 @@ begin
             HvacGetStateCommand:
                                    begin
                                        response := THvacPacket.Create(HvacGetStateCommand);
-                                       hvacState := State.ToHvacConfig();
-                                       hvacState.IndoorTemperatureIntegral := Random(10) + 18;
-                                       hvacState.IndoorTemperatureFractional := Random(2) * 5;
-                                       FIndoorTemperature := hvacState.IndoorTemperatureIntegral + (
-                                                             hvacState.IndoorTemperatureFractional / 10.0);
-                                       response.Config := hvacState;
+                                       hvacConfig := THvacConfig.FromHvacState(State);
+                                       hvacConfig.IndoorTemperatureIntegral := Random(10) + 18;
+                                       hvacConfig.IndoorTemperatureFractional := Random(2) * 5;
+                                       FIndoorTemperature := hvacConfig.IndoorTemperatureIntegral + (
+                                                             hvacConfig.IndoorTemperatureFractional / 10.0);
+                                       response.Config := hvacConfig;
                                        response.RefreshChecksum();
                                        count := Data.Write(response, SizeOf(response));
                                    end;
@@ -91,7 +93,7 @@ begin
                                    begin
                                        WriteLn('Setting state');
                                        WriteLn('Desired temp: ', request.Config.DesiredTemperature);
-                                       State := THvacState.FromHvacConfig(request.Config);
+                                       State := request.Config.ToHvacState();
                                    end;
         end;
 

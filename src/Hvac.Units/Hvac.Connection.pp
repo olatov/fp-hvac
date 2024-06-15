@@ -6,9 +6,9 @@ unit Hvac.Connection;
 interface
 
 uses 
-    Classes,
     Ssockets,
-    Hvac.Models;
+    Hvac.Models.Protocol,
+    Hvac.Models.Domain;
 
 type 
     THvacConnection = record
@@ -22,7 +22,7 @@ type
 
         public
             constructor Create(AConnectionString: string);
-            procedure SetState(state: THvacState);
+            procedure SetState(AState: THvacState);
             function GetState(): THvacState;
     end;
 
@@ -35,7 +35,7 @@ uses
 
 constructor THvacConnection.Create(AConnectionString: string);
 var 
-    elems:   TStringArray;
+    elems: TStringArray;
 begin
     try
         elems := AConnectionString.Split(':');
@@ -92,7 +92,7 @@ begin
         if (count <> SizeOf(response)) or (not response.VerifyChecksum()) then
             raise Exception.Create('Invalid response');
 
-        result := THvacState.FromHvacConfig(response.Config);
+        result := response.Config.ToHvacState();
 
     finally
         Disconnect();
@@ -101,16 +101,16 @@ begin
     end;
 end;
 
-procedure THvacConnection.SetState(state: THvacState);
+procedure THvacConnection.SetState(AState: THvacState);
 var 
-    request:   THvacPacket;
-    count:   integer;
+    request: THvacPacket;
+    count: integer;
 begin
     try
         Connect();
 
         request := THvacPacket.Create(HvacSetStateCommand);
-        request.Config := state.ToHvacConfig();
+        request.Config := THvacConfig.FromHvacState(AState);
         request.RefreshChecksum();
 
         count := Socket.Write(request, SizeOf(request));
