@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="site.css">
+    <script src="hvac.web.js"></script>
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                HVAC
+            </h1>
+
+            <div class="section">
+                <div class="column">
+                    <label>
+                        Power
+                        <div class="control">
+                            <label class="radio">
+                                <input id="powerOn" type="radio" name="power" value="on">
+                                On
+                            </label>
+
+                            <label class="radio">
+                                <input id="powerOff" type="radio" name="power" value="off">
+                                Off
+                            </label>
+                        <div>
+                    </label>
+
+                    <label>
+                        Mode
+                        <div class="select">
+                            <select id="mode">
+                                <option value="mdAuto">Auto</option>
+                                <option value="mdCool">Cool</option>
+                                <option value="mdDry">Dry</option>
+                                <option value="mdFan">Fan</option>
+                                <option value="mdHeat">Heat</option>
+                            </select>
+                        </div>
+                    </label>
+
+                    <label>
+                        Temperature
+                        <input id="desiredTemperature" class="input" type="number" placeholder="Temperature" value="18">
+                    </label>
+
+                    <label>
+                        Indoor
+                        <span id="indoorTemperature">...</span>
+                    </label>
+
+                    <label>
+                        Scale
+                        <div class="select">
+                            <select id="temperatureScale">
+                                <option value="tsCelsius">C</option>
+                                <option value="tsFahrenheit">F</option>
+                            </select>
+                        </div>
+                    </label>                    
+                </div>
+
+                <div class="column">
+                    <label>
+                        Fan speed
+                        <div class="select">
+                            <select id="fanSpeed">
+                                <option value="fsAuto">Auto</option>
+                                <option value="fsLevel1">Level 1</option>
+                                <option value="fsLevel2">Level 2</option>
+                                <option value="fsLevel3">Level 3</option>
+                                <option value="fsLevel4">Level 4</option>
+                                <option value="fsLevel5">Level 5</option>
+                                <option value="fsLevel6">Level 6</option>
+                            </select>
+                        </div>
+                    </label>
+
+                    <label>
+                        Horizontal Flow
+                        <div class="select">
+                            <select id="horizontalFlow">
+                                <option value="hfmStop">Stop</option>
+                                <option value="hfmSwing">Swing</option>
+                                <option value="hfmLeft">Left</option>
+                                <option value="hfmLeftCenter">Left / Center</option>
+                                <option value="hfmCenter">Center</option>
+                                <option value="hfmRightCenter">Right / Center</option>
+                                <option value="hfmRight">Right</option>
+                                <option value="hfmLeftRight">Left / Right</option>
+                                <option value="hfmSwingWide">Swing / Wide</option>
+                            </select>
+                        </div>
+                    </label>
+
+                    <label>
+                        Vertical flow
+                        <div class="select">
+                            <select id="verticalFlow">
+                                <option value="vfmStop">Stop</option>
+                                <option value="vfmSwing">Swing</option>
+                                <option value="vfmTop">Top</option>
+                                <option value="vfmTopCenter">Top / Center</option>
+                                <option value="vfmCenter">Center</option>
+                                <option value="vfmBottomCenter">Bottom / Center</option>
+                                <option value="vfmBottom">Bottom</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="column">
+                    <label class="checkbox">
+                        Turbo
+                        <input id="turbo" type="checkbox">
+                    </label>
+
+                    <label class="checkbox">
+                        Quiet
+                        <input id="quiet" type="checkbox">
+                    </label>
+
+                    <label class="checkbox">
+                        Display
+                        <input id="display" type="checkbox">
+                    </label>
+
+                    <label class="checkbox">
+                        Health
+                        <input id="health" type="checkbox">
+                    </label>
+
+                    <label class="checkbox">
+                        Drying
+                        <input id="drying" type="checkbox">
+                    </label>
+
+                    <label class="checkbox">
+                        Sleep
+                        <input id="sleep" type="checkbox">
+                    </label>
+
+                    <label class="checkbox">
+                        Eco
+                        <input id="eco" type="checkbox">
+                    </label>
+                </div>
+
+            <button id="btnRefresh" class="button is-primary">Apply</button>
+        </div>
+    </section>
+</body>
+<script>
+    rtl.run();
+</script>
+
+</html>

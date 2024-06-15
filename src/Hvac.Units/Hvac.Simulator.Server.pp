@@ -14,7 +14,7 @@ uses
 type 
     THvacSimulator = class(TInetServer)
         private 
-            FIndoorTemperature: single;
+            FIndoorTemperature: double;
             FState: THvacState;
             procedure PrintState();
             property State: THvacState read FState write FState;

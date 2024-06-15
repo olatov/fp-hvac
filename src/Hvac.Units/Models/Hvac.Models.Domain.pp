@@ -12,7 +12,7 @@ type
     THvacState = record
         Power: boolean;
         Mode: THvacMode;
-        IndoorTemperature: single;
+        IndoorTemperature: double;
         DesiredTemperature: integer;
         Turbo: boolean;
         FanSpeed: TFanSpeed;

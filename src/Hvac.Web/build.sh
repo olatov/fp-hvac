@@ -7,5 +7,6 @@ pas2js \
     -Fu"../Hvac.Units/Models/" \
     -Jc \
     -Jm \
+    -Jmbasedir="." \
     -o"wwwroot/hvac.web.js" \
     Hvac.Web.pp

@@ -13,7 +13,7 @@ type
     THvacStateDto = record
         Power: boolean;
         Mode: THvacMode;
-        IndoorTemperature: single;
+        IndoorTemperature: double;
         DesiredTemperature: integer;
         Turbo: boolean;
         FanSpeed: TFanSpeed;
@@ -36,13 +36,7 @@ type
 implementation
 
 uses 
-    SysUtils,
     FPJson,
-    {$ifdef pas2js}
-        FPJsonJs,
-    {$else}
-        JsonParser,
-    {$endif}
     TypInfo;
 
 { THvacStateDto }
@@ -57,6 +51,7 @@ begin
         Power := json.GetPath('power').AsBoolean;
         Mode := THvacMode(GetEnumValue(TypeInfo(THvacMode), json.GetPath('mode').AsString));
         DesiredTemperature := json.GetPath('desiredTemperature').AsInteger;
+        IndoorTemperature := json.GetPath('indoorTemperature').AsFloat;
         Turbo := json.GetPath('turbo').AsBoolean;
         FanSpeed := TFanSpeed(GetEnumValue(TypeInfo(TFanSpeed), json.GetPath('fanSpeed').AsString));
 
