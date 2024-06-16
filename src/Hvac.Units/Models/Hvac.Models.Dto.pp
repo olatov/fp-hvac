@@ -99,13 +99,14 @@ begin
     Eco := state.Eco;
 end;
 
-function THvacStateDto.ToHvacState():   THvacState;
+function THvacStateDto.ToHvacState(): THvacState;
 begin
     with result do
         begin
             Power := self.Power;
             Mode := self.Mode;
             DesiredTemperature := self.DesiredTemperature;
+            IndoorTemperature := self.IndoorTemperature;
             Turbo := self.Turbo;
             FanSpeed := self.FanSpeed;
             HorizontalFlowMode := self.HorizontalFlowMode;

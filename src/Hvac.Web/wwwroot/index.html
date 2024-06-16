@@ -11,154 +11,170 @@
 
 <body>
     <section class="section">
-        <div class="container">
-            <h1 class="title">
-                HVAC
-            </h1>
+        <h1 class="title">
+            HVAC
+        </h1>
 
-            <div class="section">
-                <div class="column">
-                    <label>
-                        Power
-                        <div class="control">
-                            <label class="radio">
-                                <input id="powerOn" type="radio" name="power" value="on">
-                                On
-                            </label>
+        <div id="settingsSection" class="is-hidden">
+            <h2>Settings</h2>
 
-                            <label class="radio">
-                                <input id="powerOff" type="radio" name="power" value="off">
-                                Off
-                            </label>
-                        <div>
-                    </label>
+            <label>
+                API URL
+                <input id="apiUrl" class="input" type="text" placeholder="API URL">
+            </label>
 
-                    <label>
-                        Mode
+            <label>
+                API Key
+                <input id="apiKey" class="input" type="text" placeholder="API Key">
+            </label>
+
+            <button id="btnSettingsSave" class="button is-primary">Save</button>
+            <button id="btnSettingsCancel" class="button">Cancel</button>
+        </div>
+
+        <div id="controlsSection" class="">
+            <h2>Controls</h2>
+
+            <button id="btnOpenSettings" class="button is-primary">Settings</button>
+
+            <div id="controls">
+                <div class="grid">
+                    <div id="power" class="control cell">
+                        <label for="power">Power</label>
+                        <div class="radio">
+                            <input id="powerOn" type="radio" name="power" value="on">
+                            On
+                        </div>
+
+                        <div class="radio">
+                            <input id="powerOff" type="radio" name="power" value="off">
+                            Off
+                        </div>
+                    </div>
+
+                    <div class="cell">
+                        <label for="mode">Mode</label>
                         <div class="select">
                             <select id="mode">
-                                <option value="mdAuto">Auto</option>
-                                <option value="mdCool">Cool</option>
-                                <option value="mdDry">Dry</option>
-                                <option value="mdFan">Fan</option>
-                                <option value="mdHeat">Heat</option>
                             </select>
                         </div>
-                    </label>
+                    </div>
 
-                    <label>
-                        Temperature
-                        <input id="desiredTemperature" class="input" type="number" placeholder="Temperature" value="18">
-                    </label>
+                    <div class="cell">
+                        <label for="desiredTemperature">Temperature</label>
+                        <input id="desiredTemperature" class="input" type="number" placeholder="Temperature">
+                    </div>
 
-                    <label>
-                        Indoor
-                        <span id="indoorTemperature">...</span>
-                    </label>
+                    <div class="cell">
+                        <label>
+                            Indoor
+                            <span id="indoorTemperature">...</span>
+                        </label>
+                    </div>
 
-                    <label>
-                        Scale
-                        <div class="select">
-                            <select id="temperatureScale">
-                                <option value="tsCelsius">C</option>
-                                <option value="tsFahrenheit">F</option>
-                            </select>
-                        </div>
-                    </label>                    
+                    <div class="cell">
+                        <label>
+                            Scale
+                            <div class="select">
+                                <select id="temperatureScale">
+                                </select>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label>
+                            Fan speed
+                            <div class="select">
+                                <select id="fanSpeed">
+                                </select>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label>
+                            Horizontal Flow
+                            <div class="select">
+                                <select id="horizontalFlow">
+                                </select>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label>
+                            Vertical flow
+                            <div class="select">
+                                <select id="verticalFlow">
+                                </select>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label class="checkbox">
+                            Turbo
+                            <input id="turbo" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label class="checkbox">
+                            Quiet
+                            <input id="quiet" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label class="checkbox">
+                            Display
+                            <input id="display" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label class="checkbox">
+                            Health
+                            <input id="health" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label class="checkbox">
+                            Drying
+                            <input id="drying" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label class="checkbox">
+                            Sleep
+                            <input id="sleep" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="cell">
+                        <label class="checkbox">
+                            Eco
+                            <input id="eco" type="checkbox">
+                        </label>
+                    </div>
                 </div>
 
-                <div class="column">
-                    <label>
-                        Fan speed
-                        <div class="select">
-                            <select id="fanSpeed">
-                                <option value="fsAuto">Auto</option>
-                                <option value="fsLevel1">Level 1</option>
-                                <option value="fsLevel2">Level 2</option>
-                                <option value="fsLevel3">Level 3</option>
-                                <option value="fsLevel4">Level 4</option>
-                                <option value="fsLevel5">Level 5</option>
-                                <option value="fsLevel6">Level 6</option>
-                            </select>
-                        </div>
-                    </label>
+                <button id="btnApply" class="button is-primary">Apply</button>
+                <button id="btnRefresh" class="button is-secondary">Refresh</button>
+            </div>
 
-                    <label>
-                        Horizontal Flow
-                        <div class="select">
-                            <select id="horizontalFlow">
-                                <option value="hfmStop">Stop</option>
-                                <option value="hfmSwing">Swing</option>
-                                <option value="hfmLeft">Left</option>
-                                <option value="hfmLeftCenter">Left / Center</option>
-                                <option value="hfmCenter">Center</option>
-                                <option value="hfmRightCenter">Right / Center</option>
-                                <option value="hfmRight">Right</option>
-                                <option value="hfmLeftRight">Left / Right</option>
-                                <option value="hfmSwingWide">Swing / Wide</option>
-                            </select>
-                        </div>
-                    </label>
-
-                    <label>
-                        Vertical flow
-                        <div class="select">
-                            <select id="verticalFlow">
-                                <option value="vfmStop">Stop</option>
-                                <option value="vfmSwing">Swing</option>
-                                <option value="vfmTop">Top</option>
-                                <option value="vfmTopCenter">Top / Center</option>
-                                <option value="vfmCenter">Center</option>
-                                <option value="vfmBottomCenter">Bottom / Center</option>
-                                <option value="vfmBottom">Bottom</option>
-                            </select>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="column">
-                    <label class="checkbox">
-                        Turbo
-                        <input id="turbo" type="checkbox">
-                    </label>
-
-                    <label class="checkbox">
-                        Quiet
-                        <input id="quiet" type="checkbox">
-                    </label>
-
-                    <label class="checkbox">
-                        Display
-                        <input id="display" type="checkbox">
-                    </label>
-
-                    <label class="checkbox">
-                        Health
-                        <input id="health" type="checkbox">
-                    </label>
-
-                    <label class="checkbox">
-                        Drying
-                        <input id="drying" type="checkbox">
-                    </label>
-
-                    <label class="checkbox">
-                        Sleep
-                        <input id="sleep" type="checkbox">
-                    </label>
-
-                    <label class="checkbox">
-                        Eco
-                        <input id="eco" type="checkbox">
-                    </label>
-                </div>
-
-            <button id="btnRefresh" class="button is-primary">Apply</button>
+            <div id="progressBar" class="">
+                <progress class="progress is-medium" max="100"></progress>
+            </div>
         </div>
     </section>
 </body>
+
 <script>
-    rtl.showUncaughtExceptions=true;
+    rtl.showUncaughtExceptions = true;
     rtl.run();
 </script>
 
