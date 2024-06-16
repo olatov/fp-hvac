@@ -20,22 +20,22 @@
 
             <label>
                 API URL
-                <input id="apiUrl" class="input" type="text" placeholder="API URL">
+                <input id="settingsApiUrl" class="input" type="text" placeholder="API URL">
             </label>
 
             <label>
                 API Key
-                <input id="apiKey" class="input" type="text" placeholder="API Key">
+                <input id="settingsApiKey" class="input" type="text" placeholder="API Key">
             </label>
 
             <button id="btnSettingsSave" class="button is-primary">Save</button>
             <button id="btnSettingsCancel" class="button">Cancel</button>
         </div>
 
-        <div id="controlsSection" class="">
+        <div id="mainSection" class="is-hidden">
             <h2>Controls</h2>
 
-            <button id="btnOpenSettings" class="button is-primary">Settings</button>
+            <button id="btnSettings" class="button is-primary">Settings</button>
 
             <div id="controls">
                 <div class="grid">
@@ -66,10 +66,10 @@
                     </div>
 
                     <div class="cell">
-                        <label>
+                        <div class="is-size-2">
                             Indoor
                             <span id="indoorTemperature">...</span>
-                        </label>
+                        </div>
                     </div>
 
                     <div class="cell">
@@ -162,11 +162,10 @@
                     </div>
                 </div>
 
-                <button id="btnApply" class="button is-primary">Apply</button>
-                <button id="btnRefresh" class="button is-secondary">Refresh</button>
+                <button id="btnReload" class="button is-secondary">Refresh</button>
             </div>
 
-            <div id="progressBar" class="">
+            <div id="progressBar" class="is-hidden">
                 <progress class="progress is-medium" max="100"></progress>
             </div>
         </div>

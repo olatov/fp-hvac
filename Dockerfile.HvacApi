@@ -3,7 +3,7 @@ WORKDIR /build
 RUN mkdir src
 COPY src/Hvac.Units ./src/Hvac.Units
 COPY src/Hvac.Api ./src/Hvac.Api
-WORKDIR /build/src/HvacApi
+WORKDIR /build/src/Hvac.Api
 RUN ./build.sh release
 
 FROM alpine:3.20 AS runtime
