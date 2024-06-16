@@ -8,6 +8,7 @@ interface
 
 uses
     Classes,
+    JS,
     Web,
     SysUtils,
     StrUtils,
@@ -72,8 +73,6 @@ type
             procedure BindControls();
             procedure InitControls();
             procedure HookControlEventListeners();
-            procedure ShowElement(AElement: TJSHtmlElement);
-            procedure HideElement(AElement: TJSHtmlElement);
             procedure SetActiveTab(AValue: TUITab);
             function OnStateChange(AEvent: TEventListenerEvent): boolean;
 
@@ -111,10 +110,6 @@ type
             property OnChange: TJSEventHandler read FOnChange write FOnChange;
             procedure SetState(AState: THvacState);
             function GetState(): THvacState;
-            procedure ShowSettingsSection();
-            procedure HideSettingsSection();
-            procedure ShowMainSection();
-            procedure HideMainSection();
             procedure EnableControls();
             procedure DisableControls();
             procedure ShowProgressBar();
@@ -367,50 +362,28 @@ end;
 
 procedure TUIState.ShowProgressBar();
 begin
-    ShowElement(ProgressBar);
+    ProgressBar.ClassList.Remove('is-hidden');
 end;
 
 procedure TUIState.HideProgressBar();
 begin
-    HideElement(ProgressBar);
-end;
-
-procedure TUIState.ShowSettingsSection();
-begin
-    ShowElement(SettingsSection);
-end;
-
-procedure TUIState.HideSettingsSection();
-begin
-    HideElement(SettingsSection);
-end;
-
-procedure TUIState.ShowMainSection();
-begin
-    ShowElement(MainSection);
-end;
-
-procedure TUIState.HideMainSection();
-begin
-    HideElement(MainSection);
+    ProgressBar.ClassList.Add('is-hidden');
 end;
 
 procedure TUIState.EnableControls();
 begin
-    Controls.QuerySelectorAll('input, select').ForEach(
+    Controls.QuerySelectorAll('input, select, button').ForEach(
         procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
         begin
             if ANode is TJSElement then
                 TJSElement(ANode).RemoveAttribute('disabled');
         end
     );
-
-    ShowElement(ButtonReload);
 end;
 
 procedure TUIState.DisableControls();
 begin
-    Controls.QuerySelectorAll('input, select').ForEach(
+    Controls.QuerySelectorAll('input, select, button').ForEach(
         procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
         begin
             if ANode is TJSElement then
@@ -419,18 +392,6 @@ begin
     );
 
     IndoorTemperature.InnerText := '--';
-    
-    HideElement(ButtonReload);
-end;
-
-procedure TUIState.ShowElement(AElement: TJSHtmlElement);
-begin
-    AElement.ClassList.Remove('is-hidden');
-end;
-
-procedure TUIState.HideElement(AElement: TJSHtmlElement);
-begin
-    AElement.ClassList.Add('is-hidden');
 end;
 
 function TUIState.OnStateChange(AEvent: TEventListenerEvent): boolean;
@@ -443,46 +404,57 @@ end;
 
 procedure TUIState.ShowErrorMessage(AError: string);
 begin
-    ShowElement(ErrorMessage);
     ErrorMessage.InnerText := AError;
 end;
 
 procedure TUIState.HideErrorMessage();
 begin
-    HideElement(ErrorMessage);
     ErrorMessage.InnerText := string.Empty;
 end;
 
 procedure TUIState.SetActiveTab(AValue: TUITab);
+    procedure HideSections();
+    var
+        item: JSValue;
+    begin
+        for item in TJSArray._of(MainSection, SettingsSection, AboutSection) do
+            if item is TJSHtmlElement then
+                TJSHtmlElement(item).ClassList.Add('is-hidden');
+    end;
+
+    procedure DeactivateTabs();
+    var
+        item: JSValue;
+    begin
+        for item in TJSArray._of(TabControls, TabSettings, TabAbout) do
+            if item is TJSHtmlElement then
+                TJSHtmlElement(item).ClassList.Remove('is-active');
+    end;
 begin
     if FActiveTab = AValue then
         exit;
 
     FActiveTab := AValue;
 
-    HideMainSection();
-    HideSettingsSection();
-    
-    TabControls.ClassList.Remove('is-active');
-    TabSettings.ClassList.Remove('is-active');
-    TabAbout.ClassList.Remove('is-active');
+    HideSections();
+    DeactivateTabs();    
 
     case ActiveTab of
-        TUITab.tabSettings:
-            begin
-                ShowSettingsSection();
-                TabSettings.ClassList.Add('is-active');
-            end;
-
         TUITab.tabControls:
             begin
-                ShowMainSection();
+                MainSection.ClassList.Remove('is-hidden');
                 TabControls.ClassList.Add('is-active');
+            end;
+
+        TUITab.tabSettings:
+            begin
+                SettingsSection.ClassList.Remove('is-hidden');
+                TabSettings.ClassList.Add('is-active');
             end;
 
         TUITab.tabAbout:
             begin
-                ShowMainSection();
+                AboutSection.ClassList.Remove('is-hidden');
                 TabAbout.ClassList.Add('is-active');
             end;
     end;

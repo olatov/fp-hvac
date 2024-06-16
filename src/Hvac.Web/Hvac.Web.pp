@@ -93,18 +93,7 @@ begin
     );
 end;
 
-procedure OpenSettings();
-begin
-    UI.SettingsApiUrl.Value := Settings.ApiUrl;
-    UI.SettingsApiKey.Value := Settings.ApiKey;
-
-    UI.HideMainSection();
-    UI.ShowSettingsSection();
-end;
-
 procedure SaveSettings();
-var
-    apiKeyElement: TJSHtmlInputElement;
 begin
     Settings.ApiUrl := UI.SettingsApiUrl.Value;
     Settings.ApiKey := UI.SettingsApiKey.Value;

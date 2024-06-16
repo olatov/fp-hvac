@@ -40,15 +40,9 @@
             </ul>
         </div>
 
-        <div id="mainSection" class="p-2 is-hidden">
-            <h2>Controls</h2>
-
-            <div id="progressBar" class="m-4 is-hidden">
-                <progress class="progress is-small" max="100"></progress>
-            </div>
-
-            <div id="controls">
-                <div class="grid m-4">
+        <div id="mainSection" class="section is-hidden">
+            <div id="controls" class="box">
+                <div class="grid">
                     <div class="cell">
                         <div class="is-size-3">
                             <span id="indoorTemperature">--</span>
@@ -174,34 +168,43 @@
                         </label>
                     </div>
                 </div>
+
+                <div id="progressBar" class="m-4 is-hidden">
+                    <progress class="progress is-small is-link" max="100"></progress>
+                </div>
             </div>
         </div>
 
-        <div id="settingsSection" class="p-2 is-hidden">
-            <div class="m-4">
-                <label>
-                    API URL
-                    <input id="settingsApiUrl" class="input" type="text" placeholder="API URL" spellcheck="false">
-                </label>
-            </div>
+        <div id="settingsSection" class="section is-hidden">
+            <div class="box">
+                <div class="field">
+                    <label class="label">API URL</label>
+                    <div class="control">
+                        <input id="settingsApiUrl" class="input" type="text" placeholder="API URL" spellcheck="false" />
+                    </div>
+                </div>
 
-            <div class="m-4">
-                <label>
-                    API Key
-                    <input id="settingsApiKey" class="input" type="text" placeholder="API Key" spellcheck="false">
-                </label>
-            </div>
+                <div class="field">
+                    <label class="label">API key</label>
+                    <div class="control">
+                        <input id="settingsApiKey" class="input" type="text" placeholder="API key" spellcheck="false" />
+                        </label>
+                    </div>
+                </div>
 
-            <button id="btnSettingsSave" class="button is-primary m-4">Save</button>
+                <button id="btnSettingsSave" class="button is-primary">Save</button>
+            </div>
         </div>
 
-        <div id="aboutSection" class="p-2 is-hidden">
-            <h2>Hvac app</2>
-            <p>v0.9</p>
+        <div id="aboutSection" class="section is-hidden">
+            <div class="box">
+                <h2 class="is-size-2">Hvac app</h2>
+                <p>v0.9</p>
+            </div>
         </div>
-
-        <div id="errorMessage" class="notification is-danger is-hidden"></div>
     </section>
+
+    <div id="errorMessage" class="notification is-danger"></div>
 </body>
 
 <script>
