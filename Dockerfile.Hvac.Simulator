@@ -1,0 +1,15 @@
+FROM freepascal/fpc:3.2.2-full AS build
+WORKDIR /build
+RUN mkdir src
+COPY src/Hvac.Units ./src/Hvac.Units
+COPY src/Hvac.Simulator ./src/Hvac.Simulator
+WORKDIR /build/src/Hvac.Simulator
+RUN ./build.sh release
+
+FROM busybox:1.36-musl AS runtime
+RUN adduser -D simulator
+USER simulator
+WORKDIR /app
+COPY --from=build /build/src/Hvac.Simulator/out/Hvac.Simulator .
+EXPOSE 12416
+ENTRYPOINT ["/app/Hvac.Simulator"]

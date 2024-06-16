@@ -37,6 +37,9 @@ implementation
 
 uses 
     FPJson,
+    {$ifndef PAS2JS}
+        JsonParser,
+    {$endif}
     TypInfo;
 
 { THvacStateDto }

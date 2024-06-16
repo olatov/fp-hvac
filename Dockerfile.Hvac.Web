@@ -1,0 +1,51 @@
+# Note: This builds the whole pas2js since there's no working image at dockerhub!
+# TODO: Replace with a pas2js image when available.
+
+ARG DEBIAN_VERSION=buster
+ARG FPC_VERSION=3.2.2
+
+FROM freepascal/fpc:${FPC_VERSION}-${DEBIAN_VERSION}-full AS build
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+RUN apt update \
+    && apt-get install -y git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone pas2js and the compiler repos
+WORKDIR /build
+RUN git clone https://gitlab.com/freepascal.org/fpc/pas2js.git pas2js
+WORKDIR /build/pas2js
+RUN git config --local pull.rebase true
+RUN git clone https://gitlab.com/freepascal.org/fpc/source.git compiler
+WORKDIR /build/pas2js/compiler
+RUN git config --local pull.rebase true
+WORKDIR /build/pas2js
+
+# Build pas2js
+RUN set -eux \
+    echo "Generating single archive installation for ${TARGETPLATFORM} on ${BUILDPLATFORM}." \
+    && make zipinstall \
+    && mkdir out \
+    && mv pas2js*.tar.gz ./out/pas2js-archive.tar.gz
+
+# Extract the package before copying to the final image
+WORKDIR /build/pas2js/out
+RUN tar -xzf pas2js-archive.tar.gz
+RUN rm /usr/bin/pas2js
+RUN ln -s /build/pas2js/out/bin/pas2js /usr/bin/pas2js
+
+# Build Web app
+WORKDIR /src
+COPY src/Hvac.Web ./Hvac.Web
+COPY src/Hvac.Units ./Hvac.Units
+WORKDIR /src/Hvac.Web
+RUN ./build.sh release
+
+### final stage ###
+FROM busybox:1.36-uclibc AS final
+RUN adduser -D web
+COPY --from=build /src/Hvac.Web/wwwroot /var/wwwroot
+ENTRYPOINT ["busybox", "httpd", "-f", "-v", "-h", "/var/wwwroot", "-p", "8080"]
+EXPOSE 8080

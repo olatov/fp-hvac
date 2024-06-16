@@ -15,11 +15,16 @@ uses
     Hvac.Models.Dto,
     Hvac.Web.UI;
 
-type
-
 var
     Settings: TSettings;
     UI: TUIState;
+
+procedure OnError(response: JSValue);
+begin
+    UI.ShowErrorMessage('Error!');
+    UI.HideProgressBar();
+    UI.EnableControls();
+end;
 
 procedure OnStateLoaded(AResponse: TJSResponse); async;
 var
@@ -27,19 +32,19 @@ var
 
     state: THvacState;
 begin
+    if not AResponse.Ok then
+    begin
+        OnError(JSValue(AResponse));
+        Exit();
+    end;
+
     state := THvacStateDto
         .FromJson(Await(AResponse.text()))
         .ToHvacState();
 
     UI.SetState(state);
-end;
-
-procedure OnError(response: JSValue);
-begin
-    UI.HideProgressBar();
-
-    Writeln('Error');
     UI.EnableControls();
+    UI.HideProgressBar();
 end;
 
 procedure LoadState();
@@ -49,6 +54,7 @@ var
 begin
     UI.DisableControls();
     UI.ShowProgressBar();
+    UI.HideErrorMessage();
 
     url := Settings.ApiUrl + '/state';
     options := new(['headers', new(['X-Api-Key', Settings.ApiKey])]);
@@ -58,12 +64,6 @@ begin
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end
     ).catch(
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end
-    )._then(
-        function(response: JSValue): JSValue
-            begin
-                UI.EnableControls();
-                UI.HideProgressBar();
-            end
     );
 end;
 
@@ -74,6 +74,7 @@ var
 begin
     UI.ShowProgressBar();
     UI.DisableControls();
+    UI.HideErrorMessage();
 
     state := UI.GetState();
     options := new([
@@ -89,12 +90,6 @@ begin
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end
     ).catch(
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end
-    )._then(
-        function(response: JSValue): JSValue
-            begin
-                UI.EnableControls();
-                UI.HideProgressBar();
-            end
     );
 end;
 

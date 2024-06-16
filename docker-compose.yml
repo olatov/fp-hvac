@@ -3,7 +3,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile.HvacApi
+      dockerfile: Dockerfile.Hvac.Api
     ports:
       - "9090:9090"
     environment:
@@ -12,10 +12,17 @@ services:
       - API_KEY=abcdef      
       - ALLOW_ORIGIN=*
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.Hvac.Web
+    ports:
+      - "8080:8080"
+
   simulator:
     build:
       context: .
-      dockerfile: Dockerfile.HvacSimulator
+      dockerfile: Dockerfile.Hvac.Simulator
     ports:
       - "12416:12416"
     environment:

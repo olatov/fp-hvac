@@ -56,6 +56,7 @@ type
             FButtonSettings: TJSHtmlButtonElement;
             FButtonReload: TJSHtmlButtonElement;
             FPorgressBar: TJSHtmlDivElement;
+            FErrorMessage: TJSHtmlDivElement;
             FOnChange: TJSEventHandler;
             property Document: TJSDocument read FDocument write FDocument;
             procedure BindControls();
@@ -92,6 +93,7 @@ type
             property ButtonSettings: TJSHtmlButtonElement read FButtonSettings write FButtonSettings;           
             property ButtonReload: TJSHtmlButtonElement read FButtonReload write FButtonReload;
             property ProgressBar: TJSHtmlDivElement read FPorgressBar write FPorgressBar;
+            property ErrorMessage: TJSHtmlDivElement read FErrorMessage write FErrorMessage;
             property OnChange: TJSEventHandler read FOnChange write FOnChange;
             procedure SetState(AState: THvacState);
             function GetState(): THvacState;
@@ -103,6 +105,8 @@ type
             procedure DisableControls();
             procedure ShowProgressBar();
             procedure HideProgressBar();
+            procedure ShowErrorMessage(AError: string);
+            procedure HideErrorMessage();
             constructor Create(ADocument: TJSDocument);
     end;
 
@@ -132,6 +136,7 @@ begin
     MainSection := TJSHtmlDivElement(Document.GetElementById('mainSection'));
     Controls := TJSHtmlDivElement(Document.GetElementById('controls'));
     ProgressBar := TJSHtmlDivElement(Document.GetElementById('progressBar'));
+    ErrorMessage := TJSHtmlDivElement(Document.GetElementById('errorMessage'));
 
     SettingsApiUrl := TJSHtmlInputElement(Document.GetElementById('settingsApiUrl'));
     SettingsApiKey := TJSHtmlInputElement(Document.GetElementById('settingsApiKey'));
@@ -359,6 +364,8 @@ begin
                 TJSElement(ANode).SetAttribute('disabled', 'true');
         end
     );
+
+    IndoorTemperature.InnerText := '--';
     
     HideElement(ButtonReload);
 end;
@@ -379,6 +386,18 @@ begin
         OnChange(AEvent);
 
     result := true;
+end;
+
+procedure TUIState.ShowErrorMessage(AError: string);
+begin
+    ShowElement(ErrorMessage);
+    ErrorMessage.InnerText := AError;
+end;
+
+procedure TUIState.HideErrorMessage();
+begin
+    HideElement(ErrorMessage);
+    ErrorMessage.InnerText := string.Empty;
 end;
 
 end.

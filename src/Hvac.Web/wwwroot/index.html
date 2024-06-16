@@ -35,10 +35,20 @@
         <div id="mainSection" class="is-hidden">
             <h2>Controls</h2>
 
-            <button id="btnSettings" class="button is-primary">Settings</button>
+            <button id="btnSettings" class="button m-4 is-primary">Settings</button>
+
+            <div id="progressBar" class="m-4 is-hidden">
+                <progress class="progress is-small" max="100"></progress>
+            </div>            
 
             <div id="controls">
-                <div class="grid">
+                <div class="grid m-4">
+                    <div class="cell">
+                        <div class="is-size-3">
+                            <span id="indoorTemperature">--</span>
+                        </div>
+                    </div>
+
                     <div id="power" class="control cell">
                         <label for="power">Power</label>
                         <div class="radio">
@@ -63,13 +73,6 @@
                     <div class="cell">
                         <label for="desiredTemperature">Temperature</label>
                         <input id="desiredTemperature" class="input" type="number" placeholder="Temperature">
-                    </div>
-
-                    <div class="cell">
-                        <div class="is-size-2">
-                            Indoor
-                            <span id="indoorTemperature">...</span>
-                        </div>
                     </div>
 
                     <div class="cell">
@@ -164,11 +167,9 @@
 
                 <button id="btnReload" class="button is-secondary">Refresh</button>
             </div>
-
-            <div id="progressBar" class="is-hidden">
-                <progress class="progress is-medium" max="100"></progress>
-            </div>
         </div>
+
+        <div id="errorMessage" class="notification is-danger is-hidden"></div>        
     </section>
 </body>
 
