@@ -35,7 +35,7 @@ begin
     if not AResponse.Ok then
     begin
         OnError(JSValue(AResponse));
-        Exit();
+        exit;
     end;
 
     state := THvacStateDto
@@ -102,14 +102,6 @@ begin
     UI.ShowSettingsSection();
 end;
 
-procedure CloseSettings();
-begin
-    UI.HideSettingsSection();
-    UI.ShowMainSection();
-
-    UI.SettingsApiKey.Value := string.Empty;
-end;
-
 procedure SaveSettings();
 var
     apiKeyElement: TJSHtmlInputElement;
@@ -120,7 +112,7 @@ begin
     Window.LocalStorage.SetItem('ApiUrl', Settings.ApiUrl);
     Window.LocalStorage.SetItem('ApiKey', Settings.ApiKey);
 
-    CloseSettings();
+    UI.ActiveTab := tabControls;
     LoadState();
 end;
 
@@ -128,6 +120,9 @@ procedure LoadSettings();
 begin
     Settings.ApiUrl := Window.LocalStorage.GetItem('ApiUrl');
     Settings.ApiKey := Window.LocalStorage.GetItem('ApiKey');
+
+    UI.SettingsApiUrl.Value := Settings.ApiUrl;
+    UI.SettingsApiKey.Value := Settings.ApiKey;
 end;
 
 function OnStateChange(AEvent: TEventListenerEvent): boolean;
@@ -138,21 +133,16 @@ end;
 
 begin
     UI := TUIState.Create(Document);
-
-    UI.ButtonSettings.AddEventListener('click', @OpenSettings);
     UI.ButtonReload.AddEventListener('click', @LoadState);
-
     UI.SettingsButtonSave.AddEventListener('click', @SaveSettings);
-    UI.SettingsButtonCancel.AddEventListener('click', @CloseSettings);
-
     UI.OnChange := @OnStateChange;
 
     LoadSettings();
 
     if (Assigned(Settings.ApiUrl)) and (not string.IsNullOrWhiteSpace(Settings.ApiUrl)) then
     begin
-        UI.ShowMainSection();
+        UI.ActiveTab := tabControls;
         LoadState();
     end else
-        OpenSettings();
+        UI.ActiveTab := tabSettings;
 end.

@@ -15,31 +15,37 @@
             HVAC
         </h1>
 
-        <div id="settingsSection" class="is-hidden">
-            <h2>Settings</h2>
+        <div class="tabs is-toggle is-toggle-rounded">
+            <ul>
+                <li id="tabControls">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-image"></i></span>
+                        <span>Controls</span>
+                    </a>
+                </li>
 
-            <label>
-                API URL
-                <input id="settingsApiUrl" class="input" type="text" placeholder="API URL">
-            </label>
+                <li id="tabSettings">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-music"></i></span>
+                        <span>Settings</span>
+                    </a>
+                </li>
 
-            <label>
-                API Key
-                <input id="settingsApiKey" class="input" type="text" placeholder="API Key">
-            </label>
-
-            <button id="btnSettingsSave" class="button is-primary">Save</button>
-            <button id="btnSettingsCancel" class="button">Cancel</button>
+                <li id="tabAbout">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-info-circle"></i></span>
+                        <span>About</span>
+                    </a>
+                </li>
+            </ul>
         </div>
 
-        <div id="mainSection" class="is-hidden">
+        <div id="mainSection" class="p-2 is-hidden">
             <h2>Controls</h2>
-
-            <button id="btnSettings" class="button m-4 is-primary">Settings</button>
 
             <div id="progressBar" class="m-4 is-hidden">
                 <progress class="progress is-small" max="100"></progress>
-            </div>            
+            </div>
 
             <div id="controls">
                 <div class="grid m-4">
@@ -47,6 +53,10 @@
                         <div class="is-size-3">
                             <span id="indoorTemperature">--</span>
                         </div>
+                    </div>
+
+                    <div class="cell">
+                        <button id="btnReload" class="button is-secondary">Refresh</button>
                     </div>
 
                     <div id="power" class="control cell">
@@ -164,12 +174,33 @@
                         </label>
                     </div>
                 </div>
-
-                <button id="btnReload" class="button is-secondary">Refresh</button>
             </div>
         </div>
 
-        <div id="errorMessage" class="notification is-danger is-hidden"></div>        
+        <div id="settingsSection" class="p-2 is-hidden">
+            <div class="m-4">
+                <label>
+                    API URL
+                    <input id="settingsApiUrl" class="input" type="text" placeholder="API URL" spellcheck="false">
+                </label>
+            </div>
+
+            <div class="m-4">
+                <label>
+                    API Key
+                    <input id="settingsApiKey" class="input" type="text" placeholder="API Key" spellcheck="false">
+                </label>
+            </div>
+
+            <button id="btnSettingsSave" class="button is-primary m-4">Save</button>
+        </div>
+
+        <div id="aboutSection" class="p-2 is-hidden">
+            <h2>Hvac app</2>
+            <p>v0.9</p>
+        </div>
+
+        <div id="errorMessage" class="notification is-danger is-hidden"></div>
     </section>
 </body>
 

@@ -27,18 +27,29 @@ type
         constructor Create(AValue: string; AText: string);
     end;
 
+    TUITab = (
+        tabNone,
+        tabControls,
+        tabSettings,
+        tabAbout
+    );
+
     TUIState = class
         private
+            FActiveTab: TUITab;
+            FTabControls: TJSHtmlElement;
+            FTabSettings: TJSHtmlElement;
+            FTabAbout: TJSHtmlElement;
             FDocument: TJSDocument;
             FPowerOn: TJSHtmlInputElement;
             FPowerOff: TJSHtmlInputElement;
             FSettingsSection: TJSHtmlDivElement;
             FMainSection: TJSHtmlDivElement;
+            FAboutSection: TJSHtmlDivElement;
             FControls: TJSHtmlDivElement;
             FSettingsApiUrl: TJSHtmlInputElement;
             FSettingsApiKey: TJSHtmlInputElement;
             FSettingsButtonSave: TJSHtmlButtonElement;
-            FSettingsButtonCancel: TJSHtmlButtonElement;
             FIndoorTemperature: TJSHtmlDivElement;
             FDesiredTemperature: TJSHtmlInputElement;
             FMode: TJSHtmlSelectElement;
@@ -53,7 +64,6 @@ type
             FDrying: TJSHtmlInputElement;
             FSleep: TJSHtmlInputElement;
             FEco: TJSHtmlInputElement;
-            FButtonSettings: TJSHtmlButtonElement;
             FButtonReload: TJSHtmlButtonElement;
             FPorgressBar: TJSHtmlDivElement;
             FErrorMessage: TJSHtmlDivElement;
@@ -64,16 +74,21 @@ type
             procedure HookControlEventListeners();
             procedure ShowElement(AElement: TJSHtmlElement);
             procedure HideElement(AElement: TJSHtmlElement);
+            procedure SetActiveTab(AValue: TUITab);
             function OnStateChange(AEvent: TEventListenerEvent): boolean;
 
         public
+            property ActiveTab: TUITab read FActiveTab write SetActiveTab;
+            property TabControls: TJSHtmlElement read FTabControls write FTabControls;
+            property TabSettings: TJSHtmlElement read FTabSettings write FTabSettings;
+            property TabAbout: TJSHtmlElement read FTabAbout write FTabAbout;
             property SettingsSection: TJSHtmlDivElement read FSettingsSection write FSettingsSection;
             property MainSection: TJSHtmlDivElement read FMainSection write FMainSection;
+            property AboutSection: TJSHtmlDivElement read FAboutSection write FAboutSection;
             property Controls: TJSHtmlDivElement read FControls write FControls;
             property SettingsApiUrl: TJSHtmlInputElement read FSettingsApiUrl write FSettingsApiUrl;
             property SettingsApiKey: TJSHtmlInputElement read FSettingsApiKey write FSettingsApiKey;
             property SettingsButtonSave: TJSHtmlButtonElement read FSettingsButtonSave write FSettingsButtonSave;
-            property SettingsButtonCancel: TJSHtmlButtonElement read FSettingsButtonCancel write FSettingsButtonCancel;
             property PowerOn: TJSHtmlInputElement read FPowerOn write FPowerOn;
             property PowerOff: TJSHtmlInputElement read FPowerOff write FPowerOff;
             property IndoorTemperature: TJSHtmlDivElement read FIndoorTemperature write FIndoorTemperature;
@@ -90,7 +105,6 @@ type
             property Drying: TJSHtmlInputElement read FDrying write FDrying;
             property Sleep: TJSHtmlInputElement read FSleep write FSleep;
             property Eco: TJSHtmlInputElement read FEco write FEco;
-            property ButtonSettings: TJSHtmlButtonElement read FButtonSettings write FButtonSettings;           
             property ButtonReload: TJSHtmlButtonElement read FButtonReload write FButtonReload;
             property ProgressBar: TJSHtmlDivElement read FPorgressBar write FPorgressBar;
             property ErrorMessage: TJSHtmlDivElement read FErrorMessage write FErrorMessage;
@@ -134,6 +148,7 @@ procedure TUIState.BindControls();
 begin
     SettingsSection := TJSHtmlDivElement(Document.GetElementById('settingsSection'));
     MainSection := TJSHtmlDivElement(Document.GetElementById('mainSection'));
+    AboutSection := TJSHtmlDivElement(Document.GetElementById('aboutSection'));
     Controls := TJSHtmlDivElement(Document.GetElementById('controls'));
     ProgressBar := TJSHtmlDivElement(Document.GetElementById('progressBar'));
     ErrorMessage := TJSHtmlDivElement(Document.GetElementById('errorMessage'));
@@ -141,7 +156,6 @@ begin
     SettingsApiUrl := TJSHtmlInputElement(Document.GetElementById('settingsApiUrl'));
     SettingsApiKey := TJSHtmlInputElement(Document.GetElementById('settingsApiKey'));
     SettingsButtonSave := TJSHtmlButtonElement(Document.GetElementById('btnSettingsSave'));
-    SettingsButtonCancel := TJSHtmlButtonElement(Document.GetElementById('btnSettingsCancel'));
 
     PowerOn := TJSHtmlInputElement(Document.GetElementById('powerOn'));
     PowerOff := TJSHtmlInputElement(Document.GetElementById('powerOff'));
@@ -160,8 +174,11 @@ begin
     Sleep := TJSHtmlInputElement(Document.GetElementById('sleep'));
     Eco := TJSHtmlInputElement(Document.GetElementById('eco'));
 
-    ButtonSettings := TJSHtmlButtonElement(Document.GetElementById('btnSettings'));
     ButtonReload := TJSHtmlButtonElement(Document.GetElementById('btnReload'));
+
+    TabSettings := TJSHtmlElement(Document.GetElementById('tabSettings'));
+    TabControls := TJSHtmlElement(Document.GetElementById('tabControls'));
+    TabAbout := TJSHtmlElement(Document.GetElementById('tabAbout'));
 end;
 
 procedure TUIState.InitControls();
@@ -251,7 +268,43 @@ begin
             if ANode is TJSElement then
                 TJSElement(ANode).AddEventListener('change', @OnStateChange);
         end
-    )
+    );
+
+    TabControls.QuerySelectorAll('a').ForEach(
+        procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
+        begin
+            if ANode is TJSHtmlElement then
+                TJSHtmlElement(ANode).OnClick := 
+                    function(AEvent: TJSMouseEvent): boolean
+                    begin
+                        ActiveTab := TUITab.TabControls;
+                    end;
+        end
+    );
+
+    TabSettings.QuerySelectorAll('a').ForEach(
+        procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
+        begin
+            if ANode is TJSHtmlElement then
+                TJSHtmlElement(ANode).OnClick :=
+                    function(AEvent: TJSMouseEvent): boolean
+                    begin
+                        ActiveTab := TUITab.tabSettings;
+                    end
+        end
+    );
+
+    TabAbout.QuerySelectorAll('a').ForEach(
+        procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
+        begin
+            if ANode is TJSHtmlElement then
+                TJSHtmlElement(ANode).OnClick :=
+                    function(AEvent: TJSMouseEvent): boolean
+                    begin
+                        ActiveTab := TUITab.tabAbout;
+                    end
+        end
+    );     
 end;
 
 procedure TUIState.SetState(AState: THvacState);
@@ -398,6 +451,41 @@ procedure TUIState.HideErrorMessage();
 begin
     HideElement(ErrorMessage);
     ErrorMessage.InnerText := string.Empty;
+end;
+
+procedure TUIState.SetActiveTab(AValue: TUITab);
+begin
+    if FActiveTab = AValue then
+        exit;
+
+    FActiveTab := AValue;
+
+    HideMainSection();
+    HideSettingsSection();
+    
+    TabControls.ClassList.Remove('is-active');
+    TabSettings.ClassList.Remove('is-active');
+    TabAbout.ClassList.Remove('is-active');
+
+    case ActiveTab of
+        TUITab.tabSettings:
+            begin
+                ShowSettingsSection();
+                TabSettings.ClassList.Add('is-active');
+            end;
+
+        TUITab.tabControls:
+            begin
+                ShowMainSection();
+                TabControls.ClassList.Add('is-active');
+            end;
+
+        TUITab.tabAbout:
+            begin
+                ShowMainSection();
+                TabAbout.ClassList.Add('is-active');
+            end;
+    end;
 end;
 
 end.
