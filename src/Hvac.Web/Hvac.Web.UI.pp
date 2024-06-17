@@ -11,32 +11,18 @@ uses
     Web,
     Hvac.Models.Core,
     Hvac.Models.Domain,
+    Hvac.Web.Core,
+    Hvac.Web.Components.ApiSettingsForm,
     Hvac.Web.Components.ThemeSwitcher,
     Hvac.Web.Components.Tabs;
 
 type
-    TSettings = record
-        ApiUrl: string;
-        ApiKey: string;
-    end;
-
-    TOption = record
-        Value: string;
-        Text: string;
-        constructor Create(AValue: string; AText: string);
-    end;
-
-    TUITabIndex = (
-        tabControls,
-        tabSettings,
-        tabAbout
-    );
-
     TUIState = class
         private
             FThemeSwitcher: TThemeSwitcher;
             FTabs: TTabs;
             FDocument: TJSDocument;
+            FApiSettingsForm: TApiSettingsForm;
             FPowerOn: TJSHtmlInputElement;
             FPowerOff: TJSHtmlInputElement;
             FSettingsSection: TJSHtmlDivElement;
@@ -44,9 +30,6 @@ type
             FAboutSection: TJSHtmlDivElement;
             FErrorSection: TJSHtmlDivElement;
             FControls: TJSHtmlDivElement;
-            FSettingsApiUrl: TJSHtmlInputElement;
-            FSettingsApiKey: TJSHtmlInputElement;
-            FSettingsButtonSave: TJSHtmlButtonElement;
             FIndoorTemperature: TJSHtmlDivElement;
             FDesiredTemperature: TJSHtmlInputElement;
             FMode: TJSHtmlSelectElement;
@@ -78,9 +61,7 @@ type
             property AboutSection: TJSHtmlDivElement read FAboutSection write FAboutSection;
             property ErrorSection: TJSHtmlDivElement read FErrorSection write FErrorSection;
             property Controls: TJSHtmlDivElement read FControls write FControls;
-            property SettingsApiUrl: TJSHtmlInputElement read FSettingsApiUrl write FSettingsApiUrl;
-            property SettingsApiKey: TJSHtmlInputElement read FSettingsApiKey write FSettingsApiKey;
-            property SettingsButtonSave: TJSHtmlButtonElement read FSettingsButtonSave write FSettingsButtonSave;
+            property ApiSettingsForm: TApiSettingsForm read FApiSettingsForm write FApiSettingsForm;
             property PowerOn: TJSHtmlInputElement read FPowerOn write FPowerOn;
             property PowerOff: TJSHtmlInputElement read FPowerOff write FPowerOff;
             property IndoorTemperature: TJSHtmlDivElement read FIndoorTemperature write FIndoorTemperature;
@@ -119,14 +100,6 @@ uses
     StrUtils,
     TypInfo;
 
-{ TOption }
-
-constructor TOption.Create(AValue: string; AText: string);
-begin
-    Value := AValue;
-    Text := AText;
-end;
-
 { TUIState }
 
 constructor TUIState.Create(ADocument: TJSDocument);
@@ -146,16 +119,17 @@ end;
 
 procedure TUIState.BindControls();
 begin
-    SettingsSection := TJSHtmlDivElement(Document.GetElementById('settingsSection'));
+    SettingsSection := TJSHtmlDivElement(Document.GetElementById('apiSettingsSection'));
     MainSection := TJSHtmlDivElement(Document.GetElementById('mainSection'));
     AboutSection := TJSHtmlDivElement(Document.GetElementById('aboutSection'));
     ErrorSection := TJSHtmlDivElement(Document.GetElementById('errorSection'));
     Controls := TJSHtmlDivElement(Document.GetElementById('controls'));
     ProgressBar := TJSHtmlDivElement(Document.GetElementById('progressBar'));
 
-    SettingsApiUrl := TJSHtmlInputElement(Document.GetElementById('settingsApiUrl'));
-    SettingsApiKey := TJSHtmlInputElement(Document.GetElementById('settingsApiKey'));
-    SettingsButtonSave := TJSHtmlButtonElement(Document.GetElementById('btnSettingsSave'));
+    ApiSettingsForm := TApiSettingsForm.Create(
+        SettingsSection,
+        TJSHtmlTemplateElement(Document.GetElementById('apiSettingsFormTemplate')),
+        Window.LocalStorage);
 
     PowerOn := TJSHtmlInputElement(Document.GetElementById('powerOn'));
     PowerOff := TJSHtmlInputElement(Document.GetElementById('powerOff'));

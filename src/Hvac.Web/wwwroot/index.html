@@ -18,29 +18,7 @@
                 </div>
             </div>
 
-            <div id="tabs" class="level-item">
-                <!-- <div class="tabs is-toggle is-toggle-rounded is-centered">
-                    <ul>
-                        <li id="tabControls">
-                            <a>
-                                <span>🗲 Controls</span>
-                            </a>
-                        </li>
-
-                        <li id="tabSettings">
-                            <a>
-                                <span>⚙ Settings</span>
-                            </a>
-                        </li>
-
-                        <li id="tabAbout">
-                            <a>
-                                <span>🛈 About</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div> -->
-            </div>
+            <div id="tabs" class="level-item"></div>
 
             <div class="level-right">
                 <div id="themeSwitcher" class="level-item is-hidden-mobile"></div>
@@ -190,7 +168,6 @@
                             Eco
                         </label>
                     </div>
-
                 </div>
 
                 <div id="progressBar" class="my-4 is-hidden">
@@ -199,26 +176,7 @@
             </div>
         </div>
 
-        <div id="settingsSection" class="section is-hidden">
-            <div class="box">
-                <div class="field">
-                    <label for="settingsApiUrl" class="label">API URL</label>
-                    <div class="control">
-                        <input id="settingsApiUrl" class="input" type="text" placeholder="API URL" spellcheck="false" />
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label for="settingsApiKey" class="label">API key</label>
-                    <div class="control">
-                        <input id="settingsApiKey" class="input" type="text" placeholder="API key" spellcheck="false" />
-                        </label>
-                    </div>
-                </div>
-
-                <button id="btnSettingsSave" class="button is-primary">Save</button>
-            </div>
-        </div>
+        <div id="apiSettingsSection" class="section is-hidden"></div>
 
         <div id="aboutSection" class="section is-hidden">
             <div class="box">
@@ -271,6 +229,29 @@
         </a>
     </li>
 </template>
+
+<!-- Settings form -->
+
+<template id="apiSettingsFormTemplate">
+    <fieldset class="box">
+        <div class="field">
+            <label class="label">API URL</label>
+            <div class="control">
+                <input class="input input-api-url" type="text" placeholder="API URL" spellcheck="false" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">API key</label>
+            <div class="control">
+                <input class="input input-api-key" type="text" placeholder="API key" spellcheck="false" />
+            </div>
+        </div>
+        
+        <button class="button is-primary button-api-save">Save</button>
+    </fieldset>
+</template>
+
 
 <script>
     rtl.showUncaughtExceptions = true;

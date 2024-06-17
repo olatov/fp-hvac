@@ -76,7 +76,7 @@ begin
     item.QuerySelector('span').InnerText := ATheme.Title;
 
     link := TJSHtmlElement(item.QuerySelector('a'));
-    link.SetAttribute('data-theme-index', IntToStr(High(FThemes));
+    link.SetAttribute('data-theme-index', IntToStr(High(FThemes)));
     link.OnClick := function(AEvent: TJSMouseEvent): boolean
         var
             themeIndex: integer;
