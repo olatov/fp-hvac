@@ -1,175 +1,215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
-    <link rel="stylesheet" href="site.css">
-    <script src="hvac.web.js"></script>
+    <title>Hvac app</title>
+    <link rel="stylesheet" href="assets/css/site.css">
+    <script src="assets/js/hvac.web.js"></script>
 </head>
 
 <body>
-    <section class="section">
-        <h1 class="title">
-            HVAC
-        </h1>
+    <main class="container is-max-desktop my-4">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item is-hidden-mobile">
+                    <h1 class="title">HVAC</h1>
+                </div>
+            </div>
 
-        <div class="tabs is-toggle is-toggle-rounded">
-            <ul>
-                <li id="tabControls">
-                    <a>
-                        <span class="icon is-small"><i class="fas fa-image"></i></span>
-                        <span>Controls</span>
-                    </a>
-                </li>
+            <div class="level-item">
+                <div class="tabs is-toggle is-toggle-rounded is-centered">
+                    <ul>
+                        <li id="tabControls">
+                            <a>
+                                <span>🗲 Controls</span>
+                            </a>
+                        </li>
 
-                <li id="tabSettings">
-                    <a>
-                        <span class="icon is-small"><i class="fas fa-music"></i></span>
-                        <span>Settings</span>
-                    </a>
-                </li>
+                        <li id="tabSettings">
+                            <a>
+                                <span>⚙ Settings</span>
+                            </a>
+                        </li>
 
-                <li id="tabAbout">
-                    <a>
-                        <span class="icon is-small"><i class="fas fa-info-circle"></i></span>
-                        <span>About</span>
-                    </a>
-                </li>
-            </ul>
+                        <li id="tabAbout">
+                            <a>
+                                <span>🛈 About</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="level-right">
+                <div class="level-item is-hidden-mobile">
+                    <div class="tabs is-toggle is-toggle-rounded">
+                        <ul>
+                            <li>
+                                <a>
+                                    <span>☀️</span>
+                                </a>
+                            </li>
+
+                            <li class="is-active">
+                                <a>
+                                    <span>🌙</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorSection" class="section is-hidden">
+            <div class="is-flex is-flex-direction-row is-justify-content-center">
+                <div id="errorMessage" class="message is-danger errorMessage" style="width: fit-content;">
+                    <div class="message-header">Error</div>
+                    <div class="message-body"></div>
+                </div>
+            </div>
         </div>
 
         <div id="mainSection" class="section is-hidden">
             <div id="controls" class="box">
-                <div class="grid">
-                    <div class="cell">
-                        <div class="is-size-3">
-                            <span id="indoorTemperature">--</span>
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly my-4">
+                    <div class="field">
+                        <label for="power" class="label">⏻ Power</label>
+                        <div id="power" class="control">
+                            <label for="powerOff" class="radio">
+                                <input id="powerOn" type="radio" name="power" value="on" />
+                                On
+                            </label>
+
+                            <label for="powerOff" class="radio">
+                                <input id="powerOff" type="radio" name="power" value="off" />
+                                Off
+                            </label>
                         </div>
                     </div>
 
-                    <div class="cell">
-                        <button id="btnReload" class="button is-secondary">Refresh</button>
+                    <div class="has-text-centered">
+                        <p class="label">Actual temperature</p>
+                        <p class="is-size-3" id="indoorTemperature">--</p>
                     </div>
 
-                    <div id="power" class="control cell">
-                        <label for="power">Power</label>
-                        <div class="radio">
-                            <input id="powerOn" type="radio" name="power" value="on">
-                            On
-                        </div>
+                    <button id="btnReload" class="button is-secondary">⟳ Refresh</button>
+                </div>
 
-                        <div class="radio">
-                            <input id="powerOff" type="radio" name="power" value="off">
-                            Off
-                        </div>
-                    </div>
+                <hr />
 
-                    <div class="cell">
-                        <label for="mode">Mode</label>
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly mb-2">
+                    <div class="field">
+                        <label for="mode" class="label">Mode</label>
                         <div class="select">
                             <select id="mode">
                             </select>
                         </div>
                     </div>
 
-                    <div class="cell">
-                        <label for="desiredTemperature">Temperature</label>
+                    <div class="field">
+                        <label for="desiredTemperature" class="label">Set temperature</label>
                         <input id="desiredTemperature" class="input" type="number" placeholder="Temperature">
                     </div>
 
-                    <div class="cell">
-                        <label>
-                            Scale
-                            <div class="select">
-                                <select id="temperatureScale">
-                                </select>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label>
-                            Fan speed
-                            <div class="select">
-                                <select id="fanSpeed">
-                                </select>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label>
-                            Horizontal Flow
-                            <div class="select">
-                                <select id="horizontalFlow">
-                                </select>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label>
-                            Vertical flow
-                            <div class="select">
-                                <select id="verticalFlow">
-                                </select>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label class="checkbox">
-                            Turbo
-                            <input id="turbo" type="checkbox">
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label class="checkbox">
-                            Quiet
-                            <input id="quiet" type="checkbox">
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label class="checkbox">
-                            Display
-                            <input id="display" type="checkbox">
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label class="checkbox">
-                            Health
-                            <input id="health" type="checkbox">
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label class="checkbox">
-                            Drying
-                            <input id="drying" type="checkbox">
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label class="checkbox">
-                            Sleep
-                            <input id="sleep" type="checkbox">
-                        </label>
-                    </div>
-
-                    <div class="cell">
-                        <label class="checkbox">
-                            Eco
-                            <input id="eco" type="checkbox">
+                    <div class="field">
+                        <label for="temperatureScale" class="label">Scale</label>
+                        <div class="select">
+                            <select id="temperatureScale">
+                            </select>
+                        </div>
                         </label>
                     </div>
                 </div>
 
-                <div id="progressBar" class="m-4 is-hidden">
+                <hr />
+
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly my-2">
+                    <div class="field">
+                        <label for="fanSpeed" class="label">Fan speed</label>
+                        <div class="select">
+                            <select id="fanSpeed">
+                            </select>
+                        </div>
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label for="horizontalFlow" class="label">Horizontal Flow</label>
+                        <div class="select">
+                            <select id="horizontalFlow">
+                            </select>
+                        </div>
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label for="verticalFlow" class="label">Vertical flow</label>
+                        <div class="select">
+                            <select id="verticalFlow">
+                            </select>
+                        </div>
+                        </label>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly mt-2">
+                    <div class="field">
+                        <label class="checkbox">
+                            <input id="turbo" type="checkbox" />
+                            Turbo
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input id="quiet" type="checkbox" />
+                            Quiet
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input id="display" type="checkbox" />
+                            Display
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input id="health" type="checkbox" />
+                            Health
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input id="drying" type="checkbox" />
+                            Drying
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input id="sleep" type="checkbox" />
+                            Sleep
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input id="eco" type="checkbox" />
+                            Eco
+                        </label>
+                    </div>
+
+                </div>
+
+                <div id="progressBar" class="my-4 is-hidden">
                     <progress class="progress is-small is-link" max="100"></progress>
                 </div>
             </div>
@@ -178,14 +218,14 @@
         <div id="settingsSection" class="section is-hidden">
             <div class="box">
                 <div class="field">
-                    <label class="label">API URL</label>
+                    <label for="settingsApiUrl" class="label">API URL</label>
                     <div class="control">
                         <input id="settingsApiUrl" class="input" type="text" placeholder="API URL" spellcheck="false" />
                     </div>
                 </div>
 
                 <div class="field">
-                    <label class="label">API key</label>
+                    <label for="settingsApiKey" class="label">API key</label>
                     <div class="control">
                         <input id="settingsApiKey" class="input" type="text" placeholder="API key" spellcheck="false" />
                         </label>
@@ -198,13 +238,12 @@
 
         <div id="aboutSection" class="section is-hidden">
             <div class="box">
-                <h2 class="is-size-2">Hvac app</h2>
+                <h2 class="title is-2">Hvac app</h2>
                 <p>v0.9</p>
             </div>
         </div>
-    </section>
 
-    <div id="errorMessage" class="notification is-danger"></div>
+    </main>
 </body>
 
 <script>

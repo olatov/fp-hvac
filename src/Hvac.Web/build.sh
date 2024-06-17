@@ -10,7 +10,7 @@ pas2js \
     -Tbrowser \
     -Fu"../Hvac.Units/" \
     -Fu"../Hvac.Units/Models/" \
-    -o"wwwroot/hvac.web.js" \
+    -o"wwwroot/assets/js/hvac.web.js" \
     $PAS2JS_OPTIONS \
     Hvac.Web.pp
     

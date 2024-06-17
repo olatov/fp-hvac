@@ -19,9 +19,18 @@ var
     Settings: TSettings;
     UI: TUIState;
 
-procedure OnError(response: JSValue);
+procedure OnError(AData: JSValue);
+var
+    msg: string;
 begin
-    UI.ShowErrorMessage('Error!');
+    if AData is TJSResponse then
+        msg := TJSResponse(AData).StatusText
+    else if AData is TJSError then
+        msg := TJSError(AData).Message
+    else
+        msg := 'Unknown error';
+
+    UI.ShowErrorMessage(msg);
     UI.HideProgressBar();
     UI.EnableControls();
 end;

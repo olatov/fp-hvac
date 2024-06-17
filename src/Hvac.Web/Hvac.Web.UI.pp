@@ -47,6 +47,7 @@ type
             FSettingsSection: TJSHtmlDivElement;
             FMainSection: TJSHtmlDivElement;
             FAboutSection: TJSHtmlDivElement;
+            FErrorSection: TJSHtmlDivElement;
             FControls: TJSHtmlDivElement;
             FSettingsApiUrl: TJSHtmlInputElement;
             FSettingsApiKey: TJSHtmlInputElement;
@@ -67,7 +68,6 @@ type
             FEco: TJSHtmlInputElement;
             FButtonReload: TJSHtmlButtonElement;
             FPorgressBar: TJSHtmlDivElement;
-            FErrorMessage: TJSHtmlDivElement;
             FOnChange: TJSEventHandler;
             property Document: TJSDocument read FDocument write FDocument;
             procedure BindControls();
@@ -84,6 +84,7 @@ type
             property SettingsSection: TJSHtmlDivElement read FSettingsSection write FSettingsSection;
             property MainSection: TJSHtmlDivElement read FMainSection write FMainSection;
             property AboutSection: TJSHtmlDivElement read FAboutSection write FAboutSection;
+            property ErrorSection: TJSHtmlDivElement read FErrorSection write FErrorSection;
             property Controls: TJSHtmlDivElement read FControls write FControls;
             property SettingsApiUrl: TJSHtmlInputElement read FSettingsApiUrl write FSettingsApiUrl;
             property SettingsApiKey: TJSHtmlInputElement read FSettingsApiKey write FSettingsApiKey;
@@ -106,7 +107,6 @@ type
             property Eco: TJSHtmlInputElement read FEco write FEco;
             property ButtonReload: TJSHtmlButtonElement read FButtonReload write FButtonReload;
             property ProgressBar: TJSHtmlDivElement read FPorgressBar write FPorgressBar;
-            property ErrorMessage: TJSHtmlDivElement read FErrorMessage write FErrorMessage;
             property OnChange: TJSEventHandler read FOnChange write FOnChange;
             procedure SetState(AState: THvacState);
             function GetState(): THvacState;
@@ -144,9 +144,9 @@ begin
     SettingsSection := TJSHtmlDivElement(Document.GetElementById('settingsSection'));
     MainSection := TJSHtmlDivElement(Document.GetElementById('mainSection'));
     AboutSection := TJSHtmlDivElement(Document.GetElementById('aboutSection'));
+    ErrorSection := TJSHtmlDivElement(Document.GetElementById('errorSection'));
     Controls := TJSHtmlDivElement(Document.GetElementById('controls'));
     ProgressBar := TJSHtmlDivElement(Document.GetElementById('progressBar'));
-    ErrorMessage := TJSHtmlDivElement(Document.GetElementById('errorMessage'));
 
     SettingsApiUrl := TJSHtmlInputElement(Document.GetElementById('settingsApiUrl'));
     SettingsApiKey := TJSHtmlInputElement(Document.GetElementById('settingsApiKey'));
@@ -404,12 +404,14 @@ end;
 
 procedure TUIState.ShowErrorMessage(AError: string);
 begin
-    ErrorMessage.InnerText := AError;
+    ErrorSection.QuerySelector('.message-body').InnerText := AError;
+    ErrorSection.ClassList.Remove('is-hidden');
 end;
 
 procedure TUIState.HideErrorMessage();
 begin
-    ErrorMessage.InnerText := string.Empty;
+    ErrorSection.QuerySelector('.message-body').InnerText := string.Empty;
+    ErrorSection.ClassList.Add('is-hidden');
 end;
 
 procedure TUIState.SetActiveTab(AValue: TUITab);
