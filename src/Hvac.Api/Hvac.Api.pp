@@ -85,7 +85,7 @@ begin
 
     try
         App.Threaded := true;
-        App.AcceptIdleTimeout := 1;
+        App.AcceptIdleTimeout := 5;
         App.Initialize();
 
         {$ifdef Unix}
