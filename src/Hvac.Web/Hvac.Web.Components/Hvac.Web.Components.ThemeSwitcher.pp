@@ -6,7 +6,6 @@ unit Hvac.Web.Components.ThemeSwitcher;
 interface
 
 uses
-    SysUtils,
     Web,
     Hvac.Web.Components.UIComponent;
 
@@ -16,18 +15,21 @@ type
         ClassName: string;
     end;
 
+    TUIThemeArray = array of TUITheme;
+
     TThemeSwitcher = class(TUIComponent)
         private
             FSwitcherElement: TJSHtmlElement;
             FTheme: TUITheme;
-            FThemes: array of TUITheme;
+            FThemes: TUIThemeArray;
             FTargetElement: TJSElement;
             FItemTemplate: TJSHtmlTemplateElement;
             FStorage: TJSStorage;
-            procedure SetTheme(AIndex: integer);
+            procedure ChangeTheme(AIndex: integer);
 
         public
             property SwitcherElement: TJSHtmlElement read FSwitcherElement;
+            property Themes: TUIThemeArray read FThemes;
             property Theme: TUITheme read FTheme;
             procedure AddTheme(ATheme: TUITheme); overload;
             procedure AddTheme(ATitle: string; AClassName: string); overload;
@@ -39,7 +41,10 @@ type
                 AStorage: TJSStorage = nil);
     end;
 
-implementation  
+implementation
+
+uses
+    SysUtils;
 
 { TThemeSwitcher }
 
@@ -65,19 +70,19 @@ var
     item, link: TJSHtmlElement;
 begin
     SetLength(FThemes, Length(FThemes) + 1);
-    FThemes[Length(FThemes) - 1] := ATheme;
+    FThemes[High(FThemes)] := ATheme;
 
     item := TJSHtmlElement(FItemTemplate.Content.CloneNode(True).ChildNodes[1]);
     item.QuerySelector('span').InnerText := ATheme.Title;
 
     link := TJSHtmlElement(item.QuerySelector('a'));
-    link.SetAttribute('data-theme-index', IntToStr(Length(FThemes) - 1));
+    link.SetAttribute('data-theme-index', IntToStr(High(FThemes));
     link.OnClick := function(AEvent: TJSMouseEvent): boolean
         var
             themeIndex: integer;
         begin
             themeIndex := StrToInt(TJSElement(AEvent.CurrentTarget).GetAttribute('data-theme-index'));
-            SetTheme(themeIndex);
+            ChangeTheme(themeIndex);
 
             if Assigned(FStorage) then
                 FStorage.SetItem('Theme', FThemes[themeIndex].ClassName);
@@ -88,10 +93,10 @@ begin
     FSwitcherElement.QuerySelector('ul').AppendChild(item);
 
     if Assigned(FStorage) and (FStorage.GetItem('Theme') = ATheme.ClassName) then
-        SetTheme(Length(FThemes) - 1)
+        ChangeTheme(High(FThemes))
     
     else if Length(FThemes) = 1 then
-        SetTheme(0);
+        ChangeTheme(0);
 end;
 
 procedure TThemeSwitcher.AddTheme(ATitle: string; AClassName: string);
@@ -103,11 +108,11 @@ begin
     AddTheme(theme);
 end;
 
-procedure TThemeSwitcher.SetTheme(AIndex: integer);
+procedure TThemeSwitcher.ChangeTheme(AIndex: integer);
 var
     item: TJSElement;
 begin
-    if (AIndex < 0) or (AIndex >= Length(FThemes)) then
+    if (AIndex < 0) or (AIndex > High(FThemes)) then
         exit;
 
     FTheme := FThemes[AIndex];

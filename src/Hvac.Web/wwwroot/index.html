@@ -18,8 +18,8 @@
                 </div>
             </div>
 
-            <div class="level-item">
-                <div class="tabs is-toggle is-toggle-rounded is-centered">
+            <div id="tabs" class="level-item">
+                <!-- <div class="tabs is-toggle is-toggle-rounded is-centered">
                     <ul>
                         <li id="tabControls">
                             <a>
@@ -39,7 +39,7 @@
                             </a>
                         </li>
                     </ul>
-                </div>
+                </div> -->
             </div>
 
             <div class="level-right">
@@ -230,6 +230,8 @@
     </main>
 </body>
 
+<!-- Templates -->
+
 <!-- Theme switcher -->
 
 <template id="themeSwitcherTemplate">
@@ -249,6 +251,26 @@
 </template>
 
 <!-- Them switcher end -->
+
+<!-- Tabs-->
+
+<template id="tabsTemplate">
+    <div class="tabs is-toggle is-toggle-rounded is-centered">
+        <ul>
+            <!-- Tabs... -->
+        </ul>
+    </div>
+</template>
+
+<!-- Tab item -->
+
+<template id="tabItemTemplate">
+    <li>
+        <a>
+            <span></span>
+        </a>
+    </li>
+</template>
 
 <script>
     rtl.showUncaughtExceptions = true;

@@ -8,14 +8,11 @@ interface
 
 uses
     Classes,
-    JS,
     Web,
-    SysUtils,
-    StrUtils,
-    TypInfo,
     Hvac.Models.Core,
     Hvac.Models.Domain,
-    Hvac.Web.Components.ThemeSwitcher;
+    Hvac.Web.Components.ThemeSwitcher,
+    Hvac.Web.Components.Tabs;
 
 type
     TSettings = record
@@ -29,8 +26,7 @@ type
         constructor Create(AValue: string; AText: string);
     end;
 
-    TUITab = (
-        tabNone,
+    TUITabIndex = (
         tabControls,
         tabSettings,
         tabAbout
@@ -39,10 +35,7 @@ type
     TUIState = class
         private
             FThemeSwitcher: TThemeSwitcher;
-            FActiveTab: TUITab;
-            FTabControls: TJSHtmlElement;
-            FTabSettings: TJSHtmlElement;
-            FTabAbout: TJSHtmlElement;
+            FTabs: TTabs;
             FDocument: TJSDocument;
             FPowerOn: TJSHtmlInputElement;
             FPowerOff: TJSHtmlInputElement;
@@ -75,15 +68,11 @@ type
             procedure BindControls();
             procedure InitControls();
             procedure HookControlEventListeners();
-            procedure SetActiveTab(AValue: TUITab);
             function OnStateChange(AEvent: TEventListenerEvent): boolean;
 
         public
             property ThemeSwitcher: TThemeSwitcher read FThemeSwitcher write FThemeSwitcher;
-            property ActiveTab: TUITab read FActiveTab write SetActiveTab;
-            property TabControls: TJSHtmlElement read FTabControls write FTabControls;
-            property TabSettings: TJSHtmlElement read FTabSettings write FTabSettings;
-            property TabAbout: TJSHtmlElement read FTabAbout write FTabAbout;
+            property Tabs: TTabs read FTabs write FTabs;
             property SettingsSection: TJSHtmlDivElement read FSettingsSection write FSettingsSection;
             property MainSection: TJSHtmlDivElement read FMainSection write FMainSection;
             property AboutSection: TJSHtmlDivElement read FAboutSection write FAboutSection;
@@ -111,6 +100,7 @@ type
             property ButtonReload: TJSHtmlButtonElement read FButtonReload write FButtonReload;
             property ProgressBar: TJSHtmlDivElement read FPorgressBar write FPorgressBar;
             property OnChange: TJSEventHandler read FOnChange write FOnChange;
+            procedure ChangeTab(ATabIndex: TUITabIndex);
             procedure SetState(AState: THvacState);
             function GetState(): THvacState;
             procedure EnableControls();
@@ -124,6 +114,11 @@ type
 
 implementation
 
+uses
+    SysUtils,
+    StrUtils,
+    TypInfo;
+
 { TOption }
 
 constructor TOption.Create(AValue: string; AText: string);
@@ -131,8 +126,6 @@ begin
     Value := AValue;
     Text := AText;
 end;
-
-{ TUIComponent }
 
 { TUIState }
 
@@ -183,9 +176,10 @@ begin
 
     ButtonReload := TJSHtmlButtonElement(Document.GetElementById('btnReload'));
 
-    TabSettings := TJSHtmlElement(Document.GetElementById('tabSettings'));
-    TabControls := TJSHtmlElement(Document.GetElementById('tabControls'));
-    TabAbout := TJSHtmlElement(Document.GetElementById('tabAbout'));
+    Tabs := TTabs.Create(
+        Document.GetElementById('tabs'),
+        TJSHTMLTemplateElement(Document.GetElementById('tabsTemplate')),
+        TJSHTMLTemplateElement(Document.GetElementById('tabItemTemplate')));
 end;
 
 procedure TUIState.InitControls();
@@ -206,6 +200,10 @@ procedure TUIState.InitControls();
     end;
 
 begin
+    Tabs.AddTab('Controls', MainSection);
+    Tabs.AddTab('Settings', SettingsSection);
+    Tabs.AddTab('About', AboutSection);
+
     PopulateSelect(
         Mode,
         [
@@ -276,42 +274,6 @@ begin
                 TJSElement(ANode).AddEventListener('change', @OnStateChange);
         end
     );
-
-    TabControls.QuerySelectorAll('a').ForEach(
-        procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
-        begin
-            if ANode is TJSHtmlElement then
-                TJSHtmlElement(ANode).OnClick := 
-                    function(AEvent: TJSMouseEvent): boolean
-                    begin
-                        ActiveTab := TUITab.TabControls;
-                    end;
-        end
-    );
-
-    TabSettings.QuerySelectorAll('a').ForEach(
-        procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
-        begin
-            if ANode is TJSHtmlElement then
-                TJSHtmlElement(ANode).OnClick :=
-                    function(AEvent: TJSMouseEvent): boolean
-                    begin
-                        ActiveTab := TUITab.tabSettings;
-                    end
-        end
-    );
-
-    TabAbout.QuerySelectorAll('a').ForEach(
-        procedure(ANode: TJSNode; AIndex: NativeInt; ANodeList: TJSNodeList)
-        begin
-            if ANode is TJSHtmlElement then
-                TJSHtmlElement(ANode).OnClick :=
-                    function(AEvent: TJSMouseEvent): boolean
-                    begin
-                        ActiveTab := TUITab.tabAbout;
-                    end
-        end
-    );     
 end;
 
 procedure TUIState.SetState(AState: THvacState);
@@ -426,52 +388,9 @@ begin
     ErrorSection.ClassList.Add('is-hidden');
 end;
 
-procedure TUIState.SetActiveTab(AValue: TUITab);
-    procedure HideSections();
-    var
-        item: JSValue;
-    begin
-        for item in TJSArray._of(MainSection, SettingsSection, AboutSection) do
-            if item is TJSHtmlElement then
-                TJSHtmlElement(item).ClassList.Add('is-hidden');
-    end;
-
-    procedure DeactivateTabs();
-    var
-        item: JSValue;
-    begin
-        for item in TJSArray._of(TabControls, TabSettings, TabAbout) do
-            if item is TJSHtmlElement then
-                TJSHtmlElement(item).ClassList.Remove('is-active');
-    end;
+procedure TUIState.ChangeTab(ATabIndex: TUITabIndex);
 begin
-    if FActiveTab = AValue then
-        exit;
-
-    FActiveTab := AValue;
-
-    HideSections();
-    DeactivateTabs();    
-
-    case ActiveTab of
-        TUITab.tabControls:
-            begin
-                MainSection.ClassList.Remove('is-hidden');
-                TabControls.ClassList.Add('is-active');
-            end;
-
-        TUITab.tabSettings:
-            begin
-                SettingsSection.ClassList.Remove('is-hidden');
-                TabSettings.ClassList.Add('is-active');
-            end;
-
-        TUITab.tabAbout:
-            begin
-                AboutSection.ClassList.Remove('is-hidden');
-                TabAbout.ClassList.Add('is-active');
-            end;
-    end;
+    Tabs.ChangeTab(Ord(ATabIndex));
 end;
 
 end.

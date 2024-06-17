@@ -107,7 +107,7 @@ begin
     Window.LocalStorage.SetItem('ApiUrl', Settings.ApiUrl);
     Window.LocalStorage.SetItem('ApiKey', Settings.ApiKey);
 
-    UI.ActiveTab := tabControls;
+    UI.ChangeTab(tabControls);
     LoadState();
 end;
 
@@ -140,8 +140,7 @@ begin
 
     if (Assigned(Settings.ApiUrl)) and (not string.IsNullOrWhiteSpace(Settings.ApiUrl)) then
     begin
-        UI.ActiveTab := tabControls;
         LoadState();
     end else
-        UI.ActiveTab := tabSettings;
+        UI.ChangeTab(tabSettings);
 end.
