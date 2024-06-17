@@ -14,7 +14,8 @@ uses
     StrUtils,
     TypInfo,
     Hvac.Models.Core,
-    Hvac.Models.Domain;
+    Hvac.Models.Domain,
+    Hvac.Web.Components.ThemeSwitcher;
 
 type
     TSettings = record
@@ -37,6 +38,7 @@ type
 
     TUIState = class
         private
+            FThemeSwitcher: TThemeSwitcher;
             FActiveTab: TUITab;
             FTabControls: TJSHtmlElement;
             FTabSettings: TJSHtmlElement;
@@ -77,6 +79,7 @@ type
             function OnStateChange(AEvent: TEventListenerEvent): boolean;
 
         public
+            property ThemeSwitcher: TThemeSwitcher read FThemeSwitcher write FThemeSwitcher;
             property ActiveTab: TUITab read FActiveTab write SetActiveTab;
             property TabControls: TJSHtmlElement read FTabControls write FTabControls;
             property TabSettings: TJSHtmlElement read FTabSettings write FTabSettings;
@@ -129,6 +132,8 @@ begin
     Text := AText;
 end;
 
+{ TUIComponent }
+
 { TUIState }
 
 constructor TUIState.Create(ADocument: TJSDocument);
@@ -137,6 +142,13 @@ begin
     BindControls();
     InitControls();
     HookControlEventListeners();
+
+    ThemeSwitcher := TThemeSwitcher.Create(
+        Document.GetElementById('themeSwitcher'),
+        Document.QuerySelector('html'),
+        TJSHTMLTemplateElement(Document.GetElementById('themeSwitcherTemplate')),
+        TJSHtmlTemplateElement(Document.GetElementById('themeSwitcherItemTemplate')),
+        Window.LocalStorage);
 end;
 
 procedure TUIState.BindControls();

@@ -10,7 +10,6 @@ uses
     FPJsonJs,
     SysUtils,
     Web,
-    Hvac.Models.Core,
     Hvac.Models.Domain,
     Hvac.Models.Dto,
     Hvac.Web.UI;
@@ -37,8 +36,6 @@ end;
 
 procedure OnStateLoaded(AResponse: TJSResponse); async;
 var
-    content: string;
-
     state: THvacState;
 begin
     if not AResponse.Ok then
@@ -131,6 +128,10 @@ end;
 
 begin
     UI := TUIState.Create(Document);
+
+    UI.ThemeSwitcher.AddTheme('☀️', 'theme-light');
+    UI.ThemeSwitcher.AddTheme('🌙', 'theme-dark');
+
     UI.ButtonReload.AddEventListener('click', @LoadState);
     UI.SettingsButtonSave.AddEventListener('click', @SaveSettings);
     UI.OnChange := @OnStateChange;

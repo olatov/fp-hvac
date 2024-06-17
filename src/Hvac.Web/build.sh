@@ -8,6 +8,7 @@ fi
 pas2js \
     -Jirtl.js \
     -Tbrowser \
+    -Fu"./Hvac.Web.Components/" \
     -Fu"../Hvac.Units/" \
     -Fu"../Hvac.Units/Models/" \
     -o"wwwroot/assets/js/hvac.web.js" \
