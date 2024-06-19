@@ -9,6 +9,7 @@ uses
     Classes,
     HttpDefs,
     HttpRoute,
+    FPJson,
     FPHttpApp,
     CustHttpApp,
     EventLog,
@@ -36,6 +37,7 @@ type
             function VerifyApiKey(request: TRequest): boolean;
             procedure RegisterRoutes(AHttpRouter: THttpRouter);
             procedure SetCorsHeader(var AResponse: TResponse);
+            function GetErrorResponse(message: string): TJsonObject;
 
         public
             const Version = '1';
@@ -59,7 +61,6 @@ implementation
 uses
     SysUtils,
     StrUtils,
-    FPJson,
     FPMimeTypes,
     Hvac.Helpers.Enums,
     Hvac.Models.Core,
@@ -141,10 +142,12 @@ var
 begin
     Logger.Debug('GET state');
     SetCorsHeader(response);
+    response.ContentType := JsonMimeType;
 
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
+            response.Content := GetErrorResponse('Unauthorized').AsJson;
             exit;
         end;
 
@@ -163,21 +166,22 @@ begin
     except
         on E: Exception do
           begin
-            response.Content := '{"error": "' + E.Message + '"}';
+            response.Content := GetErrorResponse(E.Message).AsJson;
             response.Code := 500;
           end;
     end;
 
-    response.ContentType := JsonMimeType;
+    Logger.Debug('Status %d', [response.Code]);
 end;
 
 procedure THvacApiApplication.OptionsStateHandler(request: TRequest; response: TResponse);
 begin
-    Logger.Debug('OPTIONS state');
+    Logger.Debug('OPTIONS /state');
     SetCorsHeader(response);
     Response.SetFieldByName('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
     Response.SetFieldByName('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key');
     response.Code := 204;
+    Logger.Debug('Status %d', [response.Code]);
 end;
 
 procedure THvacApiApplication.PutStateHandler(request: TRequest; response: TResponse);
@@ -185,20 +189,23 @@ var
     hvacStateDto: THvacStateDto;
     hvacState: THvacState;
 begin
-    Logger.Debug('PUT state');
+    Logger.Debug('PUT /state');
     SetCorsHeader(response);
+    response.ContentType := JsonMimeType;
 
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
+            response.Content := GetErrorResponse('Unathirized.').AsJson;
+            Logger.Debug('Status %d', [response.Code]);
             exit;
         end;
 
     if not request.ContentType.StartsWith(JsonMimeType) then
         begin
             response.Code := 415;
-            response.Content := '{"error": "JSON is required"}';
-            response.ContentType := JsonMimeType;
+            response.Content := GetErrorResponse('JSON is required.').AsJson;
+            Logger.Debug('Status %d', [response.Code]);
             exit;
         end;
 
@@ -216,58 +223,61 @@ begin
     except
         on E: Exception do
           begin
-            response.Content := '{"error": "' + E.Message + '"}';
+            response.Content := GetErrorResponse(E.Message).AsJson;
             response.ContentType := JsonMimeType;
             response.Code := 500;
           end;
     end;
+
+    Logger.Debug('Status %d', [response.Code]);
 end;
 
 procedure THvacApiApplication.GetEnumsHandler(request: TRequest; response: TResponse);
 var 
     json: TJsonObject;
 begin
-    Logger.Debug('GET enums');
+    Logger.Debug('GET /enums');
     SetCorsHeader(response);
+    response.ContentType := JsonMimeType;
 
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
-            Exit();
+            response.Content := GetErrorResponse('Unauthorized.').AsJson;
+            exit;
         end;
 
-    json := TJsonObject.Create();
-    try
-        json.Arrays['mode'] := specialize EnumToJsonArray<THvacMode>();
-        json.Arrays['fanSpeed'] := specialize EnumToJsonArray<TFanSpeed>();
-        json.Arrays['horizontalFlowMode'] := specialize EnumToJsonArray<THorizontalFlowMode>();
-        json.Arrays['verticalFlowMode'] := specialize EnumToJsonArray<TVerticalFlowMode>();
-        json.Arrays['temperatureScale'] := specialize EnumToJsonArray<TTemperatureScale>();
+    json := TJsonObject.Create([
+        'mode', specialize EnumToJsonArray<THvacMode>(),
+        'fanSpeed', specialize EnumToJsonArray<TFanSpeed>(),
+        'horizontalFlowMode', specialize EnumToJsonArray<THorizontalFlowMode>(),
+        'verticalFlowMode', specialize EnumToJsonArray<TVerticalFlowMode>(),
+        'temperatureScale', specialize EnumToJsonArray<TTemperatureScale>()
+    ]);
 
-        json.CompressedJson := true;
+    json.CompressedJson := true;
 
-        if GetPrettyParam(request) then
-            response.Content := json.FormatJson
-        else
-            response.Content := json.AsJson;
+    if GetPrettyParam(request) then
+        response.Content := json.FormatJson
+    else
+        response.Content := json.AsJson;
 
-        response.ContentType := JsonMimeType;
+    response.ContentType := JsonMimeType;
 
-    finally
-        json.Free();
-
-    end;
+    Logger.Debug('Status %d', [response.Code]);
 end;
 
 procedure THvacApiApplication.OptionsEnumsHandler(request: TRequest; response: TResponse);
 begin
     Logger.Debug('OPTIONS enums');
     SetCorsHeader(response);
+    response.ContentType := JsonMimeType;
 
     if not VerifyApiKey(request) then
     begin
         response.Code := 401;
-        Exit();
+        response.Content := GetErrorResponse('Unauthorized.').AsJson;
+        exit;
     end;
 
     Response.SetFieldByName('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -306,6 +316,13 @@ procedure THvacApiApplication.SetCorsHeader(var AResponse: TResponse);
 begin
     if not string.IsNullOrWhiteSpace(AllowOrigin) then
         AResponse.SetFieldByName('Access-Control-Allow-Origin', AllowOrigin);
+end;
+
+function THvacApiApplication.GetErrorResponse(message: string): TJsonObject;
+begin
+    result := TJsonObject.Create([
+        'error', StringToJsonString(message)
+    ]);
 end;
 
 end.
