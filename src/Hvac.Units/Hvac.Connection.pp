@@ -106,7 +106,7 @@ begin
         Connect();
 
         request := THvacPacket.Create(HvacGetStateCommand);
-        Logger.Debug('Sending READ command to Hvac...');
+        Logger.Debug('Sending READ cmd to Hvac...');
         count := FSocketHandler.Send(request, SizeOf(request));
         Logger.Debug('Sent %d bytes', [count]);
         if count <> SizeOf(request) then
@@ -150,7 +150,7 @@ begin
         request.Config := THvacConfig.FromHvacState(AState);
         request.RefreshChecksum();
 
-        Logger.Debug('Sending WRITE command to Hvac...');
+        Logger.Debug('Sending WRITE cmd to Hvac...');
         count := HvacSocket.Write(request, SizeOf(request));
         Logger.Debug('Sent %d bytes', [count]);
         if count <> SizeOf(request) then begin
@@ -162,7 +162,7 @@ begin
 
     finally
         Disconnect();
-        Sleep(500);
+        Sleep(750);
 
     end;
 end;
