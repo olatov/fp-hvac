@@ -57,10 +57,11 @@ type
 implementation
 
 uses
-    fpJson,
-    fpMimeTypes,
     SysUtils,
     StrUtils,
+    FPJson,
+    FPMimeTypes,
+    Hvac.Helpers.Enums,
     Hvac.Models.Core,
     Hvac.Models.Domain,
     Hvac.Models.Dto;
@@ -106,7 +107,7 @@ begin
     inherited;
 
     Logger.Info('Using connection string: %s', [HvacConnectionString]);
-    HvacConnection := THvacConnection.Create(HvacConnectionString);
+    HvacConnection := THvacConnection.Create(HvacConnectionString, Logger);
 
     if string.IsNullOrWhiteSpace(ApiKey) then
         Logger.Warning('API key not set!');
@@ -134,10 +135,11 @@ end;
 
 procedure THvacApiApplication.GetStateHandler(request: TRequest; response: TResponse);
 var 
-    hvacStwteDto: THvacStateDto;
+    hvacStateDto: THvacStateDto;
     hvacState: THvacState;
     pretty: boolean;
 begin
+    Logger.Debug('GET state');
     SetCorsHeader(response);
 
     if not VerifyApiKey(request) then
@@ -146,16 +148,23 @@ begin
             Exit();
         end;
 
-    hvacState := HvacConnection.GetState();
-    hvacStwteDto := THvacStateDto.FromHvacState(hvacState);
-    pretty := GetPrettyParam(request);
+    try
+        hvacState := HvacConnection.GetState();
+        hvacStateDto := THvacStateDto.FromHvacState(hvacState);
+        pretty := GetPrettyParam(request);
+        response.Content := hvacStateDto.ToJson(pretty);
 
-    response.Content := hvacStwteDto.ToJson(pretty);
+    except
+        response.Content := '{"error": "Error getting state"}';
+        response.Code := 500;
+    end;
+
     response.ContentType := JsonMimeType;
 end;
 
 procedure THvacApiApplication.OptionsStateHandler(request: TRequest; response: TResponse);
 begin
+    Logger.Debug('OPTIONS state');
     SetCorsHeader(response);
     Response.SetFieldByName('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
     Response.SetFieldByName('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key');
@@ -167,6 +176,7 @@ var
     hvacStateDto: THvacStateDto;
     hvacState: THvacState;
 begin
+    Logger.Debug('PUT state');
     SetCorsHeader(response);
 
     if not VerifyApiKey(request) then
@@ -182,16 +192,24 @@ begin
             Exit();
         end;
 
-    hvacStateDto := THvacStateDto.FromJson(request.Content);
-    hvacState := hvacStateDto.ToHvacState();
-    HvacConnection.SetState(hvacState);
-    response.Code := 204;
+    try
+        hvacStateDto := THvacStateDto.FromJson(request.Content);
+        hvacState := hvacStateDto.ToHvacState();
+        HvacConnection.SetState(hvacState);
+        response.Code := 204;
+
+    except
+        response.Content := '{"error": "Error setting state"}';
+        response.ContentType := JsonMimeType;
+        response.Code := 500;
+    end;
 end;
 
 procedure THvacApiApplication.GetEnumsHandler(request: TRequest; response: TResponse);
 var 
     json: TJsonObject;
 begin
+    Logger.Debug('GET enums');
     SetCorsHeader(response);
 
     if not VerifyApiKey(request) then
@@ -201,14 +219,13 @@ begin
         end;
 
     json := TJsonObject.Create();
-
     try
-        // TODO!
-        // json.Arrays['mode'] := specialize EnumToJsonArray<THvacMode>();
-        // json.Arrays['fanSpeed'] := specialize EnumToJsonArray<TFanSpeed>();
-        // json.Arrays['horizontalFlowMode'] := specialize EnumToJsonArray<THorizontalFlowMode>();
-        // json.Arrays['verticalFlowMode'] := specialize EnumToJsonArray<TVerticalFlowMode>();
-        // json.Arrays['temperatureScale'] := specialize EnumToJsonArray<TTemperatureScale>();
+        json.Arrays['mode'] := specialize EnumToJsonArray<THvacMode>();
+        json.Arrays['fanSpeed'] := specialize EnumToJsonArray<TFanSpeed>();
+        json.Arrays['horizontalFlowMode'] := specialize EnumToJsonArray<THorizontalFlowMode>();
+        json.Arrays['verticalFlowMode'] := specialize EnumToJsonArray<TVerticalFlowMode>();
+        json.Arrays['temperatureScale'] := specialize EnumToJsonArray<TTemperatureScale>();
+
         json.CompressedJson := true;
 
         if GetPrettyParam(request) then
@@ -226,6 +243,7 @@ end;
 
 procedure THvacApiApplication.OptionsEnumsHandler(request: TRequest; response: TResponse);
 begin
+    Logger.Debug('OPTIONS enums');
     SetCorsHeader(response);
 
     if not VerifyApiKey(request) then
@@ -241,7 +259,7 @@ end;
 
 procedure THvacApiApplication.RegisterRoutes(AHttpRouter: THttpRouter);
 var 
-    prefix, path:   string;
+    prefix, path: string;
 begin
     prefix := '/api/v' + Version;
 
@@ -257,6 +275,12 @@ end;
 
 function THvacApiApplication.VerifyApiKey(request: TRequest): boolean;
 begin
+    if ApiKey = string.Empty then
+    begin
+        Logger.Warning('API key check skipped because the key isn''t set up!');
+        exit(true);
+    end;
+
     result := request.GetFieldByName('X-Api-Key') = ApiKey;
 end;
 

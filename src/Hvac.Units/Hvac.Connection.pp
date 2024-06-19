@@ -7,6 +7,7 @@ interface
 
 uses 
     Ssockets,
+    EventLog,
     Hvac.Models.Protocol,
     Hvac.Models.Domain;
 
@@ -15,13 +16,15 @@ type
         private 
             FPort: integer;
             FHost: string;
+            FLogger: TEventLog;
             FSocket: TInetSocket;
-            property Socket: TInetSocket read FSocket write FSocket;
+            property Logger: TEventLog read FLogger;
+            property HvacSocket: TInetSocket read FSocket write FSocket;
             procedure Connect();
             procedure Disconnect();
 
         public
-            constructor Create(AConnectionString: string);
+            constructor Create(AConnectionString: string; ALogger: TEventLog);
             procedure SetState(AState: THvacState);
             function GetState(): THvacState;
     end;
@@ -33,10 +36,11 @@ uses
 
 { THvacConnection }
 
-constructor THvacConnection.Create(AConnectionString: string);
+constructor THvacConnection.Create(AConnectionString: string; ALogger: TEventLog);
 var 
     elems: TStringArray;
 begin
+    FLogger := ALogger;
     try
         elems := AConnectionString.Split(':');
         if Length(elems) <> 2 then
@@ -54,16 +58,24 @@ end;
 procedure THvacConnection.Connect();
 
 var 
-    socketHandler:   TSocketHandler;
+    socketHandler: TSocketHandler;
 begin
     socketHandler := TSocketHandler.Create();
-    Socket := TInetSocket.Create(FHost, FPort, socketHandler);
-    Socket.Connect();
+    HvacSocket := TInetSocket.Create(FHost, FPort, socketHandler);
+    HvacSocket.ConnectTimeout := 2000;
+    try
+        HvacSocket.Connect();
+    except
+        Logger.Error('Error connecting to %s:%d', [FHost, FPort]);
+        HvacSocket.Free();
+        socketHandler.Free();
+        raise;
+    end;
 end;
 
 procedure THvacConnection.Disconnect();
 begin
-    Socket.Free();
+    HvacSocket.Free();
 end;
 
 function THvacConnection.GetState(): THvacState;
@@ -73,24 +85,37 @@ var
     tries: integer = 0;
 begin
     try
+        Logger.Debug('GetState');
         Connect();
 
         request := THvacPacket.Create(HvacGetStateCommand);
-        count := Socket.Write(request, SizeOf(request));
+        count := HvacSocket.Write(request, SizeOf(request));
+        Logger.Debug('Sent %d bytes', [count]);
         if count <> SizeOf(request) then
             raise Exception.Create('Error sending');
 
         repeat
             Inc(tries);
-            count := Socket.Read(response, SizeOf(response));
+            Logger.Debug('Receiving, attempt %d', [tries]);
+            count := HvacSocket.Read(response, SizeOf(response));
+            Logger.Debug('Received %d bytes', [count]);
             if count = SizeOf(response) then
                 break;
 
             Sleep(50);
         until tries >= 20;
 
-        if (count <> SizeOf(response)) or (not response.VerifyChecksum()) then
+        if (count <> SizeOf(response)) then
+        begin
+            Logger.Debug('Bytes count mismatch: %d', [count]);
             raise Exception.Create('Invalid response');
+        end;
+
+        if (not response.VerifyChecksum()) then
+        begin
+            Logger.Debug('Checksum mismatch');
+            raise Exception.Create('Invalid response');
+        end;
 
         result := response.Config.ToHvacState();
 
@@ -107,13 +132,15 @@ var
     count: integer;
 begin
     try
+        Logger.Debug('SetState');
         Connect();
 
         request := THvacPacket.Create(HvacSetStateCommand);
         request.Config := THvacConfig.FromHvacState(AState);
         request.RefreshChecksum();
 
-        count := Socket.Write(request, SizeOf(request));
+        count := HvacSocket.Write(request, SizeOf(request));
+        Logger.Debug('Sent %d bytes', [count]);
         if count <> SizeOf(request) then
             raise Exception.Create('Error sending');
 

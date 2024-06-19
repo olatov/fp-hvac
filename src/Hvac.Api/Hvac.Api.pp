@@ -36,8 +36,8 @@ var
     HvacConnectionString: string;
     App: THvacApiApplication;
     Logger: TEventLog;
-    StdOutBuf: array[1..8] of char;
-    StdErrBuf: array[1..8] of char;
+    StdOutBuf: array[1..1] of char;
+    StdErrBuf: array[1..1] of char;
 
 procedure SignalHandler(signal: cint); cdecl;
 begin
@@ -85,7 +85,7 @@ begin
 
     try
         App.Threaded := true;
-        App.AcceptIdleTimeout := 5;
+        App.AcceptIdleTimeout := 5000;
         App.Initialize();
 
         {$ifdef Unix}
