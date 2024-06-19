@@ -214,6 +214,10 @@ begin
         hvacState := hvacStateDto.ToHvacState();
 
         if (hvacState.TemperatureScale = TTemperatureScale.tsFahrenheit)
+            and (hvacState.DesiredTemperature < 50) then
+                hvacState.DesiredTemperature := Round(hvacState.DesiredTemperature * 1.8) + 32
+
+        else if (hvacState.TemperatureScale = TTemperatureScale.tsCelsius)
             and (hvacState.DesiredTemperature >= 50) then
                 hvacState.DesiredTemperature := Round((hvacState.DesiredTemperature - 32) / 1.8);
 
