@@ -145,7 +145,7 @@ begin
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
-            Exit();
+            exit;
         end;
 
     try
@@ -161,8 +161,11 @@ begin
         response.Content := hvacStateDto.ToJson(pretty);
 
     except
-        response.Content := '{"error": "Error getting state"}';
-        response.Code := 500;
+        on E: Exception do
+          begin
+            response.Content := '{"error": "' + E.Message + '"}';
+            response.Code := 500;
+          end;
     end;
 
     response.ContentType := JsonMimeType;
@@ -188,14 +191,15 @@ begin
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
-            Exit();
+            exit;
         end;
 
     if not request.ContentType.StartsWith(JsonMimeType) then
         begin
             response.Code := 415;
-            response.Content := 'A JSON is required.';
-            Exit();
+            response.Content := '{"error": "JSON is required"}';
+            response.ContentType := JsonMimeType;
+            exit;
         end;
 
     try
@@ -210,9 +214,12 @@ begin
         response.Code := 204;
 
     except
-        response.Content := '{"error": "Error setting state"}';
-        response.ContentType := JsonMimeType;
-        response.Code := 500;
+        on E: Exception do
+          begin
+            response.Content := '{"error": "' + E.Message + '"}';
+            response.ContentType := JsonMimeType;
+            response.Code := 500;
+          end;
     end;
 end;
 

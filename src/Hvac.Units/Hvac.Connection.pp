@@ -5,18 +5,20 @@ unit Hvac.Connection;
 
 interface
 
-uses 
+uses
+    Classes,
     Ssockets,
     EventLog,
     Hvac.Models.Protocol,
     Hvac.Models.Domain;
 
 type 
-    THvacConnection = record
+    THvacConnection = class(TComponent)
         private 
             FPort: integer;
             FHost: string;
             FLogger: TEventLog;
+            FSocketHandler: TSocketHandler;
             FSocket: TInetSocket;
             property Logger: TEventLog read FLogger;
             property HvacSocket: TInetSocket read FSocket write FSocket;
@@ -24,7 +26,11 @@ type
             procedure Disconnect();
 
         public
-            constructor Create(AConnectionString: string; ALogger: TEventLog);
+            constructor Create(
+                AConnectionString: string;
+                ALogger: TEventLog;
+                AOwner: TComponent = Nil);
+            destructor Destroy();
             procedure SetState(AState: THvacState);
             function GetState(): THvacState;
     end;
@@ -36,10 +42,15 @@ uses
 
 { THvacConnection }
 
-constructor THvacConnection.Create(AConnectionString: string; ALogger: TEventLog);
+constructor THvacConnection.Create(
+    AConnectionString: string;
+    ALogger: TEventLog;
+    AOwner: TComponent = Nil);
 var 
     elems: TStringArray;
 begin
+    inherited Create(AOwner);
+
     FLogger := ALogger;
     try
         elems := AConnectionString.Split(':');
@@ -53,22 +64,25 @@ begin
         raise Exception.Create('Invalid connection string');
 
     end;
+
+    FSocketHandler := TSocketHandler.Create();
+end;
+
+destructor THvacConnection.Destroy();
+begin
+    FSocketHandler.Free();
+    inherited;
 end;
 
 procedure THvacConnection.Connect();
-
-var 
-    socketHandler: TSocketHandler;
 begin
-    socketHandler := TSocketHandler.Create();
-    HvacSocket := TInetSocket.Create(FHost, FPort, socketHandler);
+    HvacSocket := TInetSocket.Create(FHost, FPort, FSocketHandler);
     HvacSocket.ConnectTimeout := 2000;
     try
         HvacSocket.Connect();
     except
         Logger.Error('Error connecting to %s:%d', [FHost, FPort]);
         HvacSocket.Free();
-        socketHandler.Free();
         raise;
     end;
 end;
