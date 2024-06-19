@@ -151,7 +151,10 @@ begin
     try
         hvacState := HvacConnection.GetState();
         if hvacState.TemperatureScale = TTemperatureScale.tsFahrenheit then
+        begin
             hvacState.IndoorTemperature := Round(hvacState.IndoorTemperature * 1.8) + 32;
+            hvacState.DesiredTemperature := Round(hvacState.DesiredTemperature * 1.8) + 32;
+        end;
 
         hvacStateDto := THvacStateDto.FromHvacState(hvacState);
         pretty := GetPrettyParam(request);
@@ -198,6 +201,11 @@ begin
     try
         hvacStateDto := THvacStateDto.FromJson(request.Content);
         hvacState := hvacStateDto.ToHvacState();
+
+        if (hvacState.TemperatureScale = TTemperatureScale.tsFahrenheit)
+            and (hvacState.DesiredTemperature >= 50) then
+                hvacState.DesiredTemperature := Round((hvacState.DesiredTemperature - 32) / 1.8);
+
         HvacConnection.SetState(hvacState);
         response.Code := 204;
 
