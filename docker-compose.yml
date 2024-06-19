@@ -9,7 +9,7 @@ services:
     environment:
       - HVAC_CONNECTION_STRING=simulator:12416
       - LISTEN_PORT=9090
-      - API_KEY=abcdef      
+      - API_KEY=abcdef
       - ALLOW_ORIGIN=*
 
   web:

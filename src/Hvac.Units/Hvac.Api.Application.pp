@@ -150,6 +150,9 @@ begin
 
     try
         hvacState := HvacConnection.GetState();
+        if hvacState.TemperatureScale = TTemperatureScale.tsFahrenheit then
+            hvacState.IndoorTemperature := Round(hvacState.IndoorTemperature * 1.8) + 32;
+
         hvacStateDto := THvacStateDto.FromHvacState(hvacState);
         pretty := GetPrettyParam(request);
         response.Content := hvacStateDto.ToJson(pretty);
