@@ -14,8 +14,8 @@ const
 var 
     Server: THvacSimulator;
     Value: string;
-    StdOutBuf: array[1..8] of char;
-    StdErrBuf: array[1..8] of char;
+    StdOutBuf: array[1..1] of char;
+    StdErrBuf: array[1..1] of char;
 
 begin
     SetTextBuf(StdOut, StdOutBuf);

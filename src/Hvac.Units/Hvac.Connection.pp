@@ -7,8 +7,9 @@ interface
 
 uses
     Classes,
-    Ssockets,
     EventLog,
+    FPAsync,
+    FPSock,
     Hvac.Models.Protocol,
     Hvac.Models.Domain;
 
@@ -18,10 +19,9 @@ type
             FPort: integer;
             FHost: string;
             FLogger: TEventLog;
-            FSocketHandler: TSocketHandler;
-            FSocket: TInetSocket;
+            FEventLoop: TEventLoop;
+            FTcpClient: TTcpClient;
             property Logger: TEventLog read FLogger;
-            property HvacSocket: TInetSocket read FSocket write FSocket;
             procedure Connect();
             procedure Disconnect();
 
@@ -38,7 +38,9 @@ type
 implementation
 
 uses 
-    SysUtils;
+    SysUtils,
+    Sockets,
+    Resolve;
 
 { THvacConnection }
 
@@ -65,35 +67,60 @@ begin
 
     end;
 
+    FEventLoop := TEventLoop.Create();
 end;
 
 destructor THvacConnection.Destroy();
 begin
-    FSocketHandler.Free();
+    FEventLoop.Free();
     inherited;
 end;
 
 procedure THvacConnection.Connect();
+var
+   hostResolver: THostResolver;
 begin
     try
-        FSocketHandler := TSocketHandler.Create();
-        HvacSocket := TInetSocket.Create(FHost, FPort, FSocketHandler);
-        HvacSocket.ConnectTimeout := 2000;
+        FTcpClient := TTcpClient.Create(self);
+
+        if StrToNetAddr(FHost).s_bytes[4] = 0 then
+        begin
+            hostResolver := THostResolver.Create(nil);
+            try
+                if not HostResolver.NameLookup(FHost) then
+                    raise ESocketError.CreateFmt('Host "%s" not found', [FHost]);
+
+                Logger.Debug('Resolved %s to %s', [FHost, hostResolver.AddressAsString]);
+                FTcpClient.Host := hostResolver.AddressAsString;
+            finally
+                HostResolver.Free();
+            end;
+        end else
+            FTcpClient.Host := FHost;
+
+        FTcpClient.Port := FPort;
+        FTcpClient.EventLoop := FEventLoop;
 
         Logger.Debug('Connecting to %s:%d', [FHost, FPort]);
-        HvacSocket.Connect();
-        Logger.Debug('Connected to %s:%d', [FHost, FPort]);
+        FTcpClient.Active := true;
+        FEventLoop.Run();
+
+        if FTcpClient.ConnectionState = connConnected then
+            Logger.Debug('Connection established.', [FHost, FPort]);
     except
-        Logger.Error('Error connecting to %s:%d', [FHost, FPort]);
-        Disconnect();
-        raise;
+        on E: Exception do
+          begin
+            Logger.Error(E.Message);
+            Disconnect();
+            raise;
+          end;
     end;
 end;
 
 procedure THvacConnection.Disconnect();
 begin
-    FSocketHandler.Close();
-    HvacSocket.Free();    
+    FTcpClient.Active := false;
+    FTcpClient.Free();
 end;
 
 function THvacConnection.GetState(): THvacState;
@@ -107,13 +134,14 @@ begin
 
         request := THvacPacket.Create(HvacGetStateCommand);
         Logger.Debug('Sending READ cmd to Hvac...');
-        count := FSocketHandler.Send(request, SizeOf(request));
+        count := FTcpClient.Stream.Write(request, SizeOf(request));
         Logger.Debug('Sent %d bytes', [count]);
         if count <> SizeOf(request) then
             raise Exception.Create('Error sending');
 
+        Sleep(1000);
         Logger.Debug('Waiting data from Hvac...');
-        count := FSocketHandler.Recv(response, SizeOf(response));
+        count := FTcpClient.Stream.Read(response, SizeOf(response));
         Logger.Debug('Received %d bytes', [count]);
 
         if count <> SizeOf(response) then
@@ -151,7 +179,7 @@ begin
         request.RefreshChecksum();
 
         Logger.Debug('Sending WRITE cmd to Hvac...');
-        count := HvacSocket.Write(request, SizeOf(request));
+        count := FTcpClient.Stream.Write(request, SizeOf(request));
         Logger.Debug('Sent %d bytes', [count]);
         if count <> SizeOf(request) then begin
             Logger.Debug('Bytes count mismatch: %d', [count]);
