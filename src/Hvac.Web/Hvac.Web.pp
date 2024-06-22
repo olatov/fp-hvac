@@ -96,7 +96,7 @@ begin
     ]);
 
     Window.Fetch(Format('%s/%s', [ApiSettings.Url, endpoint]), options)._then(
-        function(response: JSValue): JSValue begin LoadState() end,
+        function(response: JSValue): JSValue begin OnStateLoaded(TJSResponse(response)) end,
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end
     ).catch(
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end

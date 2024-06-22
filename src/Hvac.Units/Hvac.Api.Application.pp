@@ -17,15 +17,14 @@ uses
 
 type
     THvacApiApplication = class(THttpApplication)
+        const JsonMimeType = 'application/json';
         private
             FApiKey: string;
             FAllowOrigin: string;
-            FJsonMimeType: string;
             FHvacConnection: THvacConnection;
             FHvacConnectionString: string;
             FLogger: TEventLog;
             property Logger: TEventLog read FLogger;
-            property JsonMimeType: string read FJsonMimeType write FJsonMimeType;
             property HvacConnection: THvacConnection read FHvacConnection write FHvacConnection;
             property HvacConnectionString: string read FHvacConnectionString write FHvacConnectionString;
             function GetPrettyParam(request: TRequest):   boolean;
@@ -61,7 +60,6 @@ implementation
 uses
     SysUtils,
     StrUtils,
-    FPMimeTypes,
     Hvac.Helpers.Enums,
     Hvac.Models.Core,
     Hvac.Models.Domain,
@@ -81,17 +79,6 @@ begin
 
     Port := APort;
     HvacConnectionString := AHvacConnectionString;    
-
-    with TFPMimeTypes.Create(nil) do begin
-        try
-            LoadKnownTypes();
-            self.JsonMimeType := GetMimeType('json');
-        finally
-            Free();
-        end;
-    end;
-    
-    JsonMimeType := IfThen(string.IsNullOrWhiteSpace(JsonMimeType), 'application/json', JsonMimeType);
 
     RegisterRoutes(AHttpRouter);
 end;
@@ -153,12 +140,6 @@ begin
 
     try
         hvacState := HvacConnection.GetState();
-        if hvacState.TemperatureScale = TTemperatureScale.tsFahrenheit then
-        begin
-            hvacState.IndoorTemperature := Round(hvacState.IndoorTemperature * 1.8) + 32;
-            hvacState.DesiredTemperature := Round(hvacState.DesiredTemperature * 1.8) + 32;
-        end;
-
         hvacStateDto := THvacStateDto.FromHvacState(hvacState);
         pretty := GetPrettyParam(request);
         response.Content := hvacStateDto.ToJson(pretty);
@@ -188,6 +169,7 @@ procedure THvacApiApplication.PutStateHandler(request: TRequest; response: TResp
 var 
     hvacStateDto: THvacStateDto;
     hvacState: THvacState;
+    pretty: boolean;
 begin
     Logger.Debug('PUT /state');
     SetCorsHeader(response);
@@ -213,16 +195,11 @@ begin
         hvacStateDto := THvacStateDto.FromJson(request.Content);
         hvacState := hvacStateDto.ToHvacState();
 
-        if (hvacState.TemperatureScale = TTemperatureScale.tsFahrenheit)
-            and (hvacState.DesiredTemperature < 50) then
-                hvacState.DesiredTemperature := Round(hvacState.DesiredTemperature * 1.8) + 32
+        hvacState := HvacConnection.SetState(hvacState);
 
-        else if (hvacState.TemperatureScale = TTemperatureScale.tsCelsius)
-            and (hvacState.DesiredTemperature >= 50) then
-                hvacState.DesiredTemperature := Round((hvacState.DesiredTemperature - 32) / 1.8);
-
-        HvacConnection.SetState(hvacState);
-        response.Code := 204;
+        pretty := GetPrettyParam(request);
+        response.Content := hvacStateDto.FromHvacState(hvacState).ToJson(pretty);
+        response.Code := 200;
 
     except
         on E: Exception do
@@ -309,7 +286,7 @@ function THvacApiApplication.VerifyApiKey(request: TRequest): boolean;
 begin
     if ApiKey = string.Empty then
     begin
-        Logger.Warning('API key check skipped because the key isn''t set up!');
+        Logger.Warning('API key check skipped because the key is not set!');
         exit(true);
     end;
 

@@ -62,8 +62,8 @@ begin
 end;
 
 begin
-    SetTextBuf(StdOut, StdOutBuf);
-    SetTextBuf(StdErr, StdErrBuf);
+    SetTextBuf(StdOut, StdOutBuf, SizeOf(StdOutBuf));
+    SetTextBuf(StdErr, StdErrBuf, SizeOf(StdErrBuf));
 
     Logger := TEventLog.Create(nil);
     Logger.LogType := ltStdOut;

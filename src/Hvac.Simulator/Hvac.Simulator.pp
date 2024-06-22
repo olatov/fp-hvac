@@ -18,8 +18,8 @@ var
     StdErrBuf: array[1..1] of char;
 
 begin
-    SetTextBuf(StdOut, StdOutBuf);
-    SetTextBuf(StdErr, StdErrBuf);
+    SetTextBuf(StdOut, StdOutBuf, SizeOf(StdOutBuf));
+    SetTextBuf(StdErr, StdErrBuf, SizeOf(StdErrBuf));
 
     Value := GetEnvironmentVariable('LISTEN_IFACE');
     Iface := IfThen(string.IsNullOrWhiteSpace(Value), Iface, Value);
