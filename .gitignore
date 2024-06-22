@@ -6,3 +6,6 @@ hvac.web.js
 hvac.web.js.map
 
 .vscode
+
+# Local Netlify folder
+.netlify
