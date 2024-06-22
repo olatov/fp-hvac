@@ -125,6 +125,7 @@ procedure THvacApiApplication.GetStateHandler(request: TRequest; response: TResp
 var 
     hvacStateDto: THvacStateDto;
     hvacState: THvacState;
+    errorResponse: TJsonObject;
     pretty: boolean;
 begin
     Logger.Debug('GET state');
@@ -134,7 +135,9 @@ begin
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
-            response.Content := GetErrorResponse('Unauthorized').AsJson;
+            errorResponse := GetErrorResponse('Unauthorized');
+            response.Content := errorResponse.AsJson;
+            errorResponse.Free();
             exit;
         end;
 
@@ -147,7 +150,9 @@ begin
     except
         on E: Exception do
           begin
-            response.Content := GetErrorResponse(E.Message).AsJson;
+            errorResponse := GetErrorResponse(E.Message);
+            response.Content := errorResponse.AsJson;
+            errorResponse.Free();
             response.Code := 500;
           end;
     end;
@@ -169,6 +174,7 @@ procedure THvacApiApplication.PutStateHandler(request: TRequest; response: TResp
 var 
     hvacStateDto: THvacStateDto;
     hvacState: THvacState;
+    errorResponse: TJsonObject;
     pretty: boolean;
 begin
     Logger.Debug('PUT /state');
@@ -178,7 +184,9 @@ begin
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
-            response.Content := GetErrorResponse('Unathirized.').AsJson;
+            errorResponse := GetErrorResponse('Unauthorized');
+            response.Content := errorResponse.AsJson;
+            errorResponse.Free();
             Logger.Debug('Status %d', [response.Code]);
             exit;
         end;
@@ -186,7 +194,9 @@ begin
     if not request.ContentType.StartsWith(JsonMimeType) then
         begin
             response.Code := 415;
-            response.Content := GetErrorResponse('JSON is required.').AsJson;
+            errorResponse :=GetErrorResponse('JSON is required.');
+            response.Content := errorResponse.AsJson;
+            errorResponse.Free();
             Logger.Debug('Status %d', [response.Code]);
             exit;
         end;
@@ -204,7 +214,9 @@ begin
     except
         on E: Exception do
           begin
-            response.Content := GetErrorResponse(E.Message).AsJson;
+            errorResponse := GetErrorResponse(E.Message);
+            response.Content := errorResponse.AsJson;
+            errorResponse.Free();
             response.ContentType := JsonMimeType;
             response.Code := 500;
           end;
@@ -216,6 +228,7 @@ end;
 procedure THvacApiApplication.GetEnumsHandler(request: TRequest; response: TResponse);
 var 
     json: TJsonObject;
+    errorResponse: TJsonObject;
 begin
     Logger.Debug('GET /enums');
     SetCorsHeader(response);
@@ -224,7 +237,9 @@ begin
     if not VerifyApiKey(request) then
         begin
             response.Code := 401;
-            response.Content := GetErrorResponse('Unauthorized.').AsJson;
+            errorResponse := GetErrorResponse('Unauthorized');
+            response.Content := errorResponse.AsJson;
+            errorResponse.Free();
             exit;
         end;
 
@@ -249,6 +264,8 @@ begin
 end;
 
 procedure THvacApiApplication.OptionsEnumsHandler(request: TRequest; response: TResponse);
+var
+    errorResponse: TJsonObject;
 begin
     Logger.Debug('OPTIONS enums');
     SetCorsHeader(response);
@@ -257,7 +274,9 @@ begin
     if not VerifyApiKey(request) then
     begin
         response.Code := 401;
-        response.Content := GetErrorResponse('Unauthorized.').AsJson;
+        errorResponse := GetErrorResponse('Unauthorized');
+        response.Content := errorResponse.AsJson;
+        errorResponse.Free();
         exit;
     end;
 
