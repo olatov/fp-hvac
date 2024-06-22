@@ -243,20 +243,25 @@ begin
             exit;
         end;
 
-    json := TJsonObject.Create([
-        'mode', specialize EnumToJsonArray<THvacMode>(),
-        'fanSpeed', specialize EnumToJsonArray<TFanSpeed>(),
-        'horizontalFlowMode', specialize EnumToJsonArray<THorizontalFlowMode>(),
-        'verticalFlowMode', specialize EnumToJsonArray<TVerticalFlowMode>(),
-        'temperatureScale', specialize EnumToJsonArray<TTemperatureScale>()
-    ]);
+    try
+        json := TJsonObject.Create([
+            'mode', specialize EnumToJsonArray<THvacMode>(),
+            'fanSpeed', specialize EnumToJsonArray<TFanSpeed>(),
+            'horizontalFlowMode', specialize EnumToJsonArray<THorizontalFlowMode>(),
+            'verticalFlowMode', specialize EnumToJsonArray<TVerticalFlowMode>(),
+            'temperatureScale', specialize EnumToJsonArray<TTemperatureScale>()
+        ]);
 
-    json.CompressedJson := true;
+        json.CompressedJson := true;
 
-    if GetPrettyParam(request) then
-        response.Content := json.FormatJson
-    else
-        response.Content := json.AsJson;
+        if GetPrettyParam(request) then
+            response.Content := json.FormatJson
+        else
+            response.Content := json.AsJson;
+
+    finally
+        json.Free();
+    end;
 
     response.ContentType := JsonMimeType;
 
