@@ -57,7 +57,6 @@ end;
 procedure LoadState();
 var
     options: TJSObject;
-    url: string;
 const
     endpoint = 'state';
 begin
