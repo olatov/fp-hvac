@@ -12,17 +12,15 @@ uses
     Hvac.Models.Core,
     Hvac.Models.Domain,
     Hvac.Web.Core,
-    Hvac.Web.Components.ApiSettingsForm,
-    Hvac.Web.Components.ThemeSwitcher,
+    Hvac.Web.Components.SettingsForm,
     Hvac.Web.Components.Tabs;
 
 type
     TUIState = class
         private
-            FThemeSwitcher: TThemeSwitcher;
             FTabs: TTabs;
             FDocument: TJSDocument;
-            FApiSettingsForm: TApiSettingsForm;
+            FSettingsForm: TSettingsForm;
             FPowerOn: TJSHtmlInputElement;
             FPowerOff: TJSHtmlInputElement;
             FSettingsSection: TJSHtmlDivElement;
@@ -54,14 +52,13 @@ type
             function OnStateChange(AEvent: TEventListenerEvent): boolean;
 
         public
-            property ThemeSwitcher: TThemeSwitcher read FThemeSwitcher write FThemeSwitcher;
             property Tabs: TTabs read FTabs write FTabs;
             property SettingsSection: TJSHtmlDivElement read FSettingsSection write FSettingsSection;
             property MainSection: TJSHtmlDivElement read FMainSection write FMainSection;
             property AboutSection: TJSHtmlDivElement read FAboutSection write FAboutSection;
             property ErrorSection: TJSHtmlDivElement read FErrorSection write FErrorSection;
             property Controls: TJSHtmlDivElement read FControls write FControls;
-            property ApiSettingsForm: TApiSettingsForm read FApiSettingsForm write FApiSettingsForm;
+            property SettingsForm: TSettingsForm read FSettingsForm write FSettingsForm;
             property PowerOn: TJSHtmlInputElement read FPowerOn write FPowerOn;
             property PowerOff: TJSHtmlInputElement read FPowerOff write FPowerOff;
             property IndoorTemperature: TJSHtmlDivElement read FIndoorTemperature write FIndoorTemperature;
@@ -108,27 +105,20 @@ begin
     BindControls();
     InitControls();
     HookControlEventListeners();
-
-    ThemeSwitcher := TThemeSwitcher.Create(
-        Document.GetElementById('themeSwitcher'),
-        Document.QuerySelector('html'),
-        TJSHTMLTemplateElement(Document.GetElementById('themeSwitcherTemplate')),
-        TJSHtmlTemplateElement(Document.GetElementById('themeSwitcherItemTemplate')),
-        Window.LocalStorage);
 end;
 
 procedure TUIState.BindControls();
 begin
-    SettingsSection := TJSHtmlDivElement(Document.GetElementById('apiSettingsSection'));
+    SettingsSection := TJSHtmlDivElement(Document.GetElementById('settingsSection'));
     MainSection := TJSHtmlDivElement(Document.GetElementById('mainSection'));
     AboutSection := TJSHtmlDivElement(Document.GetElementById('aboutSection'));
     ErrorSection := TJSHtmlDivElement(Document.GetElementById('errorSection'));
     Controls := TJSHtmlDivElement(Document.GetElementById('controls'));
     ProgressBar := TJSHtmlDivElement(Document.GetElementById('progressBar'));
 
-    ApiSettingsForm := TApiSettingsForm.Create(
+    SettingsForm := TSettingsForm.Create(
         SettingsSection,
-        TJSHtmlTemplateElement(Document.GetElementById('apiSettingsFormTemplate')),
+        TJSHtmlTemplateElement(Document.GetElementById('settingsFormTemplate')),
         Window.LocalStorage);
 
     PowerOn := TJSHtmlInputElement(Document.GetElementById('powerOn'));

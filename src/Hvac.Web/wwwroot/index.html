@@ -14,14 +14,16 @@
         <div class="level">
             <div class="level-left">
                 <div class="level-item m-4 is-hidden-mobile">
-                    <h1 class="title">HVAC</h1>
+                    <h1 class="title has-text-weight-bold">HVAC</h1>
                 </div>
             </div>
 
             <div id="tabs" class="level-item m-4"></div>
 
             <div class="level-right">
-                <div id="themeSwitcher" class="level-item m-4 is-hidden-mobile"></div>
+                <div class="level-item m-4 is-hidden-mobile">
+                    &nbsp;
+                </div>
             </div>
         </div>
 
@@ -179,7 +181,7 @@
             </div>
         </div>
 
-        <div id="apiSettingsSection" class="section is-hidden"></div>
+        <div id="settingsSection" class="section is-hidden"></div>
 
         <div id="aboutSection" class="section is-hidden">
             <div class="box">
@@ -235,8 +237,15 @@
 
 <!-- Settings form -->
 
-<template id="apiSettingsFormTemplate">
+<template id="settingsFormTemplate">
     <fieldset class="box">
+        <div>
+            <label class="label">Theme</label>
+            <div class="control my-4">
+                <div class="theme-switcher"></div>
+            </div>
+        </div>
+
         <div class="field">
             <label class="label">API URL</label>
             <div class="control">

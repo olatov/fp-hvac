@@ -12,9 +12,10 @@ type
         tabAbout
     );
 
-    TApiSettings = record
-        Url: string;
-        Key: string;
+    TSettings = record
+        Theme: string;
+        ApiUrl: string;
+        ApiKey: string;
     end;
 
     TOption = record

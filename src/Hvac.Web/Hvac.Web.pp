@@ -16,7 +16,7 @@ uses
     Hvac.Web.UI;
 
 var
-    ApiSettings: TApiSettings;
+    Settings: TSettings;
     UI: TUIState;
 
 procedure OnError(AData: JSValue);
@@ -65,9 +65,9 @@ begin
     UI.ShowProgressBar();
     UI.HideErrorMessage();
 
-    options := new(['headers', new(['X-Api-Key', ApiSettings.Key])]);
+    options := new(['headers', new(['X-Api-Key', Settings.ApiKey])]);
 
-    Window.Fetch(Format('%s/%s', [ApiSettings.Url, endpoint]), options)._then(
+    Window.Fetch(Format('%s/%s', [Settings.ApiUrl, endpoint]), options)._then(
         function(response: JSValue): JSValue begin OnStateLoaded(TJSResponse(response)) end,
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end
     ).catch(
@@ -90,12 +90,12 @@ begin
     options := new([
         'method', 'PUT',
         'headers', new([
-            'X-Api-Key', ApiSettings.Key,
+            'X-Api-Key', Settings.ApiKey,
             'Content-Type', 'application/json']),
         'body', THvacStateDto.FromHvacState(state).ToJson()
     ]);
 
-    Window.Fetch(Format('%s/%s', [ApiSettings.Url, endpoint]), options)._then(
+    Window.Fetch(Format('%s/%s', [Settings.ApiUrl, endpoint]), options)._then(
         function(response: JSValue): JSValue begin OnStateLoaded(TJSResponse(response)) end,
         function(response: JSValue): JSValue begin OnError(TJSResponse(response)) end
     ).catch(
@@ -112,23 +112,23 @@ end;
 begin
     UI := TUIState.Create(Document);
 
-    UI.ThemeSwitcher.AddTheme('☀️', 'theme-light');
-    UI.ThemeSwitcher.AddTheme('🌙', 'theme-dark');
+    UI.SettingsForm.ThemeSwitcher.AddTheme('☀️', 'theme-light');
+    UI.SettingsForm.ThemeSwitcher.AddTheme('🌙', 'theme-dark');
 
     UI.ButtonReload.AddEventListener('click', @LoadState);
     UI.OnChange := @OnStateChange;
 
-    UI.ApiSettingsForm.OnSave :=
+    UI.SettingsForm.OnSave :=
         function(AEvent: TEventListenerEvent): boolean
         begin
-            ApiSettings := UI.ApiSettingsForm.ApiSettings;
+            Settings := UI.SettingsForm.Settings;
             UI.ChangeTab(tabControls);
             LoadState();
         end;
 
-    ApiSettings := UI.ApiSettingsForm.ApiSettings;
+    Settings := UI.SettingsForm.Settings;
 
-    if (Assigned(ApiSettings.Url)) and (not string.IsNullOrWhiteSpace(ApiSettings.Url)) then
+    if (Assigned(Settings.ApiUrl)) and (not string.IsNullOrWhiteSpace(Settings.ApiUrl)) then
         LoadState()
     else
         UI.ChangeTab(tabSettings);
