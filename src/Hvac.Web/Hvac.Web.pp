@@ -114,7 +114,7 @@ begin
     UI.SettingsForm.ThemeSwitcher.AddTheme('☀️', 'theme-light');
     UI.SettingsForm.ThemeSwitcher.AddTheme('🌙', 'theme-dark');
 
-    UI.ButtonReload.AddEventListener('click', @LoadState);
+    UI.ReloadButton.AddEventListener('click', @LoadState);
     UI.OnChange := @OnStateChange;
 
     UI.SettingsForm.OnSave :=

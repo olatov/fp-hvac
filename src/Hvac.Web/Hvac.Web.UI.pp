@@ -18,11 +18,11 @@ uses
 type
     TUIState = class
         private
+            FPower: boolean;
             FTabs: TTabs;
             FDocument: TJSDocument;
             FSettingsForm: TSettingsForm;
-            FPowerOn: TJSHtmlInputElement;
-            FPowerOff: TJSHtmlInputElement;
+            FPowerButton: TJSHtmlButtonElement;
             FSettingsSection: TJSHtmlDivElement;
             FMainSection: TJSHtmlDivElement;
             FAboutSection: TJSHtmlDivElement;
@@ -42,13 +42,14 @@ type
             FDrying: TJSHtmlInputElement;
             FSleep: TJSHtmlInputElement;
             FEco: TJSHtmlInputElement;
-            FButtonReload: TJSHtmlButtonElement;
+            FReloadButton: TJSHtmlButtonElement;
             FPorgressBar: TJSHtmlDivElement;
             FOnChange: TJSEventHandler;
             property Document: TJSDocument read FDocument write FDocument;
             procedure BindControls();
             procedure InitControls();
             procedure HookControlEventListeners();
+            procedure UpdatePowerButton();            
             function OnStateChange(AEvent: TEventListenerEvent): boolean;
 
         public
@@ -59,8 +60,7 @@ type
             property ErrorSection: TJSHtmlDivElement read FErrorSection write FErrorSection;
             property Controls: TJSHtmlDivElement read FControls write FControls;
             property SettingsForm: TSettingsForm read FSettingsForm write FSettingsForm;
-            property PowerOn: TJSHtmlInputElement read FPowerOn write FPowerOn;
-            property PowerOff: TJSHtmlInputElement read FPowerOff write FPowerOff;
+            property PowerButton: TJSHtmlButtonElement read FPowerButton write FPowerButton;
             property IndoorTemperature: TJSHtmlDivElement read FIndoorTemperature write FIndoorTemperature;
             property DesiredTemperature: TJSHtmlInputElement read FDesiredTemperature write FDesiredTemperature;
             property Mode: TJSHtmlSelectElement read FMode write FMode;
@@ -75,7 +75,7 @@ type
             property Drying: TJSHtmlInputElement read FDrying write FDrying;
             property Sleep: TJSHtmlInputElement read FSleep write FSleep;
             property Eco: TJSHtmlInputElement read FEco write FEco;
-            property ButtonReload: TJSHtmlButtonElement read FButtonReload write FButtonReload;
+            property ReloadButton: TJSHtmlButtonElement read FReloadButton write FReloadButton;
             property ProgressBar: TJSHtmlDivElement read FPorgressBar write FPorgressBar;
             property OnChange: TJSEventHandler read FOnChange write FOnChange;
             procedure ChangeTab(ATabIndex: TUITabIndex);
@@ -116,13 +116,14 @@ begin
     Controls := TJSHtmlDivElement(Document.GetElementById('controls'));
     ProgressBar := TJSHtmlDivElement(Document.GetElementById('progressBar'));
 
+    ReloadButton := TJSHtmlButtonElement(Document.GetElementById('btnReload'));
+    PowerButton := TJSHtmlButtonElement(Document.GetElementById('btnPower'));    
+
     SettingsForm := TSettingsForm.Create(
         SettingsSection,
         TJSHtmlTemplateElement(Document.GetElementById('settingsFormTemplate')),
         Window.LocalStorage);
 
-    PowerOn := TJSHtmlInputElement(Document.GetElementById('powerOn'));
-    PowerOff := TJSHtmlInputElement(Document.GetElementById('powerOff'));
     IndoorTemperature := TJSHtmlDivElement(Document.GetElementById('indoorTemperature'));
     Mode := TJSHtmlSelectElement(Document.GetElementById('mode'));
     TemperatureScale := TJSHtmlSelectElement(Document.GetElementById('temperatureScale'));
@@ -137,8 +138,6 @@ begin
     Drying := TJSHtmlInputElement(Document.GetElementById('drying'));
     Sleep := TJSHtmlInputElement(Document.GetElementById('sleep'));
     Eco := TJSHtmlInputElement(Document.GetElementById('eco'));
-
-    ButtonReload := TJSHtmlButtonElement(Document.GetElementById('btnReload'));
 
     Tabs := TTabs.Create(
         Document.GetElementById('tabs'),
@@ -238,12 +237,20 @@ begin
                 TJSElement(ANode).AddEventListener('change', @OnStateChange);
         end
     );
+
+    PowerButton.AddEventListener('click',
+        function(AEvent: TJSMouseEvent): boolean
+          begin
+              FPower := not FPower;
+              UpdatePowerButton();
+              OnStateChange(AEvent);
+          end);
 end;
 
 procedure TUIState.SetState(AState: THvacState);
 begin
-    PowerOn.Checked := AState.Power;
-    PowerOff.Checked := not AState.Power;
+    FPower := AState.Power;
+    UpdatePowerButton();
     
     IndoorTemperature.InnerText := Format(
         '%.1f %s',
@@ -271,7 +278,7 @@ end;
 
 function TUIState.GetState(): THvacState;
 begin
-    result.Power := PowerOn.Checked;
+    result.Power := FPower;
     result.DesiredTemperature := StrToInt(DesiredTemperature.Value);
 
     result.Mode := THvacMode(
@@ -355,6 +362,16 @@ end;
 procedure TUIState.ChangeTab(ATabIndex: TUITabIndex);
 begin
     Tabs.ChangeTab(Ord(ATabIndex));
+end;
+
+procedure TUIState.UpdatePowerButton();
+const
+    CssClass = 'is-link';
+begin
+    if FPower then
+        PowerButton.ClassList.Add(CssClass)
+    else
+        PowerButton.ClassList.Remove(CssClass);
 end;
 
 end.
