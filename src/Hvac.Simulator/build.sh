@@ -8,7 +8,6 @@ fi
 
 fpc \
     $FPC_OPTIONS \
-    -Fu"../Hvac.Units/" \
-    -Fu"../Hvac.Units/Models/" \
+    -Fu"../*/*" \
     -o"out/Hvac.Simulator" \
     Hvac.Simulator.pp
