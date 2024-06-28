@@ -8,7 +8,6 @@ fi
 
 fpc \
     $FPC_OPTIONS \
-    -Fu"/home/oleg/code/pas/fp-hvac/src/Hvac.Units/Commands/GetEnums" \
     -Fu"../Hvac.Units/" \
     -Fu"../Hvac.Units/*" \
     -Fu"../Hvac.Units/Models/" \
