@@ -1,4 +1,12 @@
-FROM freepascal/fpc:3.2.2-full AS build
+#FROM freepascal/fpc:3.2.2-buster-full AS build
+
+#Note: current FPC image is too old, using this instead
+FROM debian:bookworm-slim AS build
+RUN apt-get update \
+    && apt-get install -y fpc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/
+
 WORKDIR /build
 RUN mkdir src
 COPY src/Hvac.Units ./src/Hvac.Units
