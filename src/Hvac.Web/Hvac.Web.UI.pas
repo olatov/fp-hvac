@@ -9,7 +9,7 @@ interface
 uses
     Classes,
     Web,
-    Hvac.Models.Core,
+    Hvac.Types.Core,
     Hvac.Models.Domain,
     Hvac.Web.Core,
     Hvac.Web.Components.SettingsForm,

@@ -11,5 +11,5 @@ pas2js \
     -Fu"../*/*" \
     -o"wwwroot/assets/js/hvac.web.js" \
     $PAS2JS_OPTIONS \
-    Hvac.Web.pp
+    Hvac.Web.lpr
     

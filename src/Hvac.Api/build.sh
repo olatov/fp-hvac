@@ -8,6 +8,12 @@ fi
 
 fpc \
     $FPC_OPTIONS \
-    -Fu"../*/*" \
+    -Fu"/home/oleg/code/pas/fp-hvac/src/Hvac.Units/Commands/GetEnums" \
+    -Fu"../Hvac.Units/" \
+    -Fu"../Hvac.Units/*" \
+    -Fu"../Hvac.Units/Models/" \
+    -Fu"../Hvac.Units/Models/*" \
+    -Fu"../Hvac.Units/Commands/" \
+    -Fu"../Hvac.Units/Commands/*" \
     -o"out/Hvac.Api" \
-    Hvac.Api.pp
+    Hvac.Api.lpr

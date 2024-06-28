@@ -6,7 +6,7 @@ unit Hvac.Models.Domain;
 interface
 
 uses 
-    Hvac.Models.Core;
+    Hvac.Types.Core;
 
 type
     THvacState = record

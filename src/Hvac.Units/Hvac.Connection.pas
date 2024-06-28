@@ -2,29 +2,32 @@ unit Hvac.Connection;
 
 {$mode objfpc}
 {$modeswitch AdvancedRecords}
+{$LongStrings on}
 
 interface
 
 uses
     Classes,
     EventLog,
+    FPJson,
     SSockets,
     Hvac.Models.Protocol,
     Hvac.Models.Domain;
 
-type 
+type
     THvacConnection = class(TComponent)
         private 
-            FPort: integer;
-            FHost: ansistring;
+            FPort: word;
+            FHost: string;
             FLogger: TEventLog;
             property Logger: TEventLog read FLogger;
             function SendPacket(ASocket: TInetSocket; APacket: THvacPacket): THvacPacket;
 
         public
             constructor Create(
-                AConnectionString: ansistring;
                 ALogger: TEventLog;
+                AHost: string = 'localhost';
+                APort: word = 12416;
                 AOwner: TComponent = Nil);
             function SetState(AState: THvacState): THvacState;
             function GetState(): THvacState;
@@ -38,27 +41,16 @@ uses
 { THvacConnection }
 
 constructor THvacConnection.Create(
-    AConnectionString: ansistring;
     ALogger: TEventLog;
+    AHost: string = 'localhost';
+    APort: word = 12416;
     AOwner: TComponent = Nil);
-var 
-    elems: TStringArray;
 begin
     inherited Create(AOwner);
 
     FLogger := ALogger;
-    try
-        elems := AConnectionString.Split(':');
-        if Length(elems) <> 2 then
-            raise Exception.Create('Invalid connection string');
-
-        FHost := elems[0];
-        FPort := StrToInt(elems[1]);
-
-    except
-        raise Exception.Create('Invalid connection string');
-
-    end;
+    FHost := AHost;
+    FPort := APort;
 end;
 
 function THvacConnection.SendPacket(ASocket: TInetSocket; APacket: THvacPacket): THvacPacket;
@@ -95,6 +87,7 @@ begin
     Logger.Debug('GetState');
     
     try
+        logger.Debug('Connecting to Hvac on %s:%d...', [FHost, FPort]);
         socket := TInetSocket.Create(FHost, FPort, 2000);
 
         request := THvacPacket.Create(HvacGetStateCommand);

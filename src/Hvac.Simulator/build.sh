@@ -10,4 +10,4 @@ fpc \
     $FPC_OPTIONS \
     -Fu"../*/*" \
     -o"out/Hvac.Simulator" \
-    Hvac.Simulator.pp
+    Hvac.Simulator.lpr

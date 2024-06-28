@@ -8,7 +8,7 @@ uses
     Sockets,
     Ssockets,
     EventLog,
-    Hvac.Models.Core,
+    Hvac.Types,
     Hvac.Models.Domain,
     Hvac.Models.Protocol;
 

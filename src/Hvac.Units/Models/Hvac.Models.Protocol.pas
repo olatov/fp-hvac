@@ -84,7 +84,7 @@ implementation
 uses 
     SysUtils,
     TypInfo,
-    Hvac.Models.Core,
+    Hvac.Types.Core,
     Hvac.Utils.Temperature;
 
 { THvacConfig }

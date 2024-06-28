@@ -6,7 +6,7 @@ unit Hvac.Models.Dto;
 interface
 
 uses 
-    Hvac.Models.Core,
+    Hvac.Types.Core,
     Hvac.Models.Domain;
 
 type

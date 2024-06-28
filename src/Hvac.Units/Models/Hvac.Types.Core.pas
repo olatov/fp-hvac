@@ -1,10 +1,11 @@
-unit Hvac.Models.Core;
+unit Hvac.Types.Core;
+
+{$mode objfpc}
 
 interface
 
-const 
-    HvacGetStateCommand = $A0;
-    HvacSetStateCommand = $01;
+uses
+    SysUtils;
 
 type 
     THvacMode =  (
