@@ -1,4 +1,4 @@
-FROM freepascal/fpc:3.2.2-full AS build
+FROM freepascal/fpc:3.2.2-buster-full AS build
 WORKDIR /build
 RUN mkdir src
 COPY src/Hvac.Units ./src/Hvac.Units
