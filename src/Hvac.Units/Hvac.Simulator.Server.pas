@@ -4,15 +4,15 @@ unit Hvac.Simulator.Server;
 
 interface
 
-uses 
+uses
     Sockets,
     Ssockets,
     EventLog,
-    Hvac.Types,
+    Hvac.Types.Core,
     Hvac.Models.Domain,
     Hvac.Models.Protocol;
 
-type 
+type
     THvacSimulator = class(TInetServer)
         private
             FLogger: TEventLog;
@@ -20,10 +20,10 @@ type
             FState: THvacState;
             property State: THvacState read FState write FState;
             property Logger: TEventLog read FLogger;
-            procedure PrintState();            
+            procedure PrintState();
             procedure ClientHandler(Sender: TObject; Data: TSocketStream);
 
-        public 
+        public
             constructor Create(
                 const AHost: string;
                 const APort: word;
@@ -33,7 +33,7 @@ type
 
 implementation
 
-uses 
+uses
     SysUtils,
     StrUtils,
     TypInfo;
@@ -59,7 +59,7 @@ begin
 end;
 
 procedure THvacSimulator.ClientHandler(Sender: TObject; Data: TSocketStream);
-var 
+var
     request, response: THvacPacket;
     hvacConfig: THvacConfig;
     count: integer;
@@ -80,7 +80,7 @@ begin
                 Exit();
             end;
 
-        case request.Command of 
+        case request.Command of
 
             HvacGetStateCommand:
                                    begin

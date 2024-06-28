@@ -9,8 +9,6 @@ fi
 fpc \
     $FPC_OPTIONS \
     -Fu"../Hvac.Units/" \
-    -Fu"../Hvac.Units/*" \
     -Fu"../Hvac.Units/Models/" \
-    -Fu"../Hvac.Units/Models/*" \
     -o"out/Hvac.Simulator" \
     Hvac.Simulator.lpr
