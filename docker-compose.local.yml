@@ -1,8 +1,0 @@
-services:
-
-  api:
-    environment:
-      - HVAC_CONNECTION_STRING=192.168.1.108:12416
-      - LISTEN_PORT=9090
-      - API_KEY=abcdef      
-      - ALLOW_ORIGIN=http://localhost:5034
