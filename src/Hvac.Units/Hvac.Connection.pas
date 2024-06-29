@@ -1,8 +1,8 @@
 unit Hvac.Connection;
 
 {$mode objfpc}
-{$modeswitch AdvancedRecords}
 {$LongStrings on}
+{$modeswitch AdvancedRecords}
 
 interface
 

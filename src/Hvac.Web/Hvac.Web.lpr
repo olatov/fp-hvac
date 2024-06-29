@@ -1,8 +1,8 @@
 program Hvac.Web;
 
 {$mode objfpc}
-{$modeswitch AdvancedRecords}
 {$LongStrings on}
+{$modeswitch AdvancedRecords}
 
 uses
     JS,

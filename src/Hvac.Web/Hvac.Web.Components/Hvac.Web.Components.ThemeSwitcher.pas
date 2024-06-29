@@ -18,27 +18,27 @@ type
     TUIThemeArray = array of TUITheme;
 
     TThemeSwitcher = class(TUIComponent)
-        private
-            FSwitcherElement: TJSHtmlElement;
-            FTheme: TUITheme;
-            FThemes: TUIThemeArray;
-            FTargetElement: TJSElement;
-            FItemTemplate: TJSHtmlTemplateElement;
-            FStorage: TJSStorage;
-            procedure ChangeTheme(AIndex: integer);
+    private
+        FSwitcherElement: TJSHtmlElement;
+        FTheme: TUITheme;
+        FThemes: TUIThemeArray;
+        FTargetElement: TJSElement;
+        FItemTemplate: TJSHtmlTemplateElement;
+        FStorage: TJSStorage;
+        procedure ChangeTheme(AIndex: integer);
 
-        public
-            property SwitcherElement: TJSHtmlElement read FSwitcherElement;
-            property Themes: TUIThemeArray read FThemes;
-            property Theme: TUITheme read FTheme;
-            procedure AddTheme(ATheme: TUITheme); overload;
-            procedure AddTheme(ATitle: string; AClassName: string); overload;
-            constructor Create(
-                AContainer: TJSElement;
-                ATargetElement: TJSElement;
-                ATemplate: TJSHtmlTemplateElement;
-                AItemTemplate: TJSHtmlTemplateElement;
-                AStorage: TJSStorage = nil);
+    public
+        property SwitcherElement: TJSHtmlElement read FSwitcherElement;
+        property Themes: TUIThemeArray read FThemes;
+        property Theme: TUITheme read FTheme;
+        procedure AddTheme(ATheme: TUITheme); overload;
+        procedure AddTheme(ATitle: string; AClassName: string); overload;
+        constructor Create(
+            AContainer: TJSElement;
+            ATargetElement: TJSElement;
+            ATemplate: TJSHtmlTemplateElement;
+            AItemTemplate: TJSHtmlTemplateElement;
+            AStorage: TJSStorage = nil);
     end;
 
 implementation
@@ -77,7 +77,9 @@ begin
 
     link := TJSHtmlElement(item.QuerySelector('a'));
     link.SetAttribute('data-theme-index', IntToStr(High(FThemes)));
-    link.OnClick := function(AEvent: TJSMouseEvent): boolean
+
+    link.OnClick := 
+        function(AEvent: TJSMouseEvent): boolean
         var
             themeIndex: integer;
         begin

@@ -14,21 +14,21 @@ uses
 
 type
     THvacSimulator = class(TInetServer)
-        private
-            FLogger: TEventLog;
-            FIndoorTemperature: double;
-            FState: THvacState;
-            property State: THvacState read FState write FState;
-            property Logger: TEventLog read FLogger;
-            procedure PrintState();
-            procedure ClientHandler(Sender: TObject; Data: TSocketStream);
+    private
+        FLogger: TEventLog;
+        FIndoorTemperature: double;
+        FState: THvacState;
+        property State: THvacState read FState write FState;
+        property Logger: TEventLog read FLogger;
+        procedure PrintState();
+        procedure ClientHandler(Sender: TObject; Data: TSocketStream);
 
-        public
-            constructor Create(
-                const AHost: string;
-                const APort: word;
-                ALogger: TEventLog;
-                AHandler : TSocketHandler = Nil);
+    public
+        constructor Create(
+            const AHost: string;
+            const APort: word;
+            ALogger: TEventLog;
+            AHandler : TSocketHandler = nil);
     end;
 
 implementation
@@ -69,48 +69,46 @@ begin
     try
         count := Data.Read(request, SizeOf(request));
         if (count <> SizeOf(request)) then
-            begin
-                Logger.Error('Error reading');
-                Exit();
-            end;
-
-        if (not request.VerifyChecksum()) then
-            begin
-                Logger.Error('Invalid checksum');
-                Exit();
-            end;
-
-        case request.Command of
-
-            HvacGetStateCommand:
-                                   begin
-                                       response := THvacPacket.Create(HvacGetStateCommand);
-                                       hvacConfig := THvacConfig.FromHvacState(State);
-                                       hvacConfig.IndoorTemperatureIntegral := Random(10) + 18;
-                                       hvacConfig.IndoorTemperatureFractional := Random(2) * 5;
-                                       FIndoorTemperature := hvacConfig.IndoorTemperatureIntegral + (
-                                                             hvacConfig.IndoorTemperatureFractional / 10.0);
-                                       response.Config := hvacConfig;
-                                       response.RefreshChecksum();
-                                       count := Data.Write(response, SizeOf(response));
-                                   end;
-
-            HvacSetStateCommand:
-                                   begin
-                                       State := request.Config.ToHvacState();
-                                       Sleep(500);
-
-                                       hvacConfig := THvacConfig.FromHvacState(State);
-                                       hvacConfig.IndoorTemperatureIntegral := Random(10) + 18;
-                                       hvacConfig.IndoorTemperatureFractional := Random(2) * 5;
-                                       FIndoorTemperature := hvacConfig.IndoorTemperatureIntegral + (
-                                                             hvacConfig.IndoorTemperatureFractional / 10.0);
-                                       response.Config := hvacConfig;
-                                       response.RefreshChecksum();
-                                       count := Data.Write(response, SizeOf(response));
-                                   end;
+        begin
+            Logger.Error('Error reading');
+            exit;
         end;
 
+        if (not request.VerifyChecksum()) then
+        begin
+            Logger.Error('Invalid checksum');
+            exit;
+        end;
+
+        case request.Command of
+            HvacGetStateCommand:
+                begin
+                    response := THvacPacket.Create(HvacGetStateCommand);
+                    hvacConfig := THvacConfig.FromHvacState(State);
+                    hvacConfig.IndoorTemperatureIntegral := Random(10) + 18;
+                    hvacConfig.IndoorTemperatureFractional := Random(2) * 5;
+                    FIndoorTemperature := hvacConfig.IndoorTemperatureIntegral + (
+                                          hvacConfig.IndoorTemperatureFractional / 10.0);
+                    response.Config := hvacConfig;
+                    response.RefreshChecksum();
+                    count := Data.Write(response, SizeOf(response));
+                end;
+
+            HvacSetStateCommand:
+                begin
+                    State := request.Config.ToHvacState();
+                    Sleep(500);
+
+                    hvacConfig := THvacConfig.FromHvacState(State);
+                    hvacConfig.IndoorTemperatureIntegral := Random(10) + 18;
+                    hvacConfig.IndoorTemperatureFractional := Random(2) * 5;
+                    FIndoorTemperature := hvacConfig.IndoorTemperatureIntegral + (
+                                          hvacConfig.IndoorTemperatureFractional / 10.0);
+                    response.Config := hvacConfig;
+                    response.RefreshChecksum();
+                    count := Data.Write(response, SizeOf(response));
+                end;
+        end;
         PrintState();
 
     finally
@@ -120,10 +118,10 @@ begin
 end;
 
 constructor THvacSimulator.Create(
-  const AHost: string;
-  const APort: Word;
-  ALogger: TEventLog;
-  AHandler : TSocketHandler = Nil);
+    const AHost: string;
+    const APort: word;
+    ALogger: TEventLog;
+    AHandler : TSocketHandler = nil);
 begin
     inherited Create(AHost, APort, AHAndler);
 

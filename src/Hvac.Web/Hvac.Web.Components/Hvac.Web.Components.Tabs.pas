@@ -18,24 +18,24 @@ type
     TTabArray = array of TTab;
 
     TTabs = class(TUIComponent)
-        protected
-            FTabs: TTabArray;
-            FTab: TTab;
-            FTemplate: TJSHtmlTemplateElement;
-            FItemTemplate: TJSHtmlTemplateElement;
-            FTabsElement: TJSHtmlElement;
+    protected
+        FTabs: TTabArray;
+        FTab: TTab;
+        FTemplate: TJSHtmlTemplateElement;
+        FItemTemplate: TJSHtmlTemplateElement;
+        FTabsElement: TJSHtmlElement;
 
-        public
-            constructor Create(
-                AContainer: TJSElement;
-                ATemplate: TJSHtmlTemplateElement;
-                AItemTemplate: TJSHtmlTemplateElement);
-            property Container: TJSElement read FContainer;
-            property Tabs: TTabArray read FTabs;
-            property Tab: TTab read FTab;
-            procedure ChangeTab(AIndex: integer);
-            procedure AddTab(const ATitle: string; const AElement: TJSElement);
-            procedure AddTab(const ATab: TTab);
+    public
+        constructor Create(
+            AContainer: TJSElement;
+            ATemplate: TJSHtmlTemplateElement;
+            AItemTemplate: TJSHtmlTemplateElement);
+        property Container: TJSElement read FContainer;
+        property Tabs: TTabArray read FTabs;
+        property Tab: TTab read FTab;
+        procedure ChangeTab(AIndex: integer);
+        procedure AddTab(const ATitle: string; const AElement: TJSElement);
+        procedure AddTab(const ATab: TTab);
     end;
 
 implementation
@@ -71,7 +71,9 @@ begin
 
     link := TJSHtmlElement(item.QuerySelector('a'));
     link.SetAttribute('data-tab-index', IntToStr(High(FTabs)));
-    link.OnClick := function(AEvent: TJSMouseEvent): boolean
+
+    link.OnClick :=
+        function(AEvent: TJSMouseEvent): boolean
         var
             tabIndex: integer;
         begin

@@ -1,6 +1,7 @@
 unit Hvac.Web.Core;
 
 {$mode objfpc}
+{$LongStrings on}
 {$modeswitch AdvancedRecords}
 
 interface
@@ -34,4 +35,4 @@ begin
     Text := AText;
 end;
 
-end.TApiSettings
+end.

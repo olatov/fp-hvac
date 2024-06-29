@@ -17,77 +17,77 @@ uses
 
 type
     TUIState = class
-        private
-            FPower: boolean;
-            FTabs: TTabs;
-            FDocument: TJSDocument;
-            FSettingsForm: TSettingsForm;
-            FPowerButton: TJSHtmlButtonElement;
-            FSettingsSection: TJSHtmlDivElement;
-            FMainSection: TJSHtmlDivElement;
-            FAboutSection: TJSHtmlDivElement;
-            FErrorSection: TJSHtmlDivElement;
-            FControls: TJSHtmlDivElement;
-            FIndoorTemperature: TJSHtmlDivElement;
-            FDesiredTemperature: TJSHtmlInputElement;
-            FMode: TJSHtmlSelectElement;
-            FTemperatureScale: TJSHtmlSelectElement;
-            FFanSpeed: TJSHtmlSelectElement;
-            FHorizontalFlow: TJSHtmlSelectElement;
-            FVerticalFlow: TJSHtmlSelectElement;
-            FTurbo: TJSHtmlInputElement;
-            FQuiet: TJSHtmlInputElement;
-            FDisplay: TJSHtmlInputElement;
-            FHealth: TJSHtmlInputElement;
-            FDrying: TJSHtmlInputElement;
-            FSleep: TJSHtmlInputElement;
-            FEco: TJSHtmlInputElement;
-            FReloadButton: TJSHtmlButtonElement;
-            FPorgressBar: TJSHtmlDivElement;
-            FOnChange: TJSEventHandler;
-            property Document: TJSDocument read FDocument write FDocument;
-            procedure BindControls();
-            procedure InitControls();
-            procedure HookControlEventListeners();
-            procedure UpdatePowerButton();            
-            function OnStateChange(AEvent: TEventListenerEvent): boolean;
+    private
+        FPower: boolean;
+        FTabs: TTabs;
+        FDocument: TJSDocument;
+        FSettingsForm: TSettingsForm;
+        FPowerButton: TJSHtmlButtonElement;
+        FSettingsSection: TJSHtmlDivElement;
+        FMainSection: TJSHtmlDivElement;
+        FAboutSection: TJSHtmlDivElement;
+        FErrorSection: TJSHtmlDivElement;
+        FControls: TJSHtmlDivElement;
+        FIndoorTemperature: TJSHtmlDivElement;
+        FDesiredTemperature: TJSHtmlInputElement;
+        FMode: TJSHtmlSelectElement;
+        FTemperatureScale: TJSHtmlSelectElement;
+        FFanSpeed: TJSHtmlSelectElement;
+        FHorizontalFlow: TJSHtmlSelectElement;
+        FVerticalFlow: TJSHtmlSelectElement;
+        FTurbo: TJSHtmlInputElement;
+        FQuiet: TJSHtmlInputElement;
+        FDisplay: TJSHtmlInputElement;
+        FHealth: TJSHtmlInputElement;
+        FDrying: TJSHtmlInputElement;
+        FSleep: TJSHtmlInputElement;
+        FEco: TJSHtmlInputElement;
+        FReloadButton: TJSHtmlButtonElement;
+        FPorgressBar: TJSHtmlDivElement;
+        FOnChange: TJSEventHandler;
+        property Document: TJSDocument read FDocument write FDocument;
+        procedure BindControls();
+        procedure InitControls();
+        procedure HookControlEventListeners();
+        procedure UpdatePowerButton();            
+        function OnStateChange(AEvent: TEventListenerEvent): boolean;
 
-        public
-            property Tabs: TTabs read FTabs write FTabs;
-            property SettingsSection: TJSHtmlDivElement read FSettingsSection write FSettingsSection;
-            property MainSection: TJSHtmlDivElement read FMainSection write FMainSection;
-            property AboutSection: TJSHtmlDivElement read FAboutSection write FAboutSection;
-            property ErrorSection: TJSHtmlDivElement read FErrorSection write FErrorSection;
-            property Controls: TJSHtmlDivElement read FControls write FControls;
-            property SettingsForm: TSettingsForm read FSettingsForm write FSettingsForm;
-            property PowerButton: TJSHtmlButtonElement read FPowerButton write FPowerButton;
-            property IndoorTemperature: TJSHtmlDivElement read FIndoorTemperature write FIndoorTemperature;
-            property DesiredTemperature: TJSHtmlInputElement read FDesiredTemperature write FDesiredTemperature;
-            property Mode: TJSHtmlSelectElement read FMode write FMode;
-            property TemperatureScale: TJSHtmlSelectElement read FTemperatureScale write FTemperatureScale;
-            property FanSpeed: TJSHtmlSelectElement read FFanSpeed write FFanSpeed;
-            property HorizontalFlow: TJSHtmlSelectElement read FHorizontalFlow write FHorizontalFlow;
-            property VerticalFlow: TJSHtmlSelectElement read FVerticalFlow write FVerticalFlow;
-            property Turbo: TJSHtmlInputElement read FTurbo write FTurbo;
-            property Quiet: TJSHtmlInputElement read FQuiet write FQuiet;
-            property Display: TJSHtmlInputElement read FDisplay write FDisplay;
-            property Health: TJSHtmlInputElement read FHealth write FHealth;
-            property Drying: TJSHtmlInputElement read FDrying write FDrying;
-            property Sleep: TJSHtmlInputElement read FSleep write FSleep;
-            property Eco: TJSHtmlInputElement read FEco write FEco;
-            property ReloadButton: TJSHtmlButtonElement read FReloadButton write FReloadButton;
-            property ProgressBar: TJSHtmlDivElement read FPorgressBar write FPorgressBar;
-            property OnChange: TJSEventHandler read FOnChange write FOnChange;
-            procedure ChangeTab(ATabIndex: TUITabIndex);
-            procedure SetState(AState: THvacState);
-            function GetState(): THvacState;
-            procedure EnableControls();
-            procedure DisableControls();
-            procedure ShowProgressBar();
-            procedure HideProgressBar();
-            procedure ShowErrorMessage(AError: string);
-            procedure HideErrorMessage();
-            constructor Create(ADocument: TJSDocument);
+    public
+        property Tabs: TTabs read FTabs write FTabs;
+        property SettingsSection: TJSHtmlDivElement read FSettingsSection write FSettingsSection;
+        property MainSection: TJSHtmlDivElement read FMainSection write FMainSection;
+        property AboutSection: TJSHtmlDivElement read FAboutSection write FAboutSection;
+        property ErrorSection: TJSHtmlDivElement read FErrorSection write FErrorSection;
+        property Controls: TJSHtmlDivElement read FControls write FControls;
+        property SettingsForm: TSettingsForm read FSettingsForm write FSettingsForm;
+        property PowerButton: TJSHtmlButtonElement read FPowerButton write FPowerButton;
+        property IndoorTemperature: TJSHtmlDivElement read FIndoorTemperature write FIndoorTemperature;
+        property DesiredTemperature: TJSHtmlInputElement read FDesiredTemperature write FDesiredTemperature;
+        property Mode: TJSHtmlSelectElement read FMode write FMode;
+        property TemperatureScale: TJSHtmlSelectElement read FTemperatureScale write FTemperatureScale;
+        property FanSpeed: TJSHtmlSelectElement read FFanSpeed write FFanSpeed;
+        property HorizontalFlow: TJSHtmlSelectElement read FHorizontalFlow write FHorizontalFlow;
+        property VerticalFlow: TJSHtmlSelectElement read FVerticalFlow write FVerticalFlow;
+        property Turbo: TJSHtmlInputElement read FTurbo write FTurbo;
+        property Quiet: TJSHtmlInputElement read FQuiet write FQuiet;
+        property Display: TJSHtmlInputElement read FDisplay write FDisplay;
+        property Health: TJSHtmlInputElement read FHealth write FHealth;
+        property Drying: TJSHtmlInputElement read FDrying write FDrying;
+        property Sleep: TJSHtmlInputElement read FSleep write FSleep;
+        property Eco: TJSHtmlInputElement read FEco write FEco;
+        property ReloadButton: TJSHtmlButtonElement read FReloadButton write FReloadButton;
+        property ProgressBar: TJSHtmlDivElement read FPorgressBar write FPorgressBar;
+        property OnChange: TJSEventHandler read FOnChange write FOnChange;
+        procedure ChangeTab(ATabIndex: TUITabIndex);
+        procedure SetState(AState: THvacState);
+        function GetState(): THvacState;
+        procedure EnableControls();
+        procedure DisableControls();
+        procedure ShowProgressBar();
+        procedure HideProgressBar();
+        procedure ShowErrorMessage(AError: string);
+        procedure HideErrorMessage();
+        constructor Create(ADocument: TJSDocument);
     end;
 
 implementation
@@ -240,11 +240,11 @@ begin
 
     PowerButton.AddEventListener('click',
         function(AEvent: TJSMouseEvent): boolean
-          begin
-              FPower := not FPower;
-              UpdatePowerButton();
-              OnStateChange(AEvent);
-          end);
+        begin
+            FPower := not FPower;
+            UpdatePowerButton();
+            OnStateChange(AEvent);
+        end);
 end;
 
 procedure TUIState.SetState(AState: THvacState);

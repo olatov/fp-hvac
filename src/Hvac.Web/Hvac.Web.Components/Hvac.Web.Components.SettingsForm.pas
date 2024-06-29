@@ -13,28 +13,28 @@ uses
 
 type
     TSettingsForm = class(TUIComponent)
-        private
-            FElement: TJSHtmlElement;
-            FApiUrlInput: TJSHTMLInputElement;
-            FApiKeyInput: TJSHTMLInputElement;
-            FSaveButton: TJSHTMLButtonElement;
-            FStorage: TJSStorage;
-            FThemeSwitcher: TThemeSwitcher;
-            FOnSave: TJSEventHandler;
-            function GetSettings(): TSettings;
+    private
+        FElement: TJSHtmlElement;
+        FApiUrlInput: TJSHTMLInputElement;
+        FApiKeyInput: TJSHTMLInputElement;
+        FSaveButton: TJSHTMLButtonElement;
+        FStorage: TJSStorage;
+        FThemeSwitcher: TThemeSwitcher;
+        FOnSave: TJSEventHandler;
+        function GetSettings(): TSettings;
 
-        public
-            property Element: TJSHtmlElement read FElement;
-            property ApiUrlInput: TJSHTMLInputElement read FApiUrlInput;
-            property ApiKeyInput: TJSHTMLInputElement read FApiKeyInput;
-            property ThemeSwitcher: TThemeSwitcher read FThemeSwitcher;
-            property SaveButton: TJSHTMLButtonElement read FSaveButton;
-            property OnSave: TJSEventHandler read FOnSave write FOnSave;
-            property Settings: TSettings read GetSettings;
-            constructor Create(
-                AContainer: TJSElement;
-                ATemplate: TJSHtmlTemplateElement;
-                AStorage: TJSStorage = nil);
+    public
+        property Element: TJSHtmlElement read FElement;
+        property ApiUrlInput: TJSHTMLInputElement read FApiUrlInput;
+        property ApiKeyInput: TJSHTMLInputElement read FApiKeyInput;
+        property ThemeSwitcher: TThemeSwitcher read FThemeSwitcher;
+        property SaveButton: TJSHTMLButtonElement read FSaveButton;
+        property OnSave: TJSEventHandler read FOnSave write FOnSave;
+        property Settings: TSettings read GetSettings;
+        constructor Create(
+            AContainer: TJSElement;
+            ATemplate: TJSHtmlTemplateElement;
+            AStorage: TJSStorage = nil);
     end;
 
 implementation
