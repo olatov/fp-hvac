@@ -2,7 +2,7 @@
 
 ## Description
 
-An API and a mobile-friendly web app for controlling a Cooper & Hunter Nordic Premium White series HVAC unit
+An API and a mobile-friendly web app for controlling a Cooper & Hunter Nordic Premium series HVAC unit
 from a web browser. Implemented in Object Pascal (using the Free Pascal Compiler, and Pas2JS).
 
 ## Compatible units
