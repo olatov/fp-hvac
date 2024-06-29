@@ -9,3 +9,6 @@ hvac.web.js.map
 
 # Local Netlify folder
 .netlify
+
+fly.toml
+netlify.toml
