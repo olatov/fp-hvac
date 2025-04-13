@@ -1,15 +1,15 @@
 unit Hvac.Types.Generic;
 
-{$mode objfpc}
+{$mode objfpc}{$H+}
 
 interface
 
 uses
-    SysUtils,
-    Fgl;
+  SysUtils,
+  Generics.Collections;
 
 type 
-    TStringArrayMap = specialize TFpGMap<string, TStringArray>;
+  TStringArrayMap = specialize TDictionary<String, TStringArray>;
 
 implementation
 

@@ -1,107 +1,98 @@
 unit Hvac.Api.Application;
 
-{$mode objfpc}
-{$LongStrings on}
+{$mode objfpc}{$H+}
 
 interface
 
 uses
-    Classes,
-    HttpDefs,
-    HttpRoute,
-    FPJson,
-    FPHttpApp,
-    CustHttpApp,
-    EventLog,
-    Hvac.Cqrs,
-    Hvac.Commands.Dispatcher;
+  Classes,
+  HttpDefs,
+  HttpRoute,
+  FPJson,
+  FPHttpApp,
+  CustHttpApp,
+  EventLog,
+  Hvac.Types.Generic,
+  Hvac.Cqrs,
+  Hvac.Cqrs.Dispatcher;
 
 type
-    THvacApiApplication = class(THttpApplication)
-    const JsonMimeType = 'application/json';
-    private
-        FApiKey: string;
-        FAllowOrigin: string;
-        FLogger: TEventLog;
-        FHvacHost: string;
-        FHvacPort: word;
-        FCommandDispatcher: ICommandDispatcher;
-        property Logger: TEventLog read FLogger;
-        property CommandDispatcher: ICommandDispatcher read FCommandDispatcher write FCommandDispatcher;
-        property HvacHost: string read FHvacHost write FHvacHost;
-        property HvacPort: word read FHvacPort write FHvacPort;
-        function GetPrettyParam(request: TRequest):   boolean;
-        procedure GetStateHandler(request: TRequest; response: TResponse);
-        procedure OptionsStateHandler(request: TRequest; response: TResponse);   
-        procedure PutStateHandler(request: TRequest; response: TResponse);                     
-        procedure GetEnumsHandler(request: TRequest; response: TResponse);
-        procedure OptionsEnumsHandler(request: TRequest; response: TResponse);
-        function VerifyApiKey(request: TRequest): boolean;
-        procedure RegisterRoutes(AHttpRouter: THttpRouter);
-        procedure SetCorsHeader(var AResponse: TResponse);
-        function GetErrorResponse(message: string): TJsonObject;
+
+{ THvacApiApplication }
+
+THvacApiApplication = class(THttpApplication)
+  const JsonMimeType = 'application/json';
+  private
+    FApiKey: String;
+    FAllowOrigin: String;
+    FLogger: TEventLog;
+    FHvacHost: String;
+    FHvacPort: Word;
+    FCommandDispatcher: ICommandDispatcher;
+    property Logger: TEventLog read FLogger;
+    property CommandDispatcher: ICommandDispatcher read FCommandDispatcher write FCommandDispatcher;
+    property HvacHost: String read FHvacHost write FHvacHost;
+    property HvacPort: Word read FHvacPort write FHvacPort;
+    function GetPrettyParam(ARequest: TRequest): Boolean;
+    procedure AuthInterceptor(ARequest: TRequest; AResponse: TResponse; var AContinue: Boolean);
+    procedure GetStateHandler(ARequest: TRequest; AResponse: TResponse);
+    procedure OptionsStateHandler(ARequest: TRequest; AResponse: TResponse);   
+    procedure PutStateHandler(ARequest: TRequest; AResponse: TResponse);                     
+    procedure GetEnumsHandler(ARequest: TRequest; AResponse: TResponse);
+    procedure OptionsEnumsHandler(ARequest: TRequest; AResponse: TResponse);
+    function VerifyApiKey(ARequest: TRequest): Boolean;
+    procedure RegisterRoutes(AHttpRouter: THttpRouter);
+    procedure SetCorsHeader(var AResponse: TResponse);
+    procedure SendError(AResponse: TResponse; const AMessage: String; Code: LongInt = 500);
 
     public
-        const Version = '1';
-        const DefaultConnectionString = 'localhost:12416';
-        const DefaultPort = 9090;
-        property ApiKey: string read FApiKey write FApiKey;
-        property AllowOrigin: string read FAllowOrigin write FAllowOrigin;
-        procedure Initialize(); override;
-        procedure Run();
-        constructor Create(
-            ALogger: TEventLog;
-            AHttpRouter: THttpRouter;
-            APort: word = DefaultPort;
-            AHvacConnectionString: string = DefaultConnectionString;
-            AOwner: TComponent = Nil);
-        destructor Destroy(); override;
+      const Version = '1';
+      const DefaultConnectionString = 'localhost:12416';
+      const DefaultPort = 9090;
+      property ApiKey: String read FApiKey write FApiKey;
+      property AllowOrigin: String read FAllowOrigin write FAllowOrigin;
+      procedure Initialize; override;
+      procedure Run;
+      constructor Create(
+        ALogger: TEventLog;
+        AHttpRouter: THttpRouter;
+        APort: word = DefaultPort;
+        AHvacConnectionString: String = DefaultConnectionString;
+        AOwner: TComponent = Nil); reintroduce;
+      destructor Destroy; override;
     end;
 
 implementation
 
 uses
-    SysUtils,
-    StrUtils,
-    Hvac.Helpers.Enums,
-    Hvac.Types.Core,
-    Hvac.Models.Domain,
-    Hvac.Models.Dto,
-
-    Hvac.Commands.GetEnums.Query,
-    Hvac.Commands.GetEnums.Result,
-
-    Hvac.Commands.GetState.Query,
-    Hvac.Commands.GetState.Result,
-
-    Hvac.Commands.SetState.Command,
-    Hvac.Commands.SetState.Result;
+  SysUtils,
+  Hvac.Models.Dto,
+  Hvac.Cqrs.Commands.GetEnums,
+  Hvac.Cqrs.Commands.GetState,
+  Hvac.Cqrs.Commands.SetState;
 
 { THvacApiApplication }
 
-constructor THvacApiApplication.Create(
-    ALogger: TEventLog;
-    AHttpRouter: THttpRouter;
-    APort: word = DefaultPort;
-    AHvacConnectionString: string = DefaultConnectionString;
-    AOwner: TComponent = Nil);
+constructor THvacApiApplication.Create(ALogger: TEventLog;
+  AHttpRouter: THttpRouter; APort: word; AHvacConnectionString: String;
+  AOwner: TComponent);
 var
-    elems: array of string;
+  Elems: array of String;
 begin
     inherited Create(AOwner);
     FLogger := ALogger;
     Port := APort;
 
     try
-        elems := AHvacConnectionString.Split(':');
-        if Length(elems) <> 2 then
-            raise Exception.Create('Invalid connection string');
+      Elems := AHvacConnectionString.Split(':');
+      if Length(elems) <> 2 then
+        raise Exception.Create('Invalid connection string');
 
-        HvacHost := elems[0];
-        HvacPort := StrToInt(elems[1]);
+      HvacHost := Elems[0];
+      HvacPort := Elems[1].ToInteger;
 
     except
-        raise Exception.Create('Invalid connection string');
+      raise Exception.Create('Invalid connection string');
 
     end;
 
@@ -109,287 +100,241 @@ begin
     CommandDispatcher := TCommandDispatcher.Create(Logger);
 end;
 
-destructor THvacApiApplication.Destroy();
+destructor THvacApiApplication.Destroy;
 begin
-    Logger.Info('API is shutting down...');
+  Logger.Info('API is shutting down...');
 
-    inherited;
+  inherited;
 end;
 
-procedure THvacApiApplication.Initialize();
+procedure THvacApiApplication.Initialize;
 begin
-    inherited;
+  inherited;
 
-    Logger.Info('Hvac connection configured to %s:%d', [HvacHost, HvacPort]);    
+  Logger.Info('Hvac connection configured to %s:%d', [HvacHost, HvacPort]);    
 
-    if string.IsNullOrWhiteSpace(ApiKey) then
-        Logger.Warning('API key not set!');
+  if ApiKey.IsEmpty then
+    Logger.Warning('API key not set!');
 
-    if not string.IsNullOrWhiteSpace(AllowOrigin) then
-        Logger.Info('Allow origin: %s', [AllowOrigin]);
+  if not AllowOrigin.IsEmpty then
+    Logger.Info('Allow origin: %s', [AllowOrigin]);
 end;
 
-procedure THvacApiApplication.Run();
+procedure THvacApiApplication.Run;
 begin
-    Logger.Info('Starting API, listening port %d', [Port]);
+  Logger.Info('Starting API, listening port %d', [Port]);
 
-    inherited;
+  inherited;
 end;
 
-function THvacApiApplication.GetPrettyParam(request: TRequest):   boolean;
+procedure THvacApiApplication.AuthInterceptor(ARequest: TRequest; AResponse: TResponse; var AContinue: Boolean);
+begin
+  if not VerifyApiKey(ARequest) then
+  begin
+    SendError(AResponse, 'Unauthorized', 401);
+    AContinue := False;
+  end;
+end;
+
+function THvacApiApplication.GetPrettyParam(ARequest: TRequest): Boolean;
 var 
-    prettyParam:   string;
+  PrettyParam: String;
 begin
-    prettyParam := request.QueryFields.Values['pretty'].ToLower();
-    result := (not string.IsNullOrWhiteSpace(prettyParam))
-              and (prettyParam <> '0')
-              and (prettyParam <> 'false');
+  PrettyParam := ARequest.QueryFields.Values['pretty'].ToLower;
+  Result := (not PrettyParam.IsEmpty)
+            and (PrettyParam <> '0')
+            and (PrettyParam <> 'false');
 end;
 
 // GET /state
-procedure THvacApiApplication.GetStateHandler(request: TRequest; response: TResponse);
+procedure THvacApiApplication.GetStateHandler(ARequest: TRequest; AResponse: TResponse);
 var 
-    hvacStateDto: THvacStateDto;
-    errorResponse: TJsonObject;
-    pretty: boolean;
-    cqrsQuery: IGetStateQuery;
-    cqrsResult: IGetStateResult;
+  HvacStateDto: THvacStateDto;
+  Pretty: Boolean;
+  CqrsQuery: IGetStateQuery;
+  CqrsResult: IGetStateResult;
 begin
-    Logger.Debug('GET state');
-    SetCorsHeader(response);
-    response.ContentType := JsonMimeType;
+  Logger.Debug('GET state');
+  SetCorsHeader(AResponse);
+  AResponse.ContentType := JsonMimeType;
 
-    if not VerifyApiKey(request) then
-        begin
-            response.Code := 401;
-            errorResponse := GetErrorResponse('Unauthorized');
-            response.Content := errorResponse.AsJson;
-            errorResponse.Free();
-            exit;
-        end;
+  try
+    CqrsQuery := TGetStateQuery.Create(HvacHost, HvacPort);
+    CqrsResult := CommandDispatcher.Execute(CqrsQuery);
+    if not CqrsResult.Success then
+      raise Exception.Create('Failed to get state');
 
-    try
-        cqrsQuery := TGetStateQuery.Create(HvacHost, HvacPort);
-        cqrsResult := CommandDispatcher.Execute(cqrsQuery);
-        if not cqrsResult.IsSuccess then
-            raise Exception.Create('Failed to get state');
+    HvacStateDto := THvacStateDto.FromHvacState(CqrsResult.Result);
+    Pretty := GetPrettyParam(ARequest);
+    AResponse.Content := HvacStateDto.ToJson(Pretty);
 
-        hvacStateDto := THvacStateDto.FromHvacState(cqrsResult.Result);
-        pretty := GetPrettyParam(request);
-        response.Content := hvacStateDto.ToJson(pretty);
+  except
+    on E: Exception do
+      SendError(AResponse, E.Message);
+  end;
 
-    except
-        on E: Exception do
-        begin
-            errorResponse := GetErrorResponse(E.Message);
-            response.Content := errorResponse.AsJson;
-            errorResponse.Free();
-            response.Code := 500;
-        end;
-    end;
-
-    Logger.Debug('Status %d', [response.Code]);
+  Logger.Debug('Status %d', [AResponse.Code]);
 end;
 
 // OPTIONS /state
-procedure THvacApiApplication.OptionsStateHandler(request: TRequest; response: TResponse);
+procedure THvacApiApplication.OptionsStateHandler(ARequest: TRequest; AResponse: TResponse);
 begin
-    Logger.Debug('OPTIONS /state');
-    SetCorsHeader(response);
-    Response.SetFieldByName('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
-    Response.SetFieldByName('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key');
-    response.Code := 204;
-    Logger.Debug('Status %d', [response.Code]);
+  Logger.Debug('OPTIONS /state');
+  SetCorsHeader(AResponse);
+  AResponse.SetFieldByName('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
+  AResponse.SetFieldByName('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key');
+  AResponse.Code := 204;
+  Logger.Debug('Status %d', [AResponse.Code]);
 end;
 
 // PUT /state
-procedure THvacApiApplication.PutStateHandler(request: TRequest; response: TResponse);
+procedure THvacApiApplication.PutStateHandler(ARequest: TRequest; AResponse: TResponse);
 var 
-    hvacStateDto: THvacStateDto;
-    errorResponse: TJsonObject;
-    pretty: boolean;
-    cqrsCommand: ISetStateCommand;
-    cqrsResult: ISetStateResult;
+  HvacStateDto: THvacStateDto;
+  Pretty: Boolean;
+  CqrsCommand: ISetStateCommand;
+  CqrsResult: ISetStateResult;
 begin
-    Logger.Debug('PUT /state');
-    SetCorsHeader(response);
-    response.ContentType := JsonMimeType;
+  Logger.Debug('PUT /state');
+  SetCorsHeader(AResponse);
+  AResponse.ContentType := JsonMimeType;
 
-    if not VerifyApiKey(request) then
+  if not ARequest.ContentType.StartsWith(JsonMimeType, True) then
+  begin
+    SendError(AResponse, 'JSON is required.', 415);
+    Exit;
+  end;
+
+  try
+    HvacStateDto := THvacStateDto.FromJson(ARequest.Content);
+    CqrsCommand := TSetStateCommand.Create(HvacStateDto.ToHvacState, HvacHost, HvacPort);
+    CqrsResult := CommandDispatcher.Execute(cqrsCommand);
+
+    if not CqrsResult.Success then
     begin
-        response.Code := 401;
-        errorResponse := GetErrorResponse('Unauthorized');
-        response.Content := errorResponse.AsJson;
-        errorResponse.Free();
-        Logger.Debug('Status %d', [response.Code]);
-        exit;
+      SendError(AResponse, CqrsResult.Errors[0]);
+      Exit;
     end;
 
-    if not request.ContentType.StartsWith(JsonMimeType) then
-    begin
-        response.Code := 415;
-        errorResponse :=GetErrorResponse('JSON is required.');
-        response.Content := errorResponse.AsJson;
-        errorResponse.Free();
-        Logger.Debug('Status %d', [response.Code]);
-        exit;
-    end;
+    Pretty := GetPrettyParam(ARequest);
+    AResponse.Content := hvacStateDto.FromHvacState(CqrsResult.Result).ToJson(Pretty);
+    AResponse.Code := 200;
 
-    try
-        hvacStateDto := THvacStateDto.FromJson(request.Content);
-        cqrsCommand := TSetStateCommand.Create(hvacStateDto.ToHvacState(), HvacHost, HvacPort);
-        cqrsResult := CommandDispatcher.Execute(cqrsCommand);
+  except
+    on E: Exception do
+      SendError(AResponse, E.Message);
+  end;
 
-        if not cqrsResult.IsSuccess then
-        begin
-            errorResponse := GetErrorResponse(cqrsResult.Errors[0]);
-            response.Content := errorResponse.AsJson;
-            response.Code := 500;
-            FreeAndNil(errorResponse);
-            exit;
-        end;
-
-        pretty := GetPrettyParam(request);
-        response.Content := hvacStateDto.FromHvacState(cqrsResult.Result).ToJson(pretty);
-        response.Code := 200;
-
-    except
-        on E: Exception do
-        begin
-            errorResponse := GetErrorResponse(E.Message);
-            response.Content := errorResponse.AsJson;
-            FreeAndNil(errorResponse);
-            response.ContentType := JsonMimeType;
-            response.Code := 500;
-        end;
-    end;
-
-    Logger.Debug('Status %d', [response.Code]);
+  Logger.Debug('Status %d', [AResponse.Code]);
 end;
 
 // GET /enums
-procedure THvacApiApplication.GetEnumsHandler(request: TRequest; response: TResponse);
+procedure THvacApiApplication.GetEnumsHandler(ARequest: TRequest; AResponse: TResponse);
 var 
-    errorResponse: TJsonObject;
-    cqrsQuery: IGetEnumsQuery;
-    cqrsResult: IGetEnumsResult;
-    json: TJsonObject;
-    jsonArray: TJsonArray;
-    enumValue: string;
-    i: integer;
+  CqrsQuery: IGetEnumsQuery;
+  CqrsResult: IGetEnumsResult;
+  Json: TJsonObject;
+  EnumValue: String;
+  DictItem: TStringArrayMap.TDictionaryPair;
 begin
-    Logger.Debug('GET /enums');
-    SetCorsHeader(response);
-    response.ContentType := JsonMimeType;
+  Logger.Debug('GET /enums');
+  SetCorsHeader(AResponse);
+  AResponse.ContentType := JsonMimeType;
 
-    if not VerifyApiKey(request) then
+  CqrsQuery := TGetEnumsQuery.Create;
+  CqrsResult := CommandDispatcher.Execute(CqrsQuery);
+
+  if not CqrsResult.Success then
+  begin
+    SendError(AResponse, CqrsResult.Errors[0]);
+    Exit;
+  end;
+
+  Json := TJsonObject.Create;
+  try
+    for DictItem in CqrsResult.Result do
     begin
-        response.Code := 401;
-        errorResponse := GetErrorResponse('Unauthorized');
-        response.Content := errorResponse.AsJson;
-        FreeAndNil(errorResponse);
-        exit;
+      Json.Arrays[DictItem.Key] := TJsonArray.Create;
+      for EnumValue in DictItem.Value do
+        Json.Arrays[DictItem.Key].Add(EnumValue);
     end;
 
-    cqrsQuery := TGetEnumsQuery.Create();
-    cqrsResult := CommandDispatcher.Execute(cqrsQuery);
+    Json.CompressedJson := True;
+    if GetPrettyParam(ARequest) then
+      AResponse.Content := Json.FormatJson
+    else
+      AResponse.Content := Json.AsJson;
 
-    if not cqrsResult.IsSuccess then
-    begin
-        errorResponse := GetErrorResponse(cqrsResult.Errors[0]);
-        response.Content := errorResponse.AsJson;
-        response.Code := 500;
-        FreeAndNil(errorResponse);
-        exit;
-    end;
+  finally
+    FreeAndNil(Json);
+  end;
 
-    json := TJsonObject.Create();
-    try
-        for i := 0 to (cqrsResult.Result.Count - 1) do
-        begin
-            jsonArray := TJsonArray.Create();
-            for enumValue in cqrsResult.Result.data[i] do
-                jsonArray.Add(enumValue);
+  AResponse.ContentType := JsonMimeType;
 
-            json.Arrays[cqrsResult.Result.keys[i]] := jsonArray;
-        end;
-
-        json.CompressedJson := true;
-        if GetPrettyParam(request) then
-            response.Content := json.FormatJson
-        else
-            response.Content := json.AsJson;
-
-    finally
-        FreeAndNil(json);
-    end;
-
-    response.ContentType := JsonMimeType;
-
-    Logger.Debug('Status %d', [response.Code]);
+  Logger.Debug('Status %d', [AResponse.Code]);
 end;
 
 // OPTIONS /enums
-procedure THvacApiApplication.OptionsEnumsHandler(request: TRequest; response: TResponse);
-var
-    errorResponse: TJsonObject;
+procedure THvacApiApplication.OptionsEnumsHandler(ARequest: TRequest; AResponse: TResponse);
 begin
-    Logger.Debug('OPTIONS enums');
-    SetCorsHeader(response);
-    response.ContentType := JsonMimeType;
-
-    if not VerifyApiKey(request) then
-    begin
-        response.Code := 401;
-        errorResponse := GetErrorResponse('Unauthorized');
-        response.Content := errorResponse.AsJson;
-        errorResponse.Free();
-        exit;
-    end;
-
-    Response.SetFieldByName('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    Response.SetFieldByName('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key');
-    response.Code := 204;
+  Logger.Debug('OPTIONS /enums');
+  SetCorsHeader(AResponse);
+  AResponse.ContentType := JsonMimeType;
+  AResponse.SetFieldByName('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  AResponse.SetFieldByName('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key');
+  AResponse.Code := 204;
+  Logger.Debug('Status %d', [AResponse.Code]);
 end;
 
 procedure THvacApiApplication.RegisterRoutes(AHttpRouter: THttpRouter);
 var 
-    prefix, path: string;
+  Prefix, Path: String;
 begin
-    prefix := '/api/v' + Version;
+  Prefix := '/api/v' + Version;
 
-    path := prefix + '/state';
-    AHttpRouter.RegisterRoute(path, rmGet, @GetStateHandler);
-    AHttpRouter.RegisterRoute(path, rmPut, @PutStateHandler);
-    AHttpRouter.RegisterRoute(path, rmOptions, @OptionsStateHandler);
+  Path := Prefix + '/state';
+  AHttpRouter.RegisterRoute(Path, rmGet, @GetStateHandler);
+  AHttpRouter.RegisterRoute(Path, rmPut, @PutStateHandler);
+  AHttpRouter.RegisterRoute(Path, rmOptions, @OptionsStateHandler);
 
-    path := prefix + '/enums';
-    AHttpRouter.RegisterRoute(path, rmGet, @GetEnumsHandler);
-    AHttpRouter.RegisterRoute(path, rmOptions, @OptionsEnumsHandler);
+  Path := Prefix + '/enums';
+  AHttpRouter.RegisterRoute(Path, rmGet, @GetEnumsHandler);
+  AHttpRouter.RegisterRoute(Path, rmOptions, @OptionsEnumsHandler);
+
+  AHttpRouter.RegisterInterceptor('auth', @AuthInterceptor);
 end;
 
-function THvacApiApplication.VerifyApiKey(request: TRequest): boolean;
+function THvacApiApplication.VerifyApiKey(ARequest: TRequest): Boolean;
 begin
-    if ApiKey = string.Empty then
-    begin
-        Logger.Warning('API key check skipped because the key is not set!');
-        exit(true);
-    end;
+  if ApiKey.IsEmpty then
+  begin
+    Logger.Warning('API key check skipped because the key is not set!');
+    Exit(True);
+  end;
 
-    result := request.GetFieldByName('X-Api-Key') = ApiKey;
+  Result := ARequest.GetFieldByName('X-Api-Key').Equals(ApiKey);
 end;
 
 procedure THvacApiApplication.SetCorsHeader(var AResponse: TResponse);
 begin
-    if not string.IsNullOrWhiteSpace(AllowOrigin) then
-        AResponse.SetFieldByName('Access-Control-Allow-Origin', AllowOrigin);
+  if AllowOrigin.IsEmpty then Exit;
+  AResponse.SetFieldByName('Access-Control-Allow-Origin', AllowOrigin);
 end;
 
-function THvacApiApplication.GetErrorResponse(message: string): TJsonObject;
+procedure THvacApiApplication.SendError(
+  AResponse: TResponse;
+  const AMessage: String;
+  Code: LongInt = 500);
+var
+  Content: TJsonObject;
 begin
-    result := TJsonObject.Create([
-        'error', StringToJsonString(message)
-    ]);
+  Content := TJsonObject.Create([
+    'error', StringToJsonString(AMessage)
+  ]);
+  AResponse.Content := Content.AsJson;
+  FreeAndNil(Content);
+  AResponse.ContentType := JsonMimeType;
+  AResponse.Code := Code;
 end;
 
 end.

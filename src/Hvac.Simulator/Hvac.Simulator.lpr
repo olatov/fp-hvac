@@ -3,41 +3,39 @@ program Hvac.Simulator;
 {$mode objfpc}{$H+}
 
 uses 
-    SysUtils,
-    StrUtils,
-    EventLog,
-    Hvac.Simulator.Server;
-
-const 
-    Port: word = 12416;
-    Iface: string = 'localhost';
+  SysUtils,
+  StrUtils,
+  EventLog,
+  Hvac.Simulator.Server;
 
 var 
-    Server: THvacSimulator;
-    Value: string;
-    StdOutBuf: array[1..1] of char;
-    StdErrBuf: array[1..1] of char;
-    Logger: TEventLog;
+  Server: THvacSimulator;
+  Value: String;
+  StdOutBuf: Char;
+  StdErrBuf: Char;
+  Logger: TEventLog;
+  Port: Word = 12416;
+  Iface: String = 'localhost';
 
 begin
-    SetTextBuf(StdOut, StdOutBuf, SizeOf(StdOutBuf));
-    SetTextBuf(StdErr, StdErrBuf, SizeOf(StdErrBuf));
+  SetTextBuf(StdOut, StdOutBuf, SizeOf(StdOutBuf));
+  SetTextBuf(StdErr, StdErrBuf, SizeOf(StdErrBuf));
 
-    Logger := TEventLog.Create(nil);
-    Logger.LogType := ltStdOut;
-    Logger.Info('Starting Hvac Simulator');
+  Logger := TEventLog.Create(Nil);
+  Logger.LogType := ltStdOut;
+  Logger.Info('Starting Hvac Simulator');
 
-    Value := GetEnvironmentVariable('LISTEN_IFACE');
-    Iface := IfThen(string.IsNullOrWhiteSpace(Value), Iface, Value);
+  Value := GetEnvironmentVariable('LISTEN_IFACE');
+  Iface := IfThen(Value.IsEmpty, Iface, Value);
 
-    Port := StrToIntDef(GetEnvironmentVariable('LISTEN_PORT'), Port);
+  Port := StrToIntDef(GetEnvironmentVariable('LISTEN_PORT'), Port);
 
-    Server := THvacSimulator.Create(IFace, Port, Logger);
-    try
-        Logger.Info(Format('Listening on %s port %d', [Iface, Port]));
-        Server.StartAccepting();
-    finally
-        Server.Free();
-        Logger.Free();
-    end;
+  Server := THvacSimulator.Create(IFace, Port, Logger);
+  try
+    Logger.Info(Format('Listening on %s port %d', [Iface, Port]));
+    Server.StartAccepting;
+  finally
+    FreeAndNil(Server);
+    FreeAndNil(Logger);
+  end;
 end.

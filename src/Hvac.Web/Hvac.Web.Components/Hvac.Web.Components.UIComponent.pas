@@ -10,12 +10,12 @@ uses
 
 type
     TUIComponent = class
-        protected
-            FContainer: TJSElement;
+    protected
+        FContainer: TJSElement;
 
-        public
-            constructor Create(const AContainer: TJSElement);
-            property Container: TJSElement read FContainer;
+    public
+        constructor Create(const AContainer: TJSElement);
+        property Container: TJSElement read FContainer;
     end;
 
 implementation

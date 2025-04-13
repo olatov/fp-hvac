@@ -4,54 +4,51 @@ unit Hvac.Types.Core;
 
 interface
 
-uses
-    SysUtils;
-
 type 
-    THvacMode =  (
-        mdAuto,
-        mdCool,
-        mdDry,
-        mdFan,
-        mdHeat
-    );
+  THvacMode =  (
+    mdAuto,
+    mdCool,
+    mdDry,
+    mdFan,
+    mdHeat
+  );
 
-    TFanSpeed = (
-        fsAuto,
-        fsLevel1,
-        fsLevel2,
-        fsLevel3,
-        fsLevel4,
-        fsLevel5,
-        fsLevel6
-    );
+  TFanSpeed = (
+    fsAuto,
+    fsLevel1,
+    fsLevel2,
+    fsLevel3,
+    fsLevel4,
+    fsLevel5,
+    fsLevel6
+  );
 
-    THorizontalFlowMode = (
-        hfmStop,
-        hfmSwing,
-        hfmLeft,
-        hfmLeftCenter,
-        hfmCenter,
-        hfmRightCenter,
-        hfmRight,
-        hfmLeftRight,
-        hfmSwingWide
-    );
+  THorizontalFlowMode = (
+    hfmStop,
+    hfmSwing,
+    hfmLeft,
+    hfmLeftCenter,
+    hfmCenter,
+    hfmRightCenter,
+    hfmRight,
+    hfmLeftRight,
+    hfmSwingWide
+  );
 
-    TVerticalFlowMode = (
-        vfmStop,
-        vfmSwing,
-        vfmTop,
-        vfmTopCenter,
-        vfmCenter,
-        vfmBottomCenter,
-        vfmBottom
-    );
+  TVerticalFlowMode = (
+    vfmStop,
+    vfmSwing,
+    vfmTop,
+    vfmTopCenter,
+    vfmCenter,
+    vfmBottomCenter,
+    vfmBottom
+  );
 
-    TTemperatureScale = (
-        tsCelsius,
-        tsFahrenheit
-    );
+  TTemperatureScale = (
+    tsCelsius,
+    tsFahrenheit
+  );
 
 implementation
 

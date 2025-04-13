@@ -9,23 +9,23 @@ uses
     Hvac.Types.Core;
 
 type
-    THvacState = record
-        Power: boolean;
-        Mode: THvacMode;
-        IndoorTemperature: double;
-        DesiredTemperature: integer;
-        Turbo: boolean;
-        FanSpeed: TFanSpeed;
-        HorizontalFlowMode: THorizontalFlowMode;
-        VerticalFlowMode: TVerticalFlowMode;
-        TemperatureScale: TTemperatureScale;
-        Quiet: boolean;
-        Display: boolean;
-        Health: boolean;
-        Drying: boolean;
-        Sleep: boolean;
-        Eco: boolean;
-    end;
+  THvacState = record
+    Power: Boolean;
+    Mode: THvacMode;
+    IndoorTemperature: Double;
+    DesiredTemperature: Integer;
+    Turbo: Boolean;
+    FanSpeed: TFanSpeed;
+    HorizontalFlowMode: THorizontalFlowMode;
+    VerticalFlowMode: TVerticalFlowMode;
+    TemperatureScale: TTemperatureScale;
+    Quiet: Boolean;
+    Display: Boolean;
+    Health: Boolean;
+    Drying: Boolean;
+    Sleep: Boolean;
+    Eco: Boolean;
+  end;
 
 implementation
 

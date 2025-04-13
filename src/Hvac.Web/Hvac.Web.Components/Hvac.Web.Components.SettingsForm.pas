@@ -32,9 +32,9 @@ type
         property OnSave: TJSEventHandler read FOnSave write FOnSave;
         property Settings: TSettings read GetSettings;
         constructor Create(
-            AContainer: TJSElement;
-            ATemplate: TJSHtmlTemplateElement;
-            AStorage: TJSStorage = nil);
+          AContainer: TJSElement;
+          ATemplate: TJSHtmlTemplateElement;
+          AStorage: TJSStorage = Nil);
     end;
 
 implementation

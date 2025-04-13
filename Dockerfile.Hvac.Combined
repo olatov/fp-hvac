@@ -1,0 +1,30 @@
+#FROM freepascal/fpc:3.2.2-buster-full AS build
+
+#Note: current FPC image is too old, using this instead
+FROM debian:bookworm-slim AS build
+RUN apt-get update \
+    && apt-get install -y fpc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/
+
+WORKDIR /build
+RUN mkdir src
+COPY src/Hvac.Units ./src/Hvac.Units
+COPY src/Hvac.Api ./src/Hvac.Api
+COPY src/Hvac.Simulator ./src/Hvac.Simulator
+WORKDIR /build/src/Hvac.Api
+RUN ./build.sh release
+WORKDIR /build/src/Hvac.Simulator
+RUN ./build.sh release
+
+FROM alpine:3.20 AS runtime
+WORKDIR /app
+COPY comb.sh .
+RUN chmod +x /app/comb.sh
+RUN apk add --no-cache libc6-compat
+RUN adduser -D web
+USER web
+COPY --from=build /build/src/Hvac.Api/out/Hvac.Api .
+COPY --from=build /build/src/Hvac.Simulator/out/Hvac.Simulator .
+EXPOSE 9090
+ENTRYPOINT ["/bin/sh", "/app/comb.sh"]

@@ -6,202 +6,202 @@ unit Hvac.Models.Protocol;
 interface
 
 uses 
-    Hvac.Models.Domain;
+  Hvac.Models.Domain;
 
 const 
-    HvacGetStateCommand = $A0;
-    HvacSetStateCommand = $01;
+  HvacGetStateCommand = $A0;
+  HvacSetStateCommand = $01;
 
 type 
-    THvacConfig = bitpacked record
-        // Byte 1
-        Mode: 0..%111;
-        Power: boolean;
-        FanSpeed: 0..%111;
-        Turbo: boolean;
+  THvacConfig = bitpacked record
+    // Byte 1
+    Mode: 0..%111;
+    Power: Boolean;
+    FanSpeed: 0..%111;
+    Turbo: Boolean;
 
-        // Byte 2
-        DesiredTemperature: 0..%11111;
-        TemperatureScale: boolean;
-        Quiet: boolean;
-        Unknown1: boolean;
+    // Byte 2
+    DesiredTemperature: 0..%11111;
+    TemperatureScale: Boolean;
+    Quiet: Boolean;
+    Unknown1: Boolean;
 
-        // Byte 3
-        VerticalFlowMode: 0..%1111;
-        HorizontalFlowMode: 0..%1111;
+    // Byte 3
+    VerticalFlowMode: 0..%1111;
+    HorizontalFlowMode: 0..%1111;
 
-        // Byte 4
-        Eco: boolean;
-        Sleep: boolean;
-        Unknown2: 0..%11;
-        Drying: boolean;
-        Timing: boolean;
-        Health: boolean;
-        Display: boolean;
+    // Byte 4
+    Eco: Boolean;
+    Sleep: Boolean;
+    Unknown2: 0..%11;
+    Drying: Boolean;
+    Timing: Boolean;
+    Health: Boolean;
+    Display: Boolean;
 
-        // Byte 5
-        TimerOnHour: 0..%111;
-        TimerOn: boolean;
-        TimerOffHour: 0..%111;
-        TimerOff: boolean;
+    // Byte 5
+    TimerOnHour: 0..%111;
+    TimerOn: Boolean;
+    TimerOffHour: 0..%111;
+    TimerOff: Boolean;
 
-        // Byte 6
-        TimerOnOffMinute: byte;
+    // Byte 6
+    TimerOnOffMinute: Byte;
 
-        // Byte 7
-        TimerUnknown1: byte;
+    // Byte 7
+    TimerUnknown1: Byte;
 
-        // Byte 8
-        TimerUnknown2: byte;
+    // Byte 8
+    TimerUnknown2: Byte;
 
-        // Byte 9
-        IndoorTemperatureIntegral: shortint;
+    // Byte 9
+    IndoorTemperatureIntegral: Int8;
 
-        // Byte 10
-        IndoorTemperatureFractional: byte;
+    // Byte 10
+    IndoorTemperatureFractional: Byte;
 
-        constructor FromHvacState(AState: THvacState);
-        function ToHvacState(): THvacState;
-    end;
+    constructor FromHvacState(const AState: THvacState);
+    function ToHvacState: THvacState;
+  end;
 
-    THvacPacket = record
-        Header: array[1..3] of byte;
-        Command: byte;
-        Unknown1: array[1..3] of byte;
-        FConfig: THvacConfig;
-        Unknown2: array[1..3] of byte;
-        Checksum: byte;
+  THvacPacket = record
+    Header: array[1..3] of Byte;
+    Command: Byte;
+    Unknown1: array[1..3] of Byte;
+    FConfig: THvacConfig;
+    Unknown2: array[1..3] of Byte;
+    Checksum: Byte;
 
-        property Config: THvacConfig read FConfig write FConfig;
-        function GetChecksum(): byte;
-        function VerifyChecksum(): boolean;
-        procedure RefreshChecksum();
-        constructor Create(ACommand: byte);
-    end;
+    property Config: THvacConfig read FConfig write FConfig;
+    function GetChecksum: Byte;
+    function VerifyChecksum: Boolean;
+    procedure RefreshChecksum;
+    constructor Create(const ACommand: Byte);
+  end;
 
 implementation
 
 uses 
-    SysUtils,
-    TypInfo,
-    Hvac.Types.Core,
-    Hvac.Utils.Temperature;
+  SysUtils,
+  StdConvs,
+  TypInfo,
+  Hvac.Types.Core;
 
 { THvacConfig }
 
-constructor THvacConfig.FromHvacState(AState: THvacState);
+constructor THvacConfig.FromHvacState(const AState: THvacState);
 begin
-    Power := AState.Power;
-    Mode := byte(AState.Mode);
-    Turbo := AState.Turbo;
-    FanSpeed := byte(AState.FanSpeed);
+  Power := AState.Power;
+  Mode := Byte(AState.Mode);
+  Turbo := AState.Turbo;
+  FanSpeed := Byte(AState.FanSpeed);
 
-    TemperatureScale := boolean(AState.TemperatureScale);
-    
-    // These are basically read only
-    IndoorTemperatureIntegral := 0;
-    IndoorTemperatureFractional := 0;
-    
-    if AState.DesiredTemperature < 50 then
-        // Celsius
-        DesiredTemperature := AState.DesiredTemperature - 16
-    else
-        // Fahrenheit, need to convert to Celsius
-        DesiredTemperature := Round(FahrenheitToCelsius(AState.DesiredTemperature) - 16);
+  TemperatureScale := Boolean(AState.TemperatureScale);
+  
+  // These are basically read only
+  IndoorTemperatureIntegral := 0;
+  IndoorTemperatureFractional := 0;
+  
+  if AState.DesiredTemperature < 50 then
+    // Celsius
+    DesiredTemperature := AState.DesiredTemperature - 16
+  else
+    // Fahrenheit, need to convert to Celsius
+    DesiredTemperature := Round(FahrenheitToCelsius(AState.DesiredTemperature) - 16);
 
-    HorizontalFlowMode := specialize IFThen<byte>(
-        byte(AState.HorizontalFlowMode) < 7,
-            byte(AState.HorizontalFlowMode),
-            byte(AState.HorizontalFlowMode) + 5);
+  HorizontalFlowMode := specialize IFThen<Byte>(
+    Byte(AState.HorizontalFlowMode) < 7,
+      Byte(AState.HorizontalFlowMode),
+      Byte(AState.HorizontalFlowMode) + 5);
 
-    VerticalFlowMode := byte(AState.VerticalFlowMode);
+  VerticalFlowMode := Byte(AState.VerticalFlowMode);
 
-    Quiet := AState.Quiet;
-    Display := AState.Display;
-    Health := AState.Health;
-    Drying := AState.Drying;
-    self.Sleep := AState.Sleep;
-    Eco := AState.Eco;
+  Quiet := AState.Quiet;
+  Display := AState.Display;
+  Health := AState.Health;
+  Drying := AState.Drying;
+  Self.Sleep := AState.Sleep;
+  Eco := AState.Eco;
 end;
 
-function THvacConfig.ToHvacState(): THvacState;
+function THvacConfig.ToHvacState: THvacState;
 begin
-    result.Power := Power;
-    result.Mode := THvacMode(Mode);
-    result.Turbo := Turbo;
-    result.FanSpeed := TFanSpeed(FanSpeed);
+  Result.Power := Power;
+  Result.Mode := THvacMode(Mode);
+  Result.Turbo := Turbo;
+  Result.FanSpeed := TFanSpeed(FanSpeed);
 
-    result.HorizontalFlowMode := THorizontalFlowMode(
-        specialize IFThen<byte>(
-            HorizontalFlowMode < 12,
-                HorizontalFlowMode,
-                HorizontalFlowMode - 5));
+  Result.HorizontalFlowMode := THorizontalFlowMode(
+    specialize IFThen<Byte>(
+      HorizontalFlowMode < 12,
+        HorizontalFlowMode,
+        HorizontalFlowMode - 5));
 
-    result.VerticalFlowMode := TVerticalFlowMode(VerticalFlowMode);
-    result.TemperatureScale := TTemperatureScale(TemperatureScale);
-    result.Quiet := Quiet;
-    result.Display := Display;
-    result.Health := Health;
-    result.Drying := Drying;
-    result.Sleep := Sleep;
-    result.Eco := Eco;
+  Result.VerticalFlowMode := TVerticalFlowMode(VerticalFlowMode);
+  Result.TemperatureScale := TTemperatureScale(TemperatureScale);
+  Result.Quiet := Quiet;
+  Result.Display := Display;
+  Result.Health := Health;
+  Result.Drying := Drying;
+  Result.Sleep := Sleep;
+  Result.Eco := Eco;
 
-    result.IndoorTemperature := IndoorTemperatureIntegral + (0.1 * IndoorTemperatureFractional);
-    result.DesiredTemperature := DesiredTemperature + 16;
+  Result.IndoorTemperature := IndoorTemperatureIntegral + (0.1 * IndoorTemperatureFractional);
+  Result.DesiredTemperature := DesiredTemperature + 16;
 
-    if result.TemperatureScale = tsFahrenheit then
-    begin
-        result.IndoorTemperature := Round(CelsiusToFahrenheit(result.IndoorTemperature));
-        result.DesiredTemperature := Round(CelsiusToFahrenheit(result.DesiredTemperature));
-    end;
+  if Result.TemperatureScale = tsFahrenheit then
+  begin
+    Result.IndoorTemperature := Round(CelsiusToFahrenheit(Result.IndoorTemperature));
+    Result.DesiredTemperature := Round(CelsiusToFahrenheit(Result.DesiredTemperature));
+  end;
 end;
 
 { THvacPacket }
 
-constructor THvacPacket.Create(ACommand: byte);
+constructor THvacPacket.Create(const ACommand: Byte);
 begin
-    Header[1] := $AA;
-    Header[2] := $AA;
-    Header[3] := $12;
+  Header[1] := $AA;
+  Header[2] := $AA;
+  Header[3] := $12;
 
-    Command := ACommand;
+  Command := ACommand;
 
-    Unknown1[1] := $0A;
-    Unknown1[2] := $0A;
-    Unknown1[3] := $00;
+  Unknown1[1] := $0A;
+  Unknown1[2] := $0A;
+  Unknown1[3] := $00;
 
-    FillByte(FConfig, SizeOf(FConfig), 0);
-    FillByte(Unknown2, SizeOf(Unknown2), 0);
-    FConfig.DesiredTemperature := 3;
+  FillByte(FConfig, SizeOf(FConfig), 0);
+  FillByte(Unknown2, SizeOf(Unknown2), 0);
+  FConfig.DesiredTemperature := 3;
 
-    RefreshChecksum();
+  RefreshChecksum;
 end;
 
-function THvacPacket.GetChecksum(): byte;
+function THvacPacket.GetChecksum: Byte;
 var 
-    item: pbyte;
-    sum: word = 0;
-    i: integer;
+  Item: PByte;
+  Sum: Word = 0;
+  I: Integer;
 begin
-    item := @self;
+  Item := @Self;
 
-    for i := 1 to (SizeOf(self) - 1) do
-    begin
-        Inc(sum, item^);
-        Inc(item);
-    end;
+  for I := 1 to SizeOf(Self) - 1 do
+  begin
+    Inc(Sum, Item^);
+    Inc(Item);
+  end;
 
-    result := Lo(sum);
+  Result := Lo(Sum);
 end;
 
-procedure THvacPacket.RefreshChecksum();
+procedure THvacPacket.RefreshChecksum;
 begin
-    Checksum := GetChecksum();
+  Checksum := GetChecksum;
 end;
 
-function THvacPacket.VerifyChecksum(): boolean;
+function THvacPacket.VerifyChecksum: Boolean;
 begin
-    result := (Checksum = GetChecksum());
+  Result := (Checksum = GetChecksum);
 end;
 
 end.

@@ -4,46 +4,48 @@ unit Hvac.Helpers.Enums;
 {$LongStrings on}
 
 {$ifdef PAS2JS}
-    {$fail 'Incompatible with Pas2JS'}
+  {$fail 'Incompatible with Pas2JS'}
 {$endif}
 
 interface
 
 uses
-    SysUtils,
-    TypInfo,
-    FPJson;
+  SysUtils,
+  FPJson;
 
-generic function EnumToJsonArray<T>(): TJsonArray;
-generic function EnumToStringArray<T>(): TStringArray;
+generic function EnumToJsonArray<T>: TJsonArray;
+generic function EnumToStringArray<T>: TStringArray;
 
 implementation
 
-generic function EnumToJsonArray<T>(): TJsonArray;
+uses
+  TypInfo;
+
+generic function EnumToJsonArray<T>: TJsonArray;
 var 
-    item: T;
-    value: string = '';
+  Item: T;
+  Value: String = '';
 begin
-    result := TJsonArray.Create();
-    for item in T do
-    begin
-        Str(item, value);
-        result.Add(value);
-    end;
+  Result := TJsonArray.Create;
+  for Item in T do
+  begin
+    Str(Item, Value);
+    Result.Add(Value);
+  end;
 end;
 
-generic function EnumToStringArray<T>(): TStringArray;
+generic function EnumToStringArray<T>: TStringArray;
 var 
-    item: T;
-    value: string = '';
+  Item: T;
+  Value: String = '';
 begin
-    SetLength(result, 0);
-    for item in T do
-    begin
-        Str(item, value);
-        SetLength(result, Length(result) + 1);
-        result[High(result)] := value;
-    end;
+  Result := Nil;
+  for Item in T do
+  begin
+    Str(Item, Value);
+    SetLength(Result, Length(Result) + 1);
+    Result[High(Result)] := Value;
+  end;
 end;
 
 end.

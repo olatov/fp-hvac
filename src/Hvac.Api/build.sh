@@ -12,7 +12,7 @@ fpc \
     -Fu"../Hvac.Units/*" \
     -Fu"../Hvac.Units/Models/" \
     -Fu"../Hvac.Units/Models/*" \
-    -Fu"../Hvac.Units/Commands/" \
-    -Fu"../Hvac.Units/Commands/*" \
+    -Fu"../Hvac.Units/Cqrs/" \
+    -Fu"../Hvac.Units/Cqrs/*" \
     -o"out/Hvac.Api" \
     Hvac.Api.lpr

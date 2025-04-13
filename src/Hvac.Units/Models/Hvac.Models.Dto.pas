@@ -6,160 +6,159 @@ unit Hvac.Models.Dto;
 interface
 
 uses 
-    Hvac.Types.Core,
-    Hvac.Models.Domain;
+  Hvac.Types.Core,
+  Hvac.Models.Domain;
 
 type
     THvacStateDto = record
-        Power: boolean;
-        Mode: THvacMode;
-        IndoorTemperature: double;
-        DesiredTemperature: integer;
-        Turbo: boolean;
-        FanSpeed: TFanSpeed;
-        HorizontalFlowMode: THorizontalFlowMode;
-        VerticalFlowMode: TVerticalFlowMode;
-        TemperatureScale: TTemperatureScale;
-        Quiet: boolean;
-        Display: boolean;
-        Health: boolean;
-        Drying: boolean;
-        Sleep: boolean;
-        Eco: boolean;
+      Power: Boolean;
+      Mode: THvacMode;
+      IndoorTemperature: Double;
+      DesiredTemperature: Integer;
+      Turbo: Boolean;
+      FanSpeed: TFanSpeed;
+      HorizontalFlowMode: THorizontalFlowMode;
+      VerticalFlowMode: TVerticalFlowMode;
+      TemperatureScale: TTemperatureScale;
+      Quiet: Boolean;
+      Display: Boolean;
+      Health: Boolean;
+      Drying: Boolean;
+      Sleep: Boolean;
+      Eco: Boolean;
 
-        function ToJson(pretty: boolean = false): string;
-        function ToHvacState(): THvacState;
-        constructor FromJson(content: string);
-        constructor FromHvacState(state: THvacState);
+      function ToJson(APretty: Boolean = false): String;
+      function ToHvacState: THvacState;
+      constructor FromJson(const AContent: String);
+      constructor FromHvacState(const AState: THvacState);
     end;
 
 implementation
 
-uses 
-    FPJson,
-    {$ifndef PAS2JS}
-        JsonParser,
-    {$endif}
-    TypInfo;
+uses
+  SysUtils,
+  FPJson,
+  {$ifndef PAS2JS}
+    JsonParser,
+  {$endif}
+  TypInfo;
 
 { THvacStateDto }
 
-constructor THvacStateDto.FromJson(content: string);
+constructor THvacStateDto.FromJson(const AContent: String);
 var 
-    json: TJsonData;
+  Json: TJsonData;
 begin
-    json := GetJson(content);
+  Json := GetJson(AContent);
+  try
+    Power := json.GetPath('power').AsBoolean;
+    Mode := THvacMode(GetEnumValue(TypeInfo(THvacMode), Json.GetPath('mode').AsString));
+    DesiredTemperature := Json.GetPath('desiredTemperature').AsInteger;
+    IndoorTemperature := Json.GetPath('indoorTemperature').AsFloat;
+    Turbo := Json.GetPath('turbo').AsBoolean;
+    FanSpeed := TFanSpeed(GetEnumValue(TypeInfo(TFanSpeed), Json.GetPath('fanSpeed').AsString));
 
+    HorizontalFlowMode := THorizontalFlowMode(
+        GetEnumValue(TypeInfo(THorizontalFlowMode),
+            json.GetPath('horizontalFlowMode').AsString));
+
+    VerticalFlowMode := TVerticalFlowMode(
+        GetEnumValue(TypeInfo(TVerticalFlowMode),
+            json.GetPath('verticalFlowMode').AsString));
+
+    TemperatureScale := TTemperatureScale(
+        GetEnumValue(TypeInfo(TTemperatureScale),
+                        json.GetPath('temperatureScale').AsString));
+
+    Quiet := Json.GetPath('quiet').AsBoolean;
+    Display := Json.GetPath('display').AsBoolean;
+    Health := Json.GetPath('health').AsBoolean;
+    Drying := Json.GetPath('drying').AsBoolean;
+    Sleep := Json.GetPath('sleep').AsBoolean;
+    Eco := Json.GetPath('eco').AsBoolean;
+
+  finally
+    FreeAndNil(Json);
+
+  end;
+end;
+
+constructor THvacStateDto.FromHvacState(const AState: THvacState);
+begin
+  Power := AState.Power;
+  Mode := AState.Mode;
+  IndoorTemperature := AState.IndoorTemperature;
+  DesiredTemperature := AState.DesiredTemperature;
+  Turbo := AState.Turbo;
+  FanSpeed := AState.FanSpeed;
+  HorizontalFlowMode := AState.HorizontalFlowMode;
+  VerticalFlowMode := AState.VerticalFlowMode;
+  TemperatureScale := AState.TemperatureScale;
+  Quiet := AState.Quiet;
+  Display := AState.Display;
+  Health := AState.Health;
+  Drying := AState.Drying;
+  Sleep := AState.Sleep;
+  Eco := AState.Eco;
+end;
+
+function THvacStateDto.ToHvacState: THvacState;
+begin
+  with Result do
+  begin
+    Power := Self.Power;
+    Mode := Self.Mode;
+    DesiredTemperature := Self.DesiredTemperature;
+    IndoorTemperature := Self.IndoorTemperature;
+    Turbo := Self.Turbo;
+    FanSpeed := Self.FanSpeed;
+    HorizontalFlowMode := Self.HorizontalFlowMode;
+    VerticalFlowMode := Self.VerticalFlowMode;
+    TemperatureScale := Self.TemperatureScale;
+    Quiet := Self.Quiet;
+    Display := Self.Display;
+    Health := Self.Health;
+    Drying := Self.Drying;
+    Sleep := Self.Sleep;
+    Eco := Self.Eco;
+  end;
+end;
+
+function THvacStateDto.ToJson(APretty: Boolean = false): String;
+var 
+  Json:   TJsonObject;
+
+begin
+    Json := TJsonObject.Create;
     try
-        Power := json.GetPath('power').AsBoolean;
-        Mode := THvacMode(GetEnumValue(TypeInfo(THvacMode), json.GetPath('mode').AsString));
-        DesiredTemperature := json.GetPath('desiredTemperature').AsInteger;
-        IndoorTemperature := json.GetPath('indoorTemperature').AsFloat;
-        Turbo := json.GetPath('turbo').AsBoolean;
-        FanSpeed := TFanSpeed(GetEnumValue(TypeInfo(TFanSpeed), json.GetPath('fanSpeed').AsString));
+      with Json do
+      begin
+        Booleans['power'] := Power;
+        Strings['mode'] := GetEnumName(TypeInfo(THvacMode), Ord(Mode));
+        Floats['indoorTemperature'] := IndoorTemperature;
+        Integers['desiredTemperature'] := DesiredTemperature;
+        Booleans['turbo'] := Turbo;
+        Strings['fanSpeed'] := GetEnumName(TypeInfo(TFanSpeed), Ord(FanSpeed));
+        Strings['horizontalFlowMode'] := GetEnumName(TypeInfo(THorizontalFlowMode), Ord(HorizontalFlowMode));
+        Strings['verticalFlowMode'] := GetEnumName(TypeInfo(TVerticalFlowMode), Ord(VerticalFlowMode));
+        Strings['temperatureScale'] := GetEnumName(TypeInfo(TTemperatureScale), Ord(TemperatureScale));
+        Booleans['quiet'] := Quiet;
+        Booleans['display'] := Display;
+        Booleans['health'] := Health;
+        Booleans['drying'] := Drying;
+        Booleans['sleep'] := Sleep;
+        Booleans['eco'] := Eco;
 
-        HorizontalFlowMode := THorizontalFlowMode(
-            GetEnumValue(TypeInfo(THorizontalFlowMode),
-                json.GetPath('horizontalFlowMode').AsString));
+        CompressedJson := True;
+      end;
 
-        VerticalFlowMode := TVerticalFlowMode(
-            GetEnumValue(TypeInfo(TVerticalFlowMode),
-                json.GetPath('verticalFlowMode').AsString));
-
-        TemperatureScale := TTemperatureScale(
-            GetEnumValue(TypeInfo(TTemperatureScale),
-                            json.GetPath('temperatureScale').AsString));
-
-        Quiet := json.GetPath('quiet').AsBoolean;
-        Display := json.GetPath('display').AsBoolean;
-        Health := json.GetPath('health').AsBoolean;
-        Drying := json.GetPath('drying').AsBoolean;
-        Sleep := json.GetPath('sleep').AsBoolean;
-        Eco := json.GetPath('eco').AsBoolean;
+      if APretty then
+        Result := Json.FormatJson
+      else
+        Result := Json.AsJson;
 
     finally
-        json.Free();
-
-    end;
-end;
-
-constructor THvacStateDto.FromHvacState(state: THvacState);
-begin
-    Power := state.Power;
-    Mode := state.Mode;
-    IndoorTemperature := state.IndoorTemperature;
-    DesiredTemperature := state.DesiredTemperature;
-    Turbo := state.Turbo;
-    FanSpeed := state.FanSpeed;
-    HorizontalFlowMode := state.HorizontalFlowMode;
-    VerticalFlowMode := state.VerticalFlowMode;
-    TemperatureScale := state.TemperatureScale;
-    Quiet := state.Quiet;
-    Display := state.Display;
-    Health := state.Health;
-    Drying := state.Drying;
-    Sleep := state.Sleep;
-    Eco := state.Eco;
-end;
-
-function THvacStateDto.ToHvacState(): THvacState;
-begin
-    with result do
-        begin
-            Power := self.Power;
-            Mode := self.Mode;
-            DesiredTemperature := self.DesiredTemperature;
-            IndoorTemperature := self.IndoorTemperature;
-            Turbo := self.Turbo;
-            FanSpeed := self.FanSpeed;
-            HorizontalFlowMode := self.HorizontalFlowMode;
-            VerticalFlowMode := self.VerticalFlowMode;
-            TemperatureScale := self.TemperatureScale;
-            Quiet := self.Quiet;
-            Display := self.Display;
-            Health := self.Health;
-            Drying := self.Drying;
-            Sleep := self.Sleep;
-            Eco := self.Eco;
-        end;
-end;
-
-function THvacStateDto.ToJson(pretty: boolean = false): string;
-var 
-    json:   TJsonObject;
-
-begin
-    json := TJsonObject.Create();
-
-    try
-        with json do
-            begin
-                Booleans['power'] := Power;
-                Strings['mode'] := GetEnumName(TypeInfo(THvacMode), Ord(Mode));
-                Floats['indoorTemperature'] := IndoorTemperature;
-                Integers['desiredTemperature'] := DesiredTemperature;
-                Booleans['turbo'] := Turbo;
-                Strings['fanSpeed'] := GetEnumName(TypeInfo(TFanSpeed), Ord(FanSpeed));
-                Strings['horizontalFlowMode'] := GetEnumName(TypeInfo(THorizontalFlowMode), Ord(HorizontalFlowMode));
-                Strings['verticalFlowMode'] := GetEnumName(TypeInfo(TVerticalFlowMode), Ord(VerticalFlowMode));
-                Strings['temperatureScale'] := GetEnumName(TypeInfo(TTemperatureScale), Ord(TemperatureScale));
-                Booleans['quiet'] := Quiet;
-                Booleans['display'] := Display;
-                Booleans['health'] := Health;
-                Booleans['drying'] := Drying;
-                Booleans['sleep'] := Sleep;
-                Booleans['eco'] := Eco;
-
-                CompressedJson := true;
-            end;
-
-        if pretty then
-            result := json.FormatJson
-        else
-            result := json.AsJson;
-
-    finally
-        json.Free();
+        FreeAndNil(Json);
 
     end;
 end;

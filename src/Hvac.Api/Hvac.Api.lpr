@@ -17,8 +17,7 @@ program Hvac.Api;
 
 uses 
   {$ifdef Unix}
-    cthreads,
-    cmem,
+    CThreads,
     BaseUnix,
   {$endif}
     Classes,
@@ -29,74 +28,73 @@ uses
     Hvac.Api.Application;
 
 const 
-    DefaultPort = 9090;
-    DefaultHvacConnectionString = 'localhost:12416';
+  DefaultPort = 9090;
+  DefaultHvacConnectionString = 'localhost:12416';
 
 var 
-    HvacConnectionString: string;
-    App: THvacApiApplication;
-    Logger: TEventLog;
-    StdOutBuf: array[1..1] of char;
-    StdErrBuf: array[1..1] of char;
+  HvacConnectionString: String;
+  App: THvacApiApplication;
+  Logger: TEventLog;
+  StdOutBuf: Char = #0;
+  StdErrBuf: Char = #0;
 
-procedure SignalHandler(signal: cint); cdecl;
+procedure SignalHandler(ASignal: CInt); cdecl;
 begin
-    if Assigned(App) then
-        App.Terminate();
+  if not Assigned(App) then Exit;
+  App.Terminate;
 end;
   
-procedure SetupSignalHandlers(const ASignals: array of cint);
+procedure SetupSignalHandlers(const ASignals: array of CInt);
 var
-    sigAction: PSigActionRec;
-    signal: cint;
+  SigAction: PSigActionRec;
+  Signal: CInt;
 begin
-    New(sigAction);
-    sigAction^.sa_handler := SigActionHandler(@SignalHandler);
-    FillByte(sigAction^.sa_mask, SizeOf(sigAction^.sa_mask), 0);
-    sigAction^.sa_flags := 0;
+  New(SigAction);
+  SigAction^.sa_handler := SigActionHandler(@SignalHandler);
+  FillByte(SigAction^.sa_mask, SizeOf(SigAction^.sa_mask), 0);
+  SigAction^.sa_flags := 0;
 
-    for signal in ASignals do
-        FpSigAction(signal, sigAction, nil);
+  for Signal in ASignals do
+    FpSigAction(Signal, SigAction, Nil);
 
-    Dispose(sigAction);
+  FreeMemAndNil(SigAction);
 end;
 
 begin
-    SetTextBuf(StdOut, StdOutBuf, SizeOf(StdOutBuf));
-    SetTextBuf(StdErr, StdErrBuf, SizeOf(StdErrBuf));
+  SetTextBuf(StdOut, StdOutBuf, SizeOf(StdOutBuf));
+  SetTextBuf(StdErr, StdErrBuf, SizeOf(StdErrBuf));
 
-    Logger := TEventLog.Create(nil);
-    Logger.LogType := ltStdOut;
+  Logger := TEventLog.Create(Nil);
+  Logger.LogType := ltStdOut;
 
-    HvacConnectionString := GetEnvironmentVariable('HVAC_CONNECTION_STRING');
-    HvacConnectionString := IfThen(
-        not string.IsNullOrWhiteSpace(HvacConnectionString),
-        HvacConnectionString,
-        DefaultHvacConnectionString);
+  HvacConnectionString := GetEnvironmentVariable('HVAC_CONNECTION_STRING');
+  HvacConnectionString := IfThen(
+    not HvacConnectionString.IsEmpty,
+      HvacConnectionString,
+      DefaultHvacConnectionString);
 
-    App := THvacApiApplication.Create(
-        Logger,
-        HttpRouter(),
-        StrToIntDef(GetEnvironmentVariable('LISTEN_PORT'), DefaultPort),
-        HvacConnectionString);
+  App := THvacApiApplication.Create(
+    Logger,
+    HttpRouter,
+    StrToIntDef(GetEnvironmentVariable('LISTEN_PORT'), DefaultPort),
+    HvacConnectionString);
 
-    App.ApiKey := GetEnvironmentVariable('API_KEY');
-    App.AllowOrigin := GetEnvironmentVariable('ALLOW_ORIGIN');
+  App.ApiKey := GetEnvironmentVariable('API_KEY');
+  App.AllowOrigin := GetEnvironmentVariable('ALLOW_ORIGIN');
 
-    try
-        App.Threaded := true;
-        App.AcceptIdleTimeout := 5000;
-        App.Initialize();
+  try
+    App.Threaded := True;
+    App.AcceptIdleTimeout := 5000;
+    App.Initialize;
 
-        {$ifdef Unix}
-            SetupSignalHandlers([SigInt, SigTerm]);
-        {$endif}
+    {$ifdef Unix}
+      SetupSignalHandlers([SigInt, SigTerm]);
+    {$endif}
 
-        App.Run();
+    App.Run;
 
-    finally
-        App.Free();
-        Logger.Free();
-
-    end;
+  finally
+    FreeAndNil(App);
+    FreeAndNil(Logger);
+  end;
 end.
