@@ -129,6 +129,8 @@ end;
 
 procedure THvacApiApplication.AuthInterceptor(ARequest: TRequest; AResponse: TResponse; var AContinue: Boolean);
 begin
+  if ARequest.Method.Equals('OPTIONS', True) then Exit;
+
   if not VerifyApiKey(ARequest) then
   begin
     SendError(AResponse, 'Unauthorized', 401);
