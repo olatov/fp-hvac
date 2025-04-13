@@ -81,9 +81,7 @@ type
 implementation
 
 uses 
-  SysUtils,
-  StdConvs,
-  TypInfo,
+  SysUtils, StdConvs,
   Hvac.Types.Core;
 
 { THvacConfig }

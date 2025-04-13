@@ -6,10 +6,7 @@ unit Hvac.Connection;
 interface
 
 uses
-  Classes,
-  EventLog,
-  FPJson,
-  SSockets,
+  Classes, EventLog, SSockets,
   Hvac.Models.Protocol,
   Hvac.Models.Domain;
 

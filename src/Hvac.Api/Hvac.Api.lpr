@@ -19,7 +19,7 @@ uses
   {$ifdef Unix}
     CThreads, BaseUnix,
   {$endif}
-    Classes, SysUtils, StrUtils,
+    SysUtils, StrUtils,
     HttpRoute, EventLog,
     Hvac.Api.Application;
 

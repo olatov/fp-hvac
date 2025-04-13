@@ -5,9 +5,7 @@ unit Hvac.Cqrs.Dispatcher;
 interface
 
 uses
-  TypInfo,
-  Generics.Collections,
-  EventLog,
+  TypInfo, EventLog,
   Hvac.Cqrs,
   Hvac.Cqrs.Commands.GetEnums,
   Hvac.Cqrs.Commands.GetState,
@@ -30,11 +28,9 @@ type
     FLogger: TEventLog;
   public
     constructor Create(ALogger: TEventLog);
-    destructor Destroy; override;
     function GetLogger: TEventLog;
     procedure SetLogger(AValue: TEventLog);
     property Logger: TEventLog read GetLogger write SetLogger;
-    procedure RegisterHandler(QueryType: TGuid);
     function Execute(const AQuery: IGetEnumsQuery): IGetEnumsResult;
     function Execute(const AQuery: IGetStateQuery): IGetStateResult;
     function Execute(const ACommand: ISetStateCommand): ISetStateResult;

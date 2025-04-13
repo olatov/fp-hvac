@@ -2,7 +2,7 @@
 <CONFIG>
   <ProjectSession>
     <Version Value="12"/>
-    <BuildModes Active="Arm32"/>
+    <BuildModes Active="Default"/>
     <Units>
       <Unit>
         <Filename Value="Hvac.Api.lpr"/>
@@ -27,8 +27,9 @@
       </Unit>
       <Unit>
         <Filename Value="../Hvac.Units/Cqrs/Hvac.Cqrs.Dispatcher.pas"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="7"/>
+        <CursorPos X="3" Y="8"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit>
@@ -56,9 +57,7 @@
       </Unit>
       <Unit>
         <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="165"/>
         <CursorPos X="33" Y="178"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>

@@ -5,8 +5,6 @@ unit Hvac.Cqrs.Dispatcher;
 interface
 
 uses
-  TypInfo,
-  Generics.Collections,
   EventLog,
   Hvac.Cqrs,
   Hvac.Cqrs.Commands.GetEnums,

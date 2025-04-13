@@ -5,9 +5,7 @@ unit Hvac.Simulator.Server;
 interface
 
 uses
-  Sockets,
-  Ssockets,
-  EventLog,
+  Sockets, Ssockets, EventLog,
   Hvac.Types.Core,
   Hvac.Models.Domain,
   Hvac.Models.Protocol;
@@ -34,11 +32,9 @@ type
 implementation
 
 uses
-  SysUtils,
-  StrUtils,
-  TypInfo;
+  SysUtils, StrUtils, TypInfo;
 
-procedure THvacSimulator.PrintState();
+procedure THvacSimulator.PrintState;
 begin
   Logger.Info('[%s]', [DateTimeToStr(Now)]);
   Logger.Info('%12s | %s', ['Power', IfThen(State.Power, 'On', 'Off')]);
