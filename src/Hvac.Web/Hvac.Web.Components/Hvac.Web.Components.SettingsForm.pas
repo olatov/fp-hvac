@@ -84,10 +84,10 @@ begin
         end;
 end;
 
-function TSettingsForm.GetSettings(): TSettings;
+function TSettingsForm.GetSettings: TSettings;
 begin
-    result.ApiUrl := FApiUrlInput.Value;
-    result.ApiKey := FApiKeyInput.Value;
+  Result.ApiUrl := FApiUrlInput.Value;
+  Result.ApiKey := FApiKeyInput.Value;
 end;
 
 end.

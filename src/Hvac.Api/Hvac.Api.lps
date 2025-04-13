@@ -7,16 +7,15 @@
       <Unit>
         <Filename Value="Hvac.Api.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="58"/>
-        <CursorPos X="78" Y="65"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="10"/>
+        <CursorPos X="10" Y="19"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="128"/>
         <CursorPos X="30" Y="132"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>

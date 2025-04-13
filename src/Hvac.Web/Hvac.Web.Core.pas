@@ -1,38 +1,33 @@
 unit Hvac.Web.Core;
 
-{$mode objfpc}
-{$LongStrings on}
+{$mode objfpc}{$H+}
 {$modeswitch AdvancedRecords}
 
 interface
 
 type
-    TUITabIndex = (
-        tabControls,
-        tabSettings,
-        tabAbout
-    );
+  TUITabIndex = (tabControls, tabSettings, tabAbout);
 
-    TSettings = record
-        Theme: string;
-        ApiUrl: string;
-        ApiKey: string;
-    end;
+  TSettings = record
+    Theme: String;
+    ApiUrl: String;
+    ApiKey: String;
+  end;
 
-    TOption = record
-        Value: string;
-        Text: string;
-        constructor Create(AValue: string; AText: string);
-    end;
+  TOption = record
+    Value: String;
+    Text: String;
+    constructor Create(AValue, AText: String);
+  end;
 
 implementation
 
 { TOption }
 
-constructor TOption.Create(AValue: string; AText: string);
+constructor TOption.Create(AValue, AText: String);
 begin
-    Value := AValue;
-    Text := AText;
+  Value := AValue;
+  Text := AText;
 end;
 
 end.

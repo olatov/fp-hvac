@@ -2,189 +2,186 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hvac app</title>
-    <link rel="stylesheet" href="assets/css/site.css">
-    <script src="assets/js/hvac.web.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hvac app</title>
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/hvac.web.js"></script>
 </head>
 
 <body>
-    <main class="container is-max-desktop">
-        <div class="level">
-            <div class="level-left">
-                <div class="level-item m-4 is-hidden-mobile">
-                    <h1 class="title has-text-weight-bold">HVAC</h1>
-                </div>
-            </div>
+  <main class="container is-max-desktop">
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item m-4 is-hidden-mobile">
+          <h1 class="title has-text-weight-bold">HVAC</h1>
+        </div>
+      </div>
 
-            <div id="tabs" class="level-item m-4"></div>
+      <div id="tabs" class="level-item m-4"></div>
 
-            <div class="level-right">
-                <div class="level-item m-4 is-hidden-mobile">
-                    &nbsp;
-                </div>
-            </div>
+      <div class="level-right">
+        <div class="level-item m-4 is-hidden-mobile">
+          &nbsp;
+        </div>
+      </div>
+    </div>
+
+    <div id="mainSection" class="section is-hidden">
+      <div id="errorSection" class="section is-hidden">
+        <div class="is-flex is-flex-direction-row is-justify-content-center">
+          <div id="errorMessage" class="message is-danger errorMessage" style="width: fit-content;">
+            <div class="message-header">Error</div>
+            <div class="message-body"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="controls" class="box">
+        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly my-4">
+          <div class="has-text-centered">
+            <p class="label">Power</p>
+            <button id="btnPower" class="button is-size-4">⏻</button>
+          </div>
+
+          <div class="has-text-centered">
+            <span class="label">Actual temp</span>
+            <span class="is-size-3" id="indoorTemperature">--</span>
+          </div>
+
+          <div class="has-text-centered">
+            <span class="label">Refresh</span>
+            <button id="btnReload" class="button is-secondary is-size-4">⟳</button>
+          </div>
         </div>
 
-        <div id="mainSection" class="section is-hidden">
-            <div id="errorSection" class="section is-hidden">
-                <div class="is-flex is-flex-direction-row is-justify-content-center">
-                    <div id="errorMessage" class="message is-danger errorMessage" style="width: fit-content;">
-                        <div class="message-header">Error</div>
-                        <div class="message-body"></div>
-                    </div>
-                </div>
+        <hr />
+
+        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly mb-2">
+          <div class="field">
+            <label for="mode" class="label">Mode</label>
+            <div class="select is-size-5">
+              <select id="mode">
+              </select>
             </div>
+          </div>
 
-            <div id="controls" class="box">
-                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly my-4">
-                    <div class="has-text-centered">
-                        <p class="label">Power</p>
-                        <button id="btnPower" class="button is-size-4">⏻</button>
-                    </div>                    
+          <div class="field">
+            <label for="desiredTemperature" class="label">Set temp</label>
+            <input id="desiredTemperature" class="input is-size-5 input-desired-temperature" type="number"
+              placeholder="Temp." />
+          </div>
 
-                    <div class="has-text-centered">
-                        <span class="label">Actual temp</span>
-                        <span class="is-size-3" id="indoorTemperature">--</span>
-                    </div>
-
-                    <div class="has-text-centered">
-                        <span class="label">Refresh</span>
-                        <button id="btnReload" class="button is-secondary is-size-4">⟳</button>
-                    </div>
-                </div>
-
-                <hr />
-
-                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly mb-2">
-                    <div class="field">
-                        <label for="mode" class="label">Mode</label>
-                        <div class="select is-size-5">
-                            <select id="mode">
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label for="desiredTemperature" class="label">Set temp</label>
-                        <input
-                            id="desiredTemperature"
-                            class="input is-size-5 input-desired-temperature"
-                            type="number"
-                            placeholder="Temp." />
-                    </div>
-
-                    <div class="field">
-                        <label for="temperatureScale" class="label">Scale</label>
-                        <div class="select is-size-5">
-                            <select id="temperatureScale">
-                            </select>
-                        </div>
-                        </label>
-                    </div>
-                </div>
-
-                <hr />
-
-                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly my-2">
-                    <div class="field">
-                        <label for="fanSpeed" class="label">Fan speed</label>
-                        <div class="select">
-                            <select id="fanSpeed">
-                            </select>
-                        </div>
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label for="horizontalFlow" class="label">Horiz. flow</label>
-                        <div class="select">
-                            <select id="horizontalFlow">
-                            </select>
-                        </div>
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label for="verticalFlow" class="label">Vert. flow</label>
-                        <div class="select">
-                            <select id="verticalFlow">
-                            </select>
-                        </div>
-                        </label>
-                    </div>
-                </div>
-
-                <hr />
-
-                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly mt-2">
-                    <div class="field">
-                        <label class="checkbox is-size-5 m-2">
-                            <input id="turbo" type="checkbox" />
-                            Turbo
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label class="checkbox is-size-5 m-2">
-                            <input id="quiet" type="checkbox" />
-                            Quiet
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label class="checkbox is-size-5 m-2">
-                            <input id="display" type="checkbox" />
-                            Display
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label class="checkbox is-size-5 m-2">
-                            <input id="health" type="checkbox" />
-                            Health
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label class="checkbox is-size-5 m-2">
-                            <input id="drying" type="checkbox" />
-                            Drying
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label class="checkbox is-size-5 m-2">
-                            <input id="sleep" type="checkbox" />
-                            Sleep
-                        </label>
-                    </div>
-
-                    <div class="field">
-                        <label class="checkbox is-size-5 m-2">
-                            <input id="eco" type="checkbox" />
-                            Eco
-                        </label>
-                    </div>
-                </div>
-
-                <div id="progressBar" class="my-4 is-hidden">
-                    <progress class="progress is-small is-link" max="100"></progress>
-                </div>
+          <div class="field">
+            <label for="temperatureScale" class="label">Scale</label>
+            <div class="select is-size-5">
+              <select id="temperatureScale">
+              </select>
             </div>
+            </label>
+          </div>
         </div>
 
-        <div id="settingsSection" class="section is-hidden"></div>
+        <hr />
 
-        <div id="aboutSection" class="section is-hidden">
-            <div class="box">
-                <h2 class="title is-2">Hvac app</h2>
-                <p>v1.0</p>
+        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly my-2">
+          <div class="field">
+            <label for="fanSpeed" class="label">Fan speed</label>
+            <div class="select">
+              <select id="fanSpeed">
+              </select>
             </div>
+            </label>
+          </div>
+
+          <div class="field">
+            <label for="horizontalFlow" class="label">Horiz. flow</label>
+            <div class="select">
+              <select id="horizontalFlow">
+              </select>
+            </div>
+            </label>
+          </div>
+
+          <div class="field">
+            <label for="verticalFlow" class="label">Vert. flow</label>
+            <div class="select">
+              <select id="verticalFlow">
+              </select>
+            </div>
+            </label>
+          </div>
         </div>
 
-    </main>
+        <hr />
+
+        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-justify-content-space-evenly mt-2">
+          <div class="field">
+            <label class="checkbox is-size-5 m-2">
+              <input id="turbo" type="checkbox" />
+              Turbo
+            </label>
+          </div>
+
+          <div class="field">
+            <label class="checkbox is-size-5 m-2">
+              <input id="quiet" type="checkbox" />
+              Quiet
+            </label>
+          </div>
+
+          <div class="field">
+            <label class="checkbox is-size-5 m-2">
+              <input id="display" type="checkbox" />
+              Display
+            </label>
+          </div>
+
+          <div class="field">
+            <label class="checkbox is-size-5 m-2">
+              <input id="health" type="checkbox" />
+              Health
+            </label>
+          </div>
+
+          <div class="field">
+            <label class="checkbox is-size-5 m-2">
+              <input id="drying" type="checkbox" />
+              Drying
+            </label>
+          </div>
+
+          <div class="field">
+            <label class="checkbox is-size-5 m-2">
+              <input id="sleep" type="checkbox" />
+              Sleep
+            </label>
+          </div>
+
+          <div class="field">
+            <label class="checkbox is-size-5 m-2">
+              <input id="eco" type="checkbox" />
+              Eco
+            </label>
+          </div>
+        </div>
+
+        <div id="progressBar" class="my-4 is-hidden">
+          <progress class="progress is-small is-link" max="100"></progress>
+        </div>
+      </div>
+    </div>
+
+    <div id="settingsSection" class="section is-hidden"></div>
+
+    <div id="aboutSection" class="section is-hidden">
+      <div class="box">
+        <h2 class="title is-2">Hvac app</h2>
+        <p>v1.0</p>
+      </div>
+    </div>
+
+  </main>
 </body>
 
 <!-- Templates -->
@@ -192,19 +189,19 @@
 <!-- Theme switcher -->
 
 <template id="themeSwitcherTemplate">
-    <div class="tabs is-toggle is-toggle-rounded">
-        <ul>
-            <!-- Items... -->
-        </ul>
-    </div>
+  <div class="tabs is-toggle is-toggle-rounded">
+    <ul>
+      <!-- Items... -->
+    </ul>
+  </div>
 </template>
 
 <template id="themeSwitcherItemTemplate">
-    <li>
-        <a>
-            <span></span>
-        </a>
-    </li>
+  <li>
+    <a>
+      <span></span>
+    </a>
+  </li>
 </template>
 
 <!-- Them switcher end -->
@@ -212,56 +209,56 @@
 <!-- Tabs-->
 
 <template id="tabsTemplate">
-    <div class="tabs is-toggle is-toggle-rounded is-centered">
-        <ul>
-            <!-- Tabs... -->
-        </ul>
-    </div>
+  <div class="tabs is-toggle is-toggle-rounded is-centered">
+    <ul>
+      <!-- Tabs... -->
+    </ul>
+  </div>
 </template>
 
 <!-- Tab item -->
 
 <template id="tabItemTemplate">
-    <li>
-        <a>
-            <span></span>
-        </a>
-    </li>
+  <li>
+    <a>
+      <span></span>
+    </a>
+  </li>
 </template>
 
 <!-- Settings form -->
 
 <template id="settingsFormTemplate">
-    <fieldset class="box">
-        <div>
-            <label class="label">Theme</label>
-            <div class="control my-4">
-                <div class="theme-switcher"></div>
-            </div>
-        </div>
+  <fieldset class="box">
+    <div>
+      <label class="label">Theme</label>
+      <div class="control my-4">
+        <div class="theme-switcher"></div>
+      </div>
+    </div>
 
-        <div class="field">
-            <label class="label">API URL</label>
-            <div class="control">
-                <input class="input input-api-url" type="url" placeholder="API URL" spellcheck="false" />
-            </div>
-        </div>
+    <div class="field">
+      <label class="label">API URL</label>
+      <div class="control">
+        <input class="input input-api-url" type="url" placeholder="API URL" spellcheck="false" />
+      </div>
+    </div>
 
-        <div class="field">
-            <label class="label">API key</label>
-            <div class="control">
-                <input class="input input-api-key" type="password" placeholder="API key" spellcheck="false" />
-            </div>
-        </div>
-        
-        <button class="button is-primary button-api-save">Save</button>
-    </fieldset>
+    <div class="field">
+      <label class="label">API key</label>
+      <div class="control">
+        <input class="input input-api-key" type="password" placeholder="API key" spellcheck="false" />
+      </div>
+    </div>
+
+    <button class="button is-primary button-api-save">Save</button>
+  </fieldset>
 </template>
 
 
 <script>
-    rtl.showUncaughtExceptions = true;
-    rtl.run();
+  rtl.showUncaughtExceptions = true;
+  rtl.run();
 </script>
 
 </html>

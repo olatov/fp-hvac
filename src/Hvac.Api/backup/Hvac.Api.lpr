@@ -17,6 +17,7 @@ program Hvac.Api;
 
 uses 
   {$ifdef Unix}
+    CMem,
     CThreads,
     BaseUnix,
   {$endif}
@@ -96,6 +97,5 @@ begin
   finally
     FreeAndNil(App);
     FreeAndNil(Logger);
-
   end;
 end.
