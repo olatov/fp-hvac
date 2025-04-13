@@ -5,13 +5,8 @@ unit Hvac.Api.Application;
 interface
 
 uses
-  Classes,
-  HttpDefs,
-  HttpRoute,
-  FPJson,
-  FPHttpApp,
-  CustHttpApp,
-  EventLog,
+  Classes, HttpDefs, HttpRoute, FPJson,
+  FPHttpApp, CustHttpApp, EventLog,
   Hvac.Types.Generic,
   Hvac.Cqrs,
   Hvac.Cqrs.Dispatcher;
@@ -85,7 +80,7 @@ begin
 
     try
       Elems := AHvacConnectionString.Split(':');
-      if Length(elems) <> 2 then
+      if Length(Elems) <> 2 then
         raise Exception.Create('Invalid connection string');
 
       HvacHost := Elems[0];

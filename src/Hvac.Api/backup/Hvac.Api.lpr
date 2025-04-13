@@ -17,7 +17,6 @@ program Hvac.Api;
 
 uses 
   {$ifdef Unix}
-    CMem,
     CThreads,
     BaseUnix,
   {$endif}

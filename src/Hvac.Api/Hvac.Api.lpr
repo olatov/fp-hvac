@@ -17,14 +17,10 @@ program Hvac.Api;
 
 uses 
   {$ifdef Unix}
-    CThreads,
-    BaseUnix,
+    CThreads, BaseUnix,
   {$endif}
-    Classes,
-    HttpRoute,
-    EventLog,
-    SysUtils,
-    StrUtils,
+    Classes, SysUtils, StrUtils,
+    HttpRoute, EventLog,
     Hvac.Api.Application;
 
 const 

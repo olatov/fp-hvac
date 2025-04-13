@@ -7,22 +7,20 @@
       <Unit>
         <Filename Value="Hvac.Api.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="10"/>
-        <CursorPos X="10" Y="19"/>
+        <CursorPos Y="25"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="30" Y="132"/>
+        <CursorPos X="18" Y="82"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../Hvac.Units/Cqrs/Hvac.Cqrs.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="7"/>
         <CursorPos X="15" Y="14"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -30,114 +28,43 @@
       <Unit>
         <Filename Value="../Hvac.Units/Cqrs/Hvac.Cqrs.Dispatcher.pas"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="22"/>
-        <CursorPos Y="36"/>
+        <TopLine Value="7"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../../../../../fpcupdeluxe/fpcsrc/rtl/objpas/typinfo.pp"/>
         <UnitName Value="TypInfo"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="245"/>
         <CursorPos X="16" Y="254"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="../Hvac.Units/Cqrs/Commands/Hvac.Cqrs.Commands.GetState.pas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="58"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../Hvac.Units/Hvac.Connection.pas"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="165"/>
+        <CursorPos X="33" Y="178"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="../Hvac.Units/Cqrs/Hvac.Cqrs.Dispatcher.pas"/>
-        <Caret Line="67" TopLine="56"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="272" TopLine="261"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Cqrs/Hvac.Cqrs.Dispatcher.pas"/>
-        <Caret Line="31" TopLine="11"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Cqrs/Hvac.Cqrs.Dispatcher.pas"/>
-        <Caret Line="36" TopLine="22"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="47" Column="17" TopLine="30"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="246" Column="12" TopLine="236"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="47" Column="18" TopLine="31"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="358" Column="16" TopLine="348"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="47" Column="84" TopLine="38"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="364" TopLine="346"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="347" TopLine="340"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="46" TopLine="37"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="136" TopLine="127"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="153" TopLine="145"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="173" Column="28" TopLine="162"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="203" TopLine="197"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="216" TopLine="206"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="328" Column="10" TopLine="318"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="44" Column="24" TopLine="29"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="42" Column="29" TopLine="30"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="39" TopLine="30"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="177" TopLine="175"/>
-      </Position>
-      <Position>
-        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
-        <Caret Line="236" Column="10" TopLine="225"/>
-      </Position>
       <Position>
         <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
         <Caret Line="32" Column="55" TopLine="65"/>
@@ -165,6 +92,97 @@
       <Position>
         <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
         <Caret Line="37" Column="24" TopLine="28"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Hvac.Api.Application.pas"/>
+        <Caret Line="82" Column="18"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Cqrs/Hvac.Cqrs.Dispatcher.pas"/>
+        <Caret TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Cqrs/Commands/Hvac.Cqrs.Commands.GetState.pas"/>
+        <Caret TopLine="58"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Hvac.Connection.pas"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="89" Column="47" TopLine="82"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="94" Column="29" TopLine="83"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="96" Column="29" TopLine="85"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="98" Column="46" TopLine="88"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="99" Column="51" TopLine="88"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="120" Column="14" TopLine="108"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="124" Column="25" TopLine="110"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="129" Column="33" TopLine="119"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="131" Column="33" TopLine="120"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="165" Column="52" TopLine="154"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="67" Column="18" TopLine="57"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="68" Column="33" TopLine="57"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="168" TopLine="168"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="178" Column="16" TopLine="169"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="192" Column="55" TopLine="173"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="184" Column="18" TopLine="173"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="69" TopLine="61"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="76" Column="47" TopLine="66"/>
+      </Position>
+      <Position>
+        <Filename Value="../Hvac.Units/Models/Hvac.Models.Protocol.pas"/>
+        <Caret Line="165" Column="27" TopLine="148"/>
       </Position>
     </JumpHistory>
     <RunParams>
