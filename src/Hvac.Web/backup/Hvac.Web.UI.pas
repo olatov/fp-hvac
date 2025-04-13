@@ -326,7 +326,8 @@ begin
     begin
       if ANode is TJSElement then
         TJSElement(ANode).SetAttribute('disabled', 'true');
-    end);
+    end
+  );
 
   IndoorTemperature.InnerText := '--';
 end;

@@ -11,8 +11,8 @@ uses
 var 
   Server: THvacSimulator;
   Value: String;
-  StdOutBuf: Char = #0;
-  StdErrBuf: Char = #0;
+  StdOutBuf: Char;
+  StdErrBuf: Char;
   Logger: TEventLog;
   Port: Word = 12416;
   Iface: String = 'localhost';
