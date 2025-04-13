@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="/home/oleg/fpcupdeluxe/fpc/bin/x86_64-linux/fpc.sh" Date="1742640074"/>
-  <Params Value="-MObjFPC -Scghi -Cg -O1 -gw3 -gl -l -vewnhibq -Fi/home/oleg/code/pas/fp-hvac/src/Hvac.Api/lib/x86_64-linux -Fu/home/oleg/code/pas/fp-hvac/src/Hvac.Api/ -Fu/home/oleg/code/pas/fp-hvac/src/Hvac.Units -Fu/home/oleg/code/pas/fp-hvac/src/Hvac.Units/Models -Fu/home/oleg/code/pas/fp-hvac/src/Hvac.Units/Cqrs -Fu/home/oleg/code/pas/fp-hvac/src/Hvac.Units/Cqrs/Commands -FU/home/oleg/code/pas/fp-hvac/src/Hvac.Api/lib/x86_64-linux/ -FE/home/oleg/code/pas/fp-hvac/src/Hvac.Api/ -o/home/oleg/code/pas/fp-hvac/src/Hvac.Api/Hvac.Api Hvac.Api.lpr"/>
-</CONFIG>

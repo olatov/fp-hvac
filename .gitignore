@@ -1,6 +1,9 @@
 *.o
 *.ppu
 out/
+*.compiled
+*.bak
+*.lps
 
 hvac.web.js
 hvac.web.js.map
